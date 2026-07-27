@@ -1,6 +1,6 @@
 "use client";
 import { Josefin_Sans } from "next/font/google";
-
+import { useRouter } from "next/navigation";
 // Pemanggil Font Resmi dari Figma
 const josefin = Josefin_Sans({ 
   subsets: ["latin"],
@@ -13,13 +13,14 @@ interface DetailEskulProps {
   onJoin?: () => void;
 }
 
-export default function DetailEskulCard({ eskul, onBack, onJoin}: DetailEskulProps) {
+export  function DetailEskulCard({ eskul, onBack, onJoin}: DetailEskulProps) {
   if (!eskul) return null;
   console.log(eskul)
+const router = useRouter();
 
   // 1. Mapping field dari skema Strapi v5 kamu
   const nama = eskul.nama_ekskul || "";
-  const jadwal = eskul.jadwal || eskul.jadwalpelaksanaan || eskul.waktu ||"Belum diatur";
+  const jadwal = eskul.jadwal || eskul.jadwal_pelaksanaan || eskul.waktu ||"Belum diatur";
   const tempat = eskul.tempat || eskul.tempat_pelaksanaan || eskul.lokasi||"Belum diatur";
   const hari = eskul.hari || "Belum diatur";
 
@@ -163,11 +164,15 @@ export default function DetailEskulCard({ eskul, onBack, onJoin}: DetailEskulPro
             <p className="text-[11px] text-slate-500 italic leading-relaxed font-normal max-w-sm mx-auto font-sans">
               "Ayo Gabung Ekskul {nama}! Tingkatkan kemampuan, karakter, disiplin, kreativitas, dan prestasi bersama kami."
             </p>
-            <button 
-            onClick={onJoin}
-            className="w-full bg-[#1e00a3] hover:bg-[#150080] text-white font-bold py-3.5 rounded-2xl transition duration-200 shadow-lg tracking-wide transform active:scale-[0.99] text-sm">
-              Gabung
-            </button>
+            <button
+             onClick={() => {
+             onJoin?.(); // tetap menjalankan logika lama jika ada
+             router.push("/daftar");
+  }}
+  className="w-full bg-[#1e00a3] hover:bg-[#150080] text-white font-bold py-3.5 rounded-2xl transition duration-200 shadow-lg tracking-wide transform active:scale-[0.99] text-sm"
+>
+  Gabung
+</button>
           </div>
 
         </div>

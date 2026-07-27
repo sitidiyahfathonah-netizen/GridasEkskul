@@ -7,13 +7,15 @@ const josefin = Josefin_Sans({
   weight: ["300", "400", "500", "600", "700"]
 });
 
+const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
+
 // 1. Definisikan tipe data Props agar TypeScript di page.tsx tidak eror lagi
 interface EskulProps {
   dataEkskul: any[];
   onSelect: (ekskul: any) => void;
 }
 
-export default function Eskul({ dataEkskul, onSelect }: EskulProps) {
+export  function Eskul({ dataEkskul, onSelect }: EskulProps) {
   // State untuk menangani pencarian
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -26,24 +28,25 @@ export default function Eskul({ dataEkskul, onSelect }: EskulProps) {
   return (
     <section 
       id="ekskul"
-      className={`relative w-full min-h-screen py-16 text-slate-800 overflow-hidden ${josefin.className}`}
-    >
+      className={`relative w-full min-h-screen bg-[#104f79] text-slate-800 ${josefin.className}`}>
       {/* GAMBAR BACKGROUND & GRADASI LAPISAN */}
+      <div className="relative w-full py-16 px-6 overflow-hidden"></div>
       <div className="absolute inset-0 z-0">
         <div 
           className="w-full h-full bg-cover bg-center opacity-40 filter blur-[1px]"
           style={{ backgroundImage: `url('/images/bg-katalog.jpeg')` }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-slate-900/40 to-[#104f79] z-10" />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-900/40 via-[#104f79]/70 to-[#104f79] z-10" />
+  
       </div>
 
       {/* KONTEN UTAMA */}
-      <div className="relative z-20 max-w-6xl mx-auto px-6 flex flex-col items-center">
-        
+      <div className="relative z-20 max-w-6xl mx-auto flex flex-col items-center">
         {/* 🔍 STICKY SEARCH BAR: Sekarang fungsinya udah aktif! */}
-        <div className="sticky top-4 z-40 w-full max-w-2xl mb-12 transform transition-all duration-300">
-          <div className="flex items-center gap-3 bg-white/95 backdrop-blur-md px-6 py-3 rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-slate-100">
-            <input  
+        
+       <div className="w-full max-w-2xl mb-10">
+         <div className="flex items-center gap-3 bg-white/95 backdrop-blur-md px-6 py-3 rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-slate-100">
+              <input
               type="text" 
               placeholder="Cari Eskul..." 
               value={searchQuery}
@@ -69,20 +72,24 @@ export default function Eskul({ dataEkskul, onSelect }: EskulProps) {
         </div>
 
         {/* 3. GRID CARD EKSKUL (Mapping Data dari Strapi) */}
+        
         <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-8 items-center justify-center px-4">
           {filteredEskul.map((eskul) => {
             // Mapping field berdasarkan nama komponen di Strapi v5
-            const namaEskul = eskul.nama_ekskul;
-            const deskripsiSingkat = eskul.deskripsi_singkat || "Belum ada deskripsi singkat.";
+            const namaEskul = eskul.nama_ekskul || eskul.attributes?.nama_ekskul || "";
+            const deskripsiSingkat = eskul.deskripsi_singkat || eskul.attributes?.deskripsi_singkat || "Belum ada deskripsi singkat.";
+
+            const fotoData = eskul.foto_utama || eskul.attributes?.foto_utama;
+            const photoUrl = fotoData?.url || fotoData?.data?.attributes?.url;
 
             // Cek jika foto_utama ada di Strapi, kalau ada gabungkan dengan url localhost Strapi
             const imageSrc = eskul.foto_utama 
-              ? `http://localhost:1337${eskul.foto_utama.url}` 
+              ? (photoUrl.startsWith("http") ? photoUrl : `${STRAPI_URL}${photoUrl}`) 
               : "/images/coding.jpeg"; // Fallback gambar default
 
             return (
               <div 
-                key={eskul.documentId} 
+                key={eskul.documentId || eskul.id} 
                 className="bg-white rounded-[32px] p-5 shadow-[0_15px_40px_rgba(0,0,0,0.15)] flex flex-col gap-4 transform hover:-translate-y-2 transition duration-300 border border-slate-50"
               >
                 {/* Tempat Gambar Miniatur Eskul */}
@@ -92,7 +99,7 @@ export default function Eskul({ dataEkskul, onSelect }: EskulProps) {
                     alt={namaEskul} 
                     className="w-full h-full object-cover"
                     onError={(e) => {
-                      e.currentTarget.src = "/images/coding.jpeg";
+                      e.currentTarget.src = "/images/bg-katalog.jpeg";
                     }}
                   />
                 </div>

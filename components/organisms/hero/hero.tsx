@@ -1,12 +1,10 @@
 import { Josefin_Sans } from "next/font/google";
 
-// 🌟 CARA BENAR MEMANGGIL FONT DI NEXT.JS
-// Kita ambil font Josefin Sans dengan berbagai ketebalan (dari tipis sampai tebal)
 const josefin = Josefin_Sans({ 
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"]
 });
-export default function Hero() {
+export function Hero() {
   return (
     <section 
       className="relative w-full h-[85vh] min-h-[700px] flex items-center text-white"

@@ -26,7 +26,7 @@ const dataGaleri: GaleriItem[] = [
   
 ];
 
-export default function Galeri() {
+export  function Galeri() {
   return (
     <section className="w-full min-h-screen bg-white py-16 px-6 md:px-16 text-slate-800">
       <div className="max-w-5xl mx-auto space-y-10">
@@ -78,7 +78,15 @@ export default function Galeri() {
               </div>
             </div>
           ))}
+
         </div>
+          <div className=" w-full flex items-center justify-between px-6 py-4 bg-white shadow-sm md:px-16 sticky top-0 z-50 text-gray-800">
+          <div className="flex items-center space-x-3 cursor-pointer">
+          <span className="font-bold text-sky-800 tracking-wide text-xs md:text-sm">
+          SMK NEGERI 2 SUMEDANG
+        </span>
+      </div>
+      </div>
 
       </div>
     </section>

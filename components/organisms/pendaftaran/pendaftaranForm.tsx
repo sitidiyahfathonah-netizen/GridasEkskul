@@ -1,24 +1,64 @@
 "use client";
+import { Josefin_Sans } from "next/font/google";
+import { useSearchParams } from "next/navigation";
 
+const josefin = Josefin_Sans({ 
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"]
+});
 import { useState } from "react";
 
-export default function Pendaftaran() {
+export  function PendaftaranForm() {
+
+  const searchParams = useSearchParams();
+  const ekskulId = searchParams.get("ekskulId");
   const [formData, setFormData] = useState({
     nama: "",
     kelas: "",
-    noTelp: "",
+    no_telp: "",
     jurusan: "",
   });
 
   const [isSuccess, setIsSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Data Pendaftar:", formData);
-    setIsSuccess(true);
-    setFormData({ nama: "", kelas: "", noTelp: "", jurusan: "" });
-  };
+  
 
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setLoading(true);
+
+  const BASE_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
+
+  try {
+    const res = await fetch("http://localhost:1337/api/pendaftarans", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        data: {
+          nama: formData.nama,
+          kelas: formData.kelas,
+          no_telp: formData.no_telp,
+         ekskuls: ekskulId ? [ekskulId]:[]
+        },
+      }),
+    });
+
+    if (res.ok) {
+      setIsSuccess(true);
+      setFormData({ nama: "", kelas: "", no_telp: "", jurusan: "" });
+    } else {
+      alert("Gagal mengirim pendaftaran, coba lagi!");
+    }
+  } catch (error) {
+    console.error("Error submitting form:", error);
+    alert("Terjadi kesalahan koneksi ke server.");
+  } finally {
+    setLoading(false);
+  }
+};
   return (
     /* SEAKAN SATU HALAMAN PENUH DESKTOP */
     <section className="w-full min-h-screen bg-cover bg-center relative flex flex-col justify-center items-center px-6 md:px-16"
@@ -28,6 +68,8 @@ export default function Pendaftaran() {
       <div className="absolute inset-0 bg-[#16357a]/90 z-0" />
 
       <div className="relative z-10 w-full max-w-2xl flex flex-col justify-center h-full space-y-6 py-12">
+
+        
         
         {/* INPUT FORM & JUDUL (Semua Sejajar Menggunakan Grid yang Sama) */}
         {isSuccess ? (
@@ -50,9 +92,9 @@ export default function Pendaftaran() {
             {/* JUDUL FORM: Sekarang pakai grid col-4 dan col-span-3 biar lurus dengan textfield */}
             <div className="grid grid-cols-4 items-center gap-4 mb-4">
               <div className="col-start-2 col-span-3">
-                <h2 className="text-3xl md:text-4xl font-bold tracking-wide text-white">
-                  Form Pendaftaran
-                </h2>
+                 <h1 className="text-4xl md:text-[60px] font-bold tracking-tight leading-tight text-white [text-shadow:-12px_4px_4px_rgba(0,0,0,0.25)]">
+                  Form Pendaftaran 
+                </h1>
               </div>
             </div>
 
@@ -90,8 +132,8 @@ export default function Pendaftaran() {
               <input 
                 type="tel"
                 required
-                value={formData.noTelp}
-                onChange={(e) => setFormData({ ...formData, noTelp: e.target.value })}
+                value={formData.no_telp}
+                onChange={(e) => setFormData({ ...formData, no_telp: e.target.value })}
                 className="col-span-3 px-4 py-2 bg-white text-gray-800 rounded-none text-sm focus:outline-none font-medium shadow-md"
               />
             </div>

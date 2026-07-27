@@ -6,7 +6,7 @@ interface NavbarProps {
   onReset?: () => void;
 }
 
-export default function Navbar({ onReset }: NavbarProps) {
+export function Navbar({ onReset }: NavbarProps) {
 const handleNavClick = (e: React.MouseEvent, targetId: string) => {
     if (onReset) {
       onReset();

@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
-import Navbar from "./components/Navbar";
-import Hero from "./components/Hero";
-import Eskul from "./components/Eskul";
-import DetailEskulCard from "./components/DetailEskulCard";
-import Galeri from "./components/Galeri";
-import Pendaftaran from "./components/Pendaftaran";
+import { useState, useEffect } from "react";
+import { Navbar } from "@/components/organisms/navbar";
+import { Hero } from "@/components/organisms/hero";
+import { Eskul } from "@/components/organisms/eskul-list";
+import { DetailEskulCard } from "@/components/molecules/eskul-card";
+import { Galeri } from "@/components/molecules/galeri";
+import { PendaftaranForm } from "@/components/organisms/pendaftaran";
 
 export default function Home() {
   const [selectedEskul, setSelectedEskul] = useState<any | null>(null);
@@ -16,32 +16,32 @@ export default function Home() {
   const [dataEkskulDariStrapi, setDataEkskulDariStrapi] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
+
   // Reset tampilan jika menu/logo Navbar diklik
   const handleReset = () => {
     setSelectedEskul(null);
     setShowPendaftaranOnly(false);
   };
 
-  useEffect(()=> {
+  useEffect(() => {
     async function fetchStrapiData() {
       try {
-        const res = await fetch(
-          "https://giver-moisture-wrecking.ngrok-free.dev/api/ekskuls?populate=*",
-          {
-            headers: {
-              "ngrok-skip-browser-warning": "true",
-            },
-          }
-        );
+        // Ganti URL ini sesuai URL ngrok Strapi kamu
+        const res = await fetch( "https://giver-moisture-wrecking.ngrok-free.dev/api/ekskuls?populate=*");
+       
+  
+
+        if (!res.ok) {
+          throw new Error(`HTTP Error! Status: ${res.status}`);
+        }
 
         const responseJson = await res.json();
-       console.log("Data berhasil diambil:", responseJson.data);
+        console.log("Data berhasil diambil:", responseJson.data);
 
-       if (responseJson && Array.isArray(responseJson.data)) {
-        setDataEkskulDariStrapi(responseJson.data);
-      }
-
-        setDataEkskulDariStrapi(responseJson.data);
+        if (responseJson && Array.isArray(responseJson.data)) {
+          setDataEkskulDariStrapi(responseJson.data);
+        }
       } catch (error) {
         console.error("Waduh eror pas fetch:", error);
       } finally {
@@ -49,7 +49,7 @@ export default function Home() {
       }
     }
 
-     fetchStrapiData();
+    fetchStrapiData();
   }, []);
 
   return (
@@ -61,7 +61,7 @@ export default function Home() {
         {/* KONDISI 1: Jika Tombol Gabung diklik */}
         {showPendaftaranOnly ? (
           <div className="pt-20">
-            <Pendaftaran />
+            <PendaftaranForm />
           </div>
         ) : selectedEskul ? (
           /* KONDISI 2: Jika sedang membuka Detail Ekskul */
@@ -108,12 +108,9 @@ export default function Home() {
             <div id="galeri" className="scroll-mt-20">
               <Galeri />
             </div>
-
-            <div id="pendaftaran" className="scroll-mt-20">
-              <Pendaftaran />
-            </div>
           </>
         )}
       </main>
     </div>
-  );}
+  );
+}
