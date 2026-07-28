@@ -28,11 +28,11 @@ export default function Home() {
     async function fetchStrapiData() {
       try {
         // Ganti URL ini sesuai URL ngrok Strapi kamu
-        const res = await fetch( "https://giver-moisture-wrecking.ngrok-free.dev/api/ekskuls?populate=*");
+        const res = await fetch( "http://localhost:1337/api/ekskuls?populate=*");
        
   
 
-        if (!res.ok) {
+        if (!res.ok) {w
           throw new Error(`HTTP Error! Status: ${res.status}`);
         }
 
