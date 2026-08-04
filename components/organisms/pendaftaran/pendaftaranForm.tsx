@@ -105,34 +105,34 @@ const handleSubmit = async (e: React.FormEvent) => {
           <form onSubmit={handleSubmit} className="space-y-5 w-full">
             
             {/* JUDUL FORM*/}
-            <div className="grid grid-cols-4 items-center gap-4 mb-4">
-              <div className="col-start-2 col-span-3">
-                 <h1 className="text-4xl md:text-[60px] font-bold tracking-tight leading-tight text-white [text-shadow:-12px_4px_4px_rgba(0,0,0,0.25)]">
+            <div className="grid grid-cols-1 sm:grid-cols-4 items-center gap-2 sm:gap-4 mb-4">
+              <div className="sm:col-start-2 sm:col-span-3">
+                 <h1 className="text-3xl sm:text-4xl md:text-[60px] font-bold tracking-tight leading-tight text-white [text-shadow:-12px_4px_4px_rgba(0,0,0,0.25)]">
                   Form Pendaftaran 
                 </h1>
               </div>
             </div>
 
             {/* 1. Nama */}
-            <div className="grid grid-cols-4 items-center gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-4 items-start sm:items-center gap-2 sm:gap-4">
               <label className="text-base font-medium text-white">Nama</label>
               <input 
                 type="text"
                 required
                 value={formData.nama}
                 onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
-                className="col-span-3 px-4 py-2 bg-white text-gray-800 rounded-none text-sm focus:outline-none font-medium shadow-md"
+                className="col-span-1 sm:col-span-3 px-4 py-2 bg-white text-gray-800 rounded-none text-sm focus:outline-none font-medium shadow-md"
               />
             </div>
 
             {/* 2. Kelas */}
-            <div className="grid grid-cols-4 items-center gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-4 items-start sm:items-center gap-2 sm:gap-4">
               <label className="text-base font-medium text-white">Kelas</label>
               <select 
                 required
                 value={formData.kelas}
                 onChange={(e) => setFormData({ ...formData, kelas: e.target.value })}
-                className="col-span-3 px-4 py-2 bg-white text-gray-800 rounded-none text-sm focus:outline-none font-medium shadow-md cursor-pointer"
+                className="col-span-1 sm:col-span-3 px-4 py-2 bg-white text-gray-800 rounded-none text-sm focus:outline-none font-medium shadow-md cursor-pointer"
               >
                 <option value="" disabled>Pilih Kelas</option>
                 <option value="X">Kelas X</option>
@@ -142,25 +142,25 @@ const handleSubmit = async (e: React.FormEvent) => {
             </div>
 
             {/* 3. No.Telp */}
-            <div className="grid grid-cols-4 items-center gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-4 items-start sm:items-center gap-2 sm:gap-4">
               <label className="text-base font-medium text-white">No.Telp</label>
               <input 
                 type="tel"
                 required
                 value={formData.no_telp}
                 onChange={(e) => setFormData({ ...formData, no_telp: e.target.value })}
-                className="col-span-3 px-4 py-2 bg-white text-gray-800 rounded-none text-sm focus:outline-none font-medium shadow-md"
+                className="col-span-1 sm:col-span-3 px-4 py-2 bg-white text-gray-800 rounded-none text-sm focus:outline-none font-medium shadow-md"
               />
             </div>
 
             {/* 4. Jurusan */}
-            <div className="grid grid-cols-4 items-center gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-4 items-start sm:items-center gap-2 sm:gap-4">
               <label className="text-base font-medium text-white">Jurusan</label>
               <select 
                 required
                 value={formData.jurusan}
                 onChange={(e) => setFormData({ ...formData, jurusan: e.target.value })}
-                className="col-span-3 px-4 py-2 bg-white text-gray-800 rounded-none text-sm focus:outline-none font-medium shadow-md cursor-pointer"
+                className="col-span-1 sm:col-span-3 px-4 py-2 bg-white text-gray-800 rounded-none text-sm focus:outline-none font-medium shadow-md cursor-pointer"
               >
                 <option value="" disabled>Pilih Jurusan</option>
                 <option value="PPLG">PPLG</option>
@@ -171,11 +171,11 @@ const handleSubmit = async (e: React.FormEvent) => {
             </div>
 
             {/* TOMBOL DAFTAR KOTAK PUTIH (Lurus di bawah textfield) */}
-            <div className="grid grid-cols-4 items-center gap-4 pt-4">
-              <div className="col-start-2 col-span-3">
+            <div className="grid grid-cols-1 sm:grid-cols-4 items-center gap-2 sm:gap-4 pt-4">
+              <div className="sm:col-start-2 sm:col-span-3">
                 <button 
                   type="submit"
-                  className="px-10 py-2 bg-white hover:bg-slate-100 text-[#16357a] font-bold text-sm rounded-none transition duration-150 shadow-md tracking-wider"
+                  className="w-full sm:w-auto px-10 py-2 bg-white hover:bg-slate-100 text-[#16357a] font-bold text-sm rounded-none transition duration-150 shadow-md tracking-wider"
                 >
                   Daftar
                 </button>

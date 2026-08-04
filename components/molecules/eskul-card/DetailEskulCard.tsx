@@ -114,7 +114,7 @@ export function DetailEskulCard({ eskul, onBack, onJoin }: DetailEskulProps) {
         <div className="p-6 space-y-6 flex-1">
 
           {/* ================= BAGIAN 1: DETAIL INFORMASI UTAMA ================= */}
-          <div className="grid grid-cols-2 gap-4 items-stretch">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-stretch">
             {/* Foto Utama Ekskul dari Strapi */}
             <div
               className="rounded-3xl overflow-hidden h-44 shadow-sm bg-cover bg-center border border-slate-100"
@@ -122,13 +122,13 @@ export function DetailEskulCard({ eskul, onBack, onJoin }: DetailEskulProps) {
             />
 
             {/* Kotak Informasi Jadwal & Tempat */}
-            <div className=" bg-sky-100 rounded-3xl p-4 flex flex-col justify-between text-slate-700 text-[11px] md:text-xs space-y-2">
+            <div className=" bg-sky-100 rounded-3xl p-4 flex flex-col justify-between text-slate-700 text-xs space-y-2">
               <div>
-                <span className="font-bold text-sky-800 block mb-0.5">Jadwal Pelaksanaan :</span>
+                <span className="font-bold text-sky-800 block mb-0.5 text-xs sm:text-[11px] md:text-xs">Jadwal Pelaksanaan :</span>
                 <p className="font-normal">{jadwal}</p>
               </div>
               <div>
-                <span className="font-bold text-[#00598a] block mb-0.5">Tempat Pelaksanaan :</span>
+                <span className="font-bold text-[#00598a] block mb-0.5 text-xs sm:text-[11px] md:text-xs">Tempat Pelaksanaan :</span>
                 <p className="font-normal">{tempat}</p>
               </div>
               <div>
