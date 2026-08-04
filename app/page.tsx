@@ -9,14 +9,36 @@ import { Galeri } from "@/components/molecules/galeri";
 import { PendaftaranForm } from "@/components/organisms/pendaftaran";
 
 export default function Home() {
-  const [selectedEskul, setSelectedEskul] = useState<any | null>(null);
+  const [selectedEkskul, setSelectedEskul] = useState<any | null>(null);
   const [showPendaftaranOnly, setShowPendaftaranOnly] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+
+  const handleGabung = () => {
+    setIsFormOpen(true);
+  };
+
+  const handleSuccessOke = () => {
+    setShowSuccessModal(false);
+    setIsFormOpen(false);
+    setSelectedEskul(null);
+
+    const ekskulElement = document.getElementById("ekskul");
+
+    if (ekskulElement) {
+      ekskulElement.scrollIntoView({
+        behavior: "smooth",
+      });
+    }
+  };
 
   // Data dari Strapi
   const [dataEkskulDariStrapi, setDataEkskulDariStrapi] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
+  const STRAPI_URL =
+    process.env.NEXT_PUBLIC_STRAPI_URL ||
+    "http://localhost:1337";
 
   // Reset tampilan jika menu/logo Navbar diklik
   const handleReset = () => {
@@ -28,22 +50,36 @@ export default function Home() {
     async function fetchStrapiData() {
       try {
         // Ganti URL ini sesuai URL ngrok Strapi kamu
-        const res = await fetch( "http://localhost:1337/api/ekskuls?populate=*");
-       
-  
+        const res = await fetch(
+          "http://localhost:1337/api/ekskuls?populate=*"
+        );
 
-        if (!res.ok) {w
-          throw new Error(`HTTP Error! Status: ${res.status}`);
+        if (!res.ok) {
+          throw new Error(
+            `HTTP Error! Status: ${res.status}`
+          );
         }
 
         const responseJson = await res.json();
-        console.log("Data berhasil diambil:", responseJson.data);
 
-        if (responseJson && Array.isArray(responseJson.data)) {
-          setDataEkskulDariStrapi(responseJson.data);
+        console.log(
+          "Data berhasil diambil:",
+          responseJson.data
+        );
+
+        if (
+          responseJson &&
+          Array.isArray(responseJson.data)
+        ) {
+          setDataEkskulDariStrapi(
+            responseJson.data
+          );
         }
       } catch (error) {
-        console.error("Waduh eror pas fetch:", error);
+        console.error(
+          "Waduh eror pas fetch:",
+          error
+        );
       } finally {
         setLoading(false);
       }
@@ -53,61 +89,147 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="bg-[#0f172a] min-h-screen font-sans antialiased text-white">
+    <div
+      className="
+        min-h-screen
+        w-full
+        overflow-x-hidden
+        bg-[#0f172a]
+        font-sans
+        antialiased
+        text-white
+      "
+    >
       {/* Navbar */}
       <Navbar onReset={handleReset} />
 
-      <main>
+      <main className="w-full">
         {/* KONDISI 1: Jika Tombol Gabung diklik */}
         {showPendaftaranOnly ? (
-          <div className="pt-20">
-            <PendaftaranForm />
+          <div
+            className="
+              w-full
+              pt-16
+
+              sm:pt-20
+            "
+          >
+            <PendaftaranForm
+              onSuccess={() => {
+                setShowPendaftaranOnly(false);
+
+                setTimeout(() => {
+                  const element =
+                    document.getElementById(
+                      "ekskul"
+                    );
+
+                  if (element) {
+                    element.scrollIntoView({
+                      behavior: "smooth",
+                    });
+                  }
+                }, 100);
+              }}
+            />
           </div>
-        ) : selectedEskul ? (
+        ) : selectedEkskul ? (
           /* KONDISI 2: Jika sedang membuka Detail Ekskul */
-          <DetailEskulCard
-            eskul={selectedEskul}
-            onBack={() => {
-              setSelectedEskul(null);
-              setTimeout(() => {
-                const element = document.getElementById("ekskul");
-                if (element) {
-                  element.scrollIntoView({ behavior: "smooth" });
-                }
-              }, 50);
-            }}
-            onJoin={() => {
-              setSelectedEskul(null);
-              setShowPendaftaranOnly(true);
-              window.scrollTo(0, 0);
-            }}
-          />
+          <div className="w-full">
+            <DetailEskulCard
+              eskul={selectedEkskul}
+              onBack={() => {
+                setSelectedEskul(null);
+
+                setTimeout(() => {
+                  const element =
+                    document.getElementById(
+                      "ekskul"
+                    );
+
+                  if (element) {
+                    element.scrollIntoView({
+                      behavior: "smooth",
+                    });
+                  }
+                }, 50);
+              }}
+              onJoin={() => {
+                handleGabung();
+                setSelectedEskul(null);
+                setShowPendaftaranOnly(true);
+                window.scrollTo(0, 0);
+              }}
+            />
+          </div>
         ) : (
           /* KONDISI 3: Tampilan Beranda Utama */
           <>
-            <div id="home" className="scroll-mt-20">
-              <Hero />
-            </div>
+            {/* Hero */}
+            <section
+              id="home"
+              className="
+                w-full
+                scroll-mt-16
 
-            <div id="ekskul" className="scroll-mt-20">
+                sm:scroll-mt-20
+              "
+            >
+              <Hero />
+            </section>
+
+            {/* Daftar Ekskul */}
+            <section
+              id="ekskul"
+              className="
+                w-full
+                scroll-mt-16
+
+                sm:scroll-mt-20
+              "
+            >
               {loading ? (
-                <div className="text-center py-10 text-gray-400">
+                <div
+                  className="
+                    px-4
+                    py-10
+                    text-center
+                    text-sm
+                    text-gray-400
+
+                    sm:text-base
+                  "
+                >
                   Memuat data ekskul dari Strapi...
                 </div>
               ) : (
                 <Eskul
-                  dataEkskul={dataEkskulDariStrapi}
+                  dataEkskul={
+                    dataEkskulDariStrapi
+                  }
                   onSelect={(ekskul) => {
-                    setSelectedEskul(ekskul);
+                    setSelectedEskul(
+                      ekskul
+                    );
+
                     window.scrollTo(0, 0);
                   }}
                 />
               )}
-            </div>
+            </section>
 
-            <div id="galeri" className="scroll-mt-20">
+            {/* Galeri */}
+            <section
+              id="galeri"
+              className="
+                w-full
+                scroll-mt-16
+
+                sm:scroll-mt-20
+              "
+            >
               <Galeri />
-            </div>
+            </section>
           </>
         )}
       </main>

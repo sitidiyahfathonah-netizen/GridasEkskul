@@ -8,7 +8,11 @@ const josefin = Josefin_Sans({
 });
 import { useState } from "react";
 
-export  function PendaftaranForm() {
+interface PendaftaranFormProps {
+  onSuccess?: () => void;
+}
+
+export  function PendaftaranForm({ onSuccess }: { onSuccess?: () => void }) {
 
   const searchParams = useSearchParams();
   const ekskulId = searchParams.get("ekskulId");
@@ -21,6 +25,14 @@ export  function PendaftaranForm() {
 
   const [isSuccess, setIsSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+
+   const handleKembaliKeKatalog = () => {
+  setIsSuccess(false);
+  if (onSuccess) {
+    onSuccess();
+  }
+};
+
 
   
 
@@ -80,7 +92,10 @@ const handleSubmit = async (e: React.FormEvent) => {
             </div>
             <h3 className="text-lg font-bold text-white">Pendaftaran Berhasil!</h3>
             <button 
-              onClick={() => setIsSuccess(false)}
+              onClick={() =>{
+                setIsSuccess(false);
+                if (onSuccess) onSuccess();
+              }}
               className="px-8 py-1.5 bg-white text-blue-900 rounded-none text-xs font-bold transition hover:bg-slate-100"
             >
               Kembali
@@ -89,7 +104,7 @@ const handleSubmit = async (e: React.FormEvent) => {
         ) : (
           <form onSubmit={handleSubmit} className="space-y-5 w-full">
             
-            {/* JUDUL FORM: Sekarang pakai grid col-4 dan col-span-3 biar lurus dengan textfield */}
+            {/* JUDUL FORM*/}
             <div className="grid grid-cols-4 items-center gap-4 mb-4">
               <div className="col-start-2 col-span-3">
                  <h1 className="text-4xl md:text-[60px] font-bold tracking-tight leading-tight text-white [text-shadow:-12px_4px_4px_rgba(0,0,0,0.25)]">

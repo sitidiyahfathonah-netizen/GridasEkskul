@@ -1,180 +1,577 @@
 "use client";
+
 import { Josefin_Sans } from "next/font/google";
 import { useRouter } from "next/navigation";
-// Pemanggil Font Resmi dari Figma
-const josefin = Josefin_Sans({ 
+
+// Pemanggil Font
+const josefin = Josefin_Sans({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"]
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 interface DetailEskulProps {
-  eskul: any | null; // Ubah ke any dulu agar flexibel menerima object dari Strapi
+  eskul: any | null;
   onBack: () => void;
   onJoin?: () => void;
 }
 
-export  function DetailEskulCard({ eskul, onBack, onJoin}: DetailEskulProps) {
+export function DetailEskulCard({
+  eskul,
+  onBack,
+  onJoin,
+}: DetailEskulProps) {
   if (!eskul) return null;
-  console.log(eskul)
-const router = useRouter();
 
-  // 1. Mapping field dari skema Strapi v5 kamu
+  console.log(eskul);
+
+  const router = useRouter();
+
+  // Mapping field dari skema Strapi v5
   const nama = eskul.nama_ekskul || "";
-  const jadwal = eskul.jadwal || eskul.jadwal_pelaksanaan || eskul.waktu ||"Belum diatur";
-  const tempat = eskul.tempat || eskul.tempat_pelaksanaan || eskul.lokasi||"Belum diatur";
+
+  const jadwal =
+    eskul.jadwal ||
+    eskul.jadwal_pelaksanaan ||
+    eskul.waktu ||
+    "Belum diatur";
+
+  const tempat =
+    eskul.tempat ||
+    eskul.tempat_pelaksanaan ||
+    eskul.lokasi ||
+    "Belum diatur";
+
   const hari = eskul.hari || "Belum diatur";
 
-  // 2. Mengambil URL Foto Utama dari Strapi
-  const fotoUtamaUrl = eskul.foto_utama 
-    ? `http://localhost:1337${eskul.foto_utama.url}` 
-    : '/images/coding.jpeg';
+  const kata_ajakan =
+    eskul.kata_ajakan ||
+    eskul.attributes?.kata_ajakan ||
+    "belum diatur";
 
-  // 3. JINAKKAN EROR BLOCKS: Fungsi untuk mengekstrak teks asli dari komponen Blocks Strapi v5
+  // Helper mengambil URL gambar dari Strapi
+  const getStrapiMediaUrl = (media: any) => {
+    if (!media) return null;
+
+    const item = Array.isArray(media)
+      ? media[0]
+      : media;
+
+    const rawUrl =
+      item?.url ||
+      item?.attributes?.url ||
+      item?.data?.attributes?.url ||
+      item?.data?.url;
+
+    if (!rawUrl) return null;
+
+    if (
+      rawUrl.startsWith("http://") ||
+      rawUrl.startsWith("https://")
+    ) {
+      return rawUrl;
+    }
+
+    return `http://localhost:1337${rawUrl}`;
+  };
+
+  // Mengambil foto dari Strapi
+  const fotoUtamaUrl =
+    getStrapiMediaUrl(eskul.foto_utama) || "";
+
+  const fotoPrestasiUrl =
+    getStrapiMediaUrl(eskul.foto_prestasi);
+
+  // Menentukan apakah bagian prestasi ditampilkan
+  const punyaPrestasi = Boolean(
+    fotoPrestasiUrl || eskul.prestasi
+  );
+
+  // Mengubah Blocks Strapi menjadi teks
   const renderDeskripsi = () => {
     const rawDeskripsi = eskul.deskripsi;
-    
-    if (!rawDeskripsi) return "Belum ada deskripsi.";
-    
-    // Jika tipenya sudah teks biasa (string)
-    if (typeof rawDeskripsi === 'string') return rawDeskripsi;
-    
-    // Jika tipenya adalah Rich Text / Blocks (Array of Objects) bawaan Strapi v5
+
+    if (!rawDeskripsi) {
+      return "Belum ada deskripsi.";
+    }
+
+    if (typeof rawDeskripsi === "string") {
+      return rawDeskripsi;
+    }
+
     if (Array.isArray(rawDeskripsi)) {
       return rawDeskripsi
         .map((block: any) => {
-          if (block.children && Array.isArray(block.children)) {
-            return block.children.map((child: any) => child.text).join("");
+          if (
+            block.children &&
+            Array.isArray(block.children)
+          ) {
+            return block.children
+              .map((child: any) => child.text)
+              .join("");
           }
+
           return "";
         })
         .join("\n");
     }
-    
+
     return "Format deskripsi tidak didukung.";
   };
 
   return (
-    <section className={`w-full min-h-screen bg-[#6B424D]/10 py-6 sm:py-10 md:py-12 px-3 sm:px-4 md:px-6 flex justify-center items-start md:items-center relative overflow-hidden ${josefin.className}`}>
-      
-      {/* ================= BACKGROUND MOTIF SAMAR FIGMA ================= */}
+    <section
+      className={`
+        relative
+        flex
+        min-h-screen
+        w-full
+        items-start
+        justify-center
+        overflow-hidden
+        bg-[#6B424D]/10
+        px-3
+        py-4
+        sm:px-5
+        sm:py-8
+        md:items-center
+        md:px-8
+        md:py-12
+        ${josefin.className}
+      `}
+    >
+      {/* BACKGROUND */}
       <div className="absolute inset-0 z-0">
-        <div 
-          className="w-full h-full bg-cover bg-center opacity-40 filter blur-[1px]"
-          style={{ backgroundImage: `url('/images/bg-katalog.jpeg')` }}
+        <div
+          className="
+            h-full
+            w-full
+            bg-cover
+            bg-center
+            opacity-80
+          "
+          style={{
+            backgroundImage:
+              "url('/images/bgdetail.jpg')",
+          }}
         />
-        {/* Lapisan Gradasi Warna Khas Katalog */}
-        <div className="absolute inset-0 bg-gradient-to-b from-white via-sky-800/40 to-blue-900 z-10" />
+
+        <div className="absolute inset-0 bg-gradient-to-b from-white/20 to-sky-100/30" />
       </div>
 
-      {/* ================= BINGKAI CARD UTAMA (SLICING MOBILE PATTERN FIGMA) ================= */}
-     <div className="w-full max-w-sm sm:max-w-md md:max-w-lg bg-white rounded-[28px] sm:rounded-[35px] md:rounded-[40px] shadow-[0_20px_50px_rgba(0,0,0,0.15)] overflow-hidden border border-slate-100 relative z-20 flex flex-col">
-        {/* ================= HEADER AREA (FIXED STICKY) ================= */}
-        <div className="p-4 sm:p-5 md:p-6 flex items-center justify-between border-b border-slate-50 bg-white sticky top-0 z-30">
-          <button 
+      {/* CARD UTAMA */}
+      <div
+        className="
+          relative
+          z-20
+          flex
+          w-full
+          max-w-sm
+          flex-col
+          overflow-hidden
+          rounded-[24px]
+          border
+          border-slate-100
+          bg-white
+          shadow-[0_20px_50px_rgba(0,0,0,0.15)]
+
+          sm:max-w-xl
+          sm:rounded-[32px]
+
+          md:max-w-2xl
+          md:rounded-[40px]
+
+          lg:max-w-4xl
+        "
+      >
+        {/* HEADER */}
+        <div
+          className="
+            sticky
+            top-0
+            z-30
+            flex
+            items-center
+            justify-between
+            border-b
+            border-slate-100
+            bg-white
+            px-4
+            py-4
+
+            sm:px-6
+            sm:py-5
+
+            md:px-8
+            md:py-6
+          "
+        >
+          {/* Tombol kembali */}
+          <button
             onClick={onBack}
-            className="text-slate-400 hover:text-slate-600 font-bold transition text-xs sm:text-sm flex items-center gap-1"
+            className="
+              flex
+              items-center
+              gap-1
+              text-xs
+              font-bold
+              text-slate-400
+              transition
+
+              hover:text-slate-600
+
+              sm:text-sm
+            "
           >
-            <span>← Kembali</span>
+            <span>←</span>
           </button>
-          
-          <div className="flex items-center gap-2 bg-sky-50 px-4 py-1.5 rounded-full">
-            <span className="text-sm font-bold text-[#00598a] tracking-wide uppercase">
+
+          {/* Nama ekskul */}
+          <div
+            className="
+              max-w-[150px]
+              truncate
+              rounded-full
+              bg-sky-100
+              px-3
+              py-1.5
+
+              sm:max-w-[250px]
+              sm:px-5
+            "
+          >
+            <span
+              className="
+                block
+                truncate
+                text-center
+                text-xs
+                font-bold
+                uppercase
+                tracking-wide
+                text-sky-800
+
+                sm:text-sm
+              "
+            >
               {nama}
             </span>
           </div>
-          
-          <span className="text-xs font-bold text-slate-300 tracking-widest">GRIDAS</span>
+
+          {/* Logo teks */}
+          <span
+            className="
+              text-[9px]
+              font-bold
+              tracking-widest
+              text-slate-300
+
+              sm:text-xs
+            "
+          >
+            GRIDAS
+          </span>
         </div>
 
-        {/* CONTAINER KONTEN UTAMA */}
-        <div className="p-6 space-y-6 flex-1">
+        {/* ISI CARD */}
+        <div
+          className="
+            flex-1
+            space-y-5
+            p-4
 
-          {/* ================= BAGIAN 1: DETAIL INFORMASI UTAMA ================= */}
-          <div className="grid grid-cols-2 gap-4 items-stretch">
-            {/* Foto Utama Ekskul dari Strapi */}
+            sm:space-y-6
+            sm:p-6
+
+            md:p-8
+          "
+        >
+          {/* FOTO DAN INFORMASI */}
+          <div
+            className="
+              grid
+              grid-cols-1
+              gap-4
+
+              sm:grid-cols-2
+
+              md:gap-6
+            "
+          >
+            {/* Foto utama */}
             <div
-              className="rounded-3xl overflow-hidden h-44 shadow-sm bg-cover bg-center border border-slate-100"
-              style={{ backgroundImage: `url(${fotoUtamaUrl})` }}
+              className="
+                h-48
+                w-full
+                rounded-2xl
+                border
+                border-slate-100
+                bg-slate-100
+                bg-cover
+                bg-center
+                shadow-sm
+
+                sm:h-56
+                sm:rounded-3xl
+
+                md:h-64
+              "
+              style={{
+                backgroundImage:
+                  `url(${fotoUtamaUrl})`,
+              }}
             />
 
-            {/* Kotak Informasi Jadwal & Tempat */}
-            <div className="bg-[#247ACA]/10 border border-[#247ACA]/20 rounded-3xl p-4 flex flex-col justify-between text-slate-700 text-[11px] md:text-xs space-y-2">
+            {/* Informasi */}
+            <div
+              className="
+                flex
+                flex-col
+                justify-between
+                gap-4
+                rounded-2xl
+                bg-sky-100
+                p-4
+                text-xs
+                text-slate-700
+
+                sm:rounded-3xl
+                sm:p-5
+
+                md:text-sm
+              "
+            >
               <div>
-                <span className="font-bold text-[#00598a] block mb-0.5">Jadwal Pelaksanaan :</span>
-                <p className="font-normal">{jadwal}</p>
+                <span className="mb-1 block font-bold text-sky-800">
+                  Jadwal Pelaksanaan:
+                </span>
+
+                <p className="break-words">
+                  {jadwal}
+                </p>
               </div>
+
               <div>
-                <span className="font-bold text-[#00598a] block mb-0.5">Tempat Pelaksanaan :</span>
-                <p className="font-normal">{tempat}</p>
+                <span className="mb-1 block font-bold text-[#00598A]">
+                  Tempat Pelaksanaan:
+                </span>
+
+                <p className="break-words">
+                  {tempat}
+                </p>
               </div>
+
               <div>
-                <span className="font-bold text-[#00598a] block mb-0.5">Hari :</span>
-                <p className="font-normal">{hari}</p> 
+                <span className="mb-1 block font-bold text-[#00598A]">
+                  Hari:
+                </span>
+
+                <p className="break-words">
+                  {hari}
+                </p>
               </div>
             </div>
           </div>
 
-          {/* ================= BAGIAN 2: DESKRIPSI TENTANG EKSKUL (Memanggil fungsi pengaman blocks) ================= */}
-          <div className="bg-sky-50/60 rounded-2xl p-4 border border-sky-100/50">
-            <p className="text-xs text-slate-600 leading-relaxed text-center font-normal font-sans whitespace-pre-line">
+          {/* DESKRIPSI */}
+          <div
+            className="
+              rounded-2xl
+              border
+              border-sky-100/50
+              bg-sky-100
+              p-4
+
+              sm:p-5
+
+              md:p-6
+            "
+          >
+            <p
+              className="
+                whitespace-pre-line
+                break-words
+                text-center
+                font-sans
+                text-xs
+                leading-relaxed
+                text-slate-600
+
+                sm:text-sm
+
+                md:text-base
+              "
+            >
               {renderDeskripsi()}
             </p>
           </div>
 
-          {/* ================= BAGIAN 3: PRESTASI (SUDAH DINAMIS) ================= */}
-          <div className="py-2 flex flex-col items-center space-y-4">
-            <div className="text-center">
-              <h1 className="text-2xl font-bold text-[#00598a] tracking-tight">Prestasi</h1>
-              <h1 className="text-2xl font-bold text-[#00598a] tracking-tight -mt-1">Ekstrakurikuler</h1>
-            </div>
+          {/* PRESTASI */}
+          {punyaPrestasi && (
+            <div
+              className="
+                flex
+                flex-col
+                items-center
+                space-y-4
+                py-2
 
-            {/* Foto Prestasi Dinamis dari Strapi v5 */}
-            <div className="w-full rounded-3xl overflow-hidden shadow-md bg-slate-100 border border-slate-100">
-              <div
-                className="w-full h-100 bg-cover bg-center"
-                style={{ 
-                  backgroundImage: `url(${
-                    eskul.foto_prestasi && eskul.foto_prestasi.length > 0
-                      ? `http://localhost:1337${eskul.foto_prestasi[0].url}` 
-                      : eskul.foto_prestasi?.url 
-                        
-                  })` 
-                }}
-              />
-            </div>
+                sm:space-y-5
+              "
+            >
+              {/* Judul */}
+              <div className="text-center">
+                <h1
+                  className="
+                    text-xl
+                    font-bold
+                    tracking-tight
+                    text-[#00598A]
 
-            {/* Judul & Keterangan Prestasi dari Strapi */}
-            <div className="w-full text-center mt-3 px-2">
-              {eskul.prestasi ? (
-                <h2 className="text-[#00598A] text-base font-bold leading-relaxed whitespace-pre-line">
-                  {eskul.prestasi}
-                </h2>
-              ) : (
-                <p className="text-sm text-slate-400 italic">
-                  Belum ada data prestasi yang ditambahkan.
-                  <br></br>
-                  Ayo raih prestasi prestasi dari generasi kalian. jadikanlah kalian generasi yang berguna penuh dengan krestivitas.
-                </p>
+                    sm:text-2xl
+
+                    md:text-3xl
+                  "
+                >
+                  Prestasi
+                </h1>
+
+                <h1
+                  className="
+                    -mt-1
+                    text-xl
+                    font-bold
+                    tracking-tight
+                    text-[#00598A]
+
+                    sm:text-2xl
+
+                    md:text-3xl
+                  "
+                >
+                  Ekstrakurikuler
+                </h1>
+              </div>
+
+              {/* Foto prestasi */}
+              {fotoPrestasiUrl && (
+                <div
+                  className="
+                    w-full
+                    overflow-hidden
+                    rounded-2xl
+                    border
+                    border-slate-100
+                    bg-slate-100
+                    shadow-md
+                  "
+                >
+                  <img
+                    src={fotoPrestasiUrl}
+                    alt="Foto Prestasi"
+                    className="
+                      h-auto
+                      w-full
+                      object-contain
+                    "
+                  />
+                </div>
+              )}
+
+              {/* Teks prestasi */}
+              {eskul.prestasi && (
+                <div
+                  className="
+                    w-full
+                    px-2
+                    text-center
+                  "
+                >
+                  <div
+                    className="
+                      mx-auto
+                      max-w-2xl
+                      whitespace-pre-line
+                      break-words
+                      text-xs
+                      font-bold
+                      leading-relaxed
+                      text-[#00598A]
+
+                      sm:text-sm
+
+                      md:text-base
+                    "
+                  >
+                    {eskul.prestasi}
+                  </div>
+                </div>
               )}
             </div>
-          </div>
+          )}
 
-          {/* ================= FOOTER CALL TO ACTION (JOIN) ================= */}
-          <div className="pt-4 bg-gradient-to-t from-slate-50 to-white mt-auto text-center space-y-4">
-            <p className="text-[11px] text-slate-500 italic leading-relaxed font-normal max-w-sm mx-auto font-sans">
-              "Ayo Gabung Ekskul {nama}! Tingkatkan kemampuan, karakter, disiplin, kreativitas, dan prestasi bersama kami."
+          {/* BAGIAN GABUNG */}
+          <div
+            className="
+              mt-auto
+              space-y-4
+              bg-gradient-to-t
+              from-slate-50
+              to-white
+              pt-4
+              text-center
+
+              sm:pt-6
+            "
+          >
+            {/* Kata ajakan */}
+            <p
+              className="
+                break-words
+                px-1
+                text-xs
+                text-slate-700
+
+                sm:text-sm
+
+                md:text-base
+              "
+            >
+              {kata_ajakan}
             </p>
-            <button
-             onClick={() => {
-             onJoin?.(); // tetap menjalankan logika lama jika ada
-             router.push("/daftar");
-  }}
-  className="w-full bg-[#1e00a3] hover:bg-[#150080] text-white font-bold py-3.5 rounded-2xl transition duration-200 shadow-lg tracking-wide transform active:scale-[0.99] text-sm"
->
-  Gabung
-</button>
-          </div>
 
+            {/* Tombol gabung */}
+            <button
+              onClick={() => {
+                onJoin?.();
+
+                router.push("/daftar");
+              }}
+              className="
+                w-full
+                rounded-xl
+                bg-[#1E00A3]
+                px-5
+                py-3
+                text-sm
+                font-bold
+                tracking-wide
+                text-white
+                shadow-lg
+                transition
+                duration-200
+
+                hover:bg-[#150080]
+
+                active:scale-[0.99]
+
+                sm:rounded-2xl
+                sm:py-3.5
+                sm:text-base
+              "
+            >
+              Gabung
+            </button>
+          </div>
         </div>
       </div>
     </section>
