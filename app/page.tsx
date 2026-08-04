@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { Navbar } from "@/components/organisms/navbar";
 import { Hero } from "@/components/organisms/hero";
 import { Eskul } from "@/components/organisms/eskul-list";
@@ -46,9 +46,9 @@ export default function Home() {
     async function fetchStrapiData() {
       try {
         // Ganti URL ini sesuai URL ngrok Strapi kamu
-        const res = await fetch( "http://localhost:1337/api/ekskuls?populate=*");
-       
-  
+        const res = await fetch("https://cn17l1l4-1337.asse.devtunnels.ms/api/ekskuls?populate=*");
+
+
 
         if (!res.ok) {
           throw new Error(`HTTP Error! Status: ${res.status}`);
@@ -79,20 +79,20 @@ export default function Home() {
         {/* KONDISI 1: Jika Tombol Gabung diklik */}
         {showPendaftaranOnly ? (
           <div className="pt-20">
-            <PendaftaranForm
-            onSuccess={() => {
-        setShowPendaftaranOnly(false);
-
-        
-        setTimeout(() => {
-          const element = document.getElementById("ekskul");
-          if (element) {
-            element.scrollIntoView({ behavior: "smooth" });
-          }
-        }, 100);
-      }}
-    />
-  </div>
+            <Suspense fallback={<div className="min-h-screen bg-[#16357a] text-white flex items-center justify-center">Loading...</div>}>
+              <PendaftaranForm
+                onSuccess={() => {
+                  setShowPendaftaranOnly(false);
+                  setTimeout(() => {
+                    const element = document.getElementById("ekskul");
+                    if (element) {
+                      element.scrollIntoView({ behavior: "smooth" });
+                    }
+                  }, 100);
+                }}
+              />
+            </Suspense>
+          </div>
         ) : selectedEkskul ? (
           /* KONDISI 2: Jika sedang membuka Detail Ekskul */
           <DetailEskulCard
@@ -107,7 +107,7 @@ export default function Home() {
               }, 50);
             }}
             onJoin={() => {
-              handleGabung(); 
+              handleGabung();
               setSelectedEskul(null);
               setShowPendaftaranOnly(true);
               window.scrollTo(0, 0);
