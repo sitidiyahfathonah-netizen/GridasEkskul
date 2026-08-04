@@ -1,158 +1,83 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
+import { useState } from "react";
+
+import Sidebar from "@/components/molecules/admin/sidebar";
+import Header from "@/components/molecules/admin/header";
+import SearchBar from "@/components/molecules/admin/SearchBar";
+
+import { EskulTable } from "@/components/organisms/admin/Eskul-Table";
+import { TambahModal } from "@/components/organisms/admin/TambahModal";
+import { EditModal } from "@/components/organisms/admin/EditModal";
 
 export default function DashboardPage() {
-  const data = [
-    {
-      id: 1,
-      nama: "Tatarias",
-      deskripsi:
-        "Ekstrakurikuler Tata Rias bertujuan mengembangkan keterampilan merias.",
-      jadwal: "Selasa\n15.00 - 17.00",
-      foto: "/images/tatarias.jpeg",
-    },
-    {
-      id: 2,
-      nama: "Pramuka",
-      deskripsi:
-        "Ekstrakurikuler Pramuka membentuk karakter disiplin dan kepemimpinan.",
-      jadwal: "Rabu\n15.00 - 17.00",
-      foto: "/images/pramuka.jpeg",
-    },
-    {
-      id: 3,
-      nama: "Paskibra",
-      deskripsi:
-        "Ekstrakurikuler Paskibra membentuk karakter disiplin dan tanggung jawab.",
-      jadwal: "Kamis\n15.00 - 17.00",
-      foto: "/images/Paskibra.jpeg",
-    },
-    {
-      id: 4,
-      nama: "Basket",
-      deskripsi:
-        "Mengembangkan kemampuan bermain basket dan sportivitas.",
-      jadwal: "Jumat\n15.00 - 17.00",
-      foto: "/images/basket.jpeg",
-    },
-  ];
+  const [openTambah, setOpenTambah] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
 
   return (
-    <div className="flex w-full min-h-screen bg-white">
+    <div className="flex h-screen w-full overflow-hidden bg-[#F5F7FA]">
 
-      {/* ================= SIDEBAR ================= */}
+      {/* Sidebar */}
+      <Sidebar />
 
-      <aside className="w-72 bg-[#00598A] text-white flex flex-col">
+      {/* Bagian kanan */}
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
 
-        <div className="flex justify-center py-8 border-b border-white/20">
-          <Image
-            src="/images/logo skolah.jpeg"
-            alt="Logo"
-            width={110}
-            height={110}/>
-        </div>
+        {/* Header tetap */}
+        <Header
+          title="GRIDAS EKSKUL"
+          onTambahClick={() => setOpenTambah(true)}
+        />
 
-        <nav className="flex-1 mt-8">
+        {/* Isi halaman */}
+        <main
+          className="
+            flex
+            min-h-0
+            flex-1
+            flex-col
+            bg-[#F5F7FA]
 
-          <Link href="/admin/dashboard" className="block px-10 py-4 bg-white/10 font-semibold">
-            Eskul
-          </Link>
+            px-3
+            py-4
 
-          <Link href="/admin/galeri" className="block px-10 py-4 hover:bg-white/10  text-sky-900">
-            Galeri
-          </Link>
+            sm:px-4
+            sm:py-5
 
-          <Link href="/admin/pendaftaran" className="block px-10 py-4 hover:bg-white/10  text-sky-900">
-            Riwayat Pendaftaran
-          </Link>
-        </nav>
-      </aside>
+            md:px-6
+            md:py-6
 
-      {/* ================= CONTENT ================= */}
+            lg:px-8
+          "
+        >
 
-      <main className="flex-1 flex flex-col">
+          {/* Search tetap */}
+          <div className="mb-4 shrink-0 sm:mb-5">
+            <SearchBar />
+          </div>
 
-        {/* HEADER */}
+          {/* Hanya tabel yang bisa di-scroll */}
+          <div className="min-h-0 min-w-0 flex-1 overflow-y-auto">
+            <EskulTable
+              onEdit={() => setOpenEdit(true)}
+            />
+          </div>
 
-        <header className="h-20 bg-[#00598A] flex items-center justify-between px-10">
-          <h1 className="text-3xl font-bold text-white tracking-wide">
-            GRIDAS EKSKUL
-          </h1>
-          <button className="bg-[#32D74B] hover:bg-green-500 text-white font-bold px-8 py-3 rounded-xl">
-            Tambah
-          </button>
-        </header>
+        </main>
+      </div>
 
-        {/* TABLE */}
+      {/* Modal Tambah */}
+      <TambahModal
+        open={openTambah}
+        onClose={() => setOpenTambah(false)}
+      />
 
-        <div className="p-8 overflow-auto">
+      {/* Modal Edit */}
+      <EditModal
+        open={openEdit}
+        onClose={() => setOpenEdit(false)}
+      />
 
-          <table className="w-full border-separate border-spacing-y-5">
-
-            <thead>
-
-              <tr className="text-left text-[#00598A] text-lg">
-
-                <th>Foto</th>
-                <th>Nama</th>
-                <th>Deskripsi</th>
-                <th>Jadwal</th>
-                <th className="text-center">Aksi</th>
-              </tr>
-
-            </thead>
-
-            <tbody>
-              {data.map((item) => (
-
-                <tr
-                  key={item.id}
-                  className="bg-white shadow rounded-xl">
-                  <td className="p-4">
-
-                    <Image
-                      src={item.foto}
-                      alt={item.nama}
-                      width={120}
-                      height={70}
-                      className="rounded-lg object-cover"/>
-                  </td>
-
-                  <td className="font-bold text-gray-600">
-                    {item.nama}
-                  </td>
-
-                  <td className="w-[420px] text-gray-600">
-                    {item.deskripsi}
-                  </td>
-
-                  <td className="font-bold text-gray-600 whitespace-pre-line">
-                    {item.jadwal}
-                  </td>
-
-                  <td>
-
-                    <div className="flex justify-center gap-3">
-
-                      <button className="bg-[#163FA8] text-white px-5 py-2 rounded-lg hover:bg-blue-800">
-                        Edit
-                      </button>
-
-                      <button className="bg-red-500 text-white px-5 py-2 rounded-lg hover:bg-red-600">
-                        Hapus
-                      </button>
-
-                    </div>
-                  </td>
-                </tr>
-              ))}
-
-            </tbody>
-          </table>
-        </div>
-      </main>
     </div>
   );
 }
