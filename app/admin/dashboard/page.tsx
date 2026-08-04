@@ -15,14 +15,12 @@ export default function DashboardPage() {
   const [openEdit, setOpenEdit] = useState(false);
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-[#F5F7FA]">
-
+    <div className="flex h-screen overflow-hidden bg-[#F5F7FA]">
       {/* Sidebar */}
       <Sidebar />
 
       {/* Bagian kanan */}
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-
         {/* Header tetap */}
         <Header
           title="GRIDAS EKSKUL"
@@ -30,34 +28,15 @@ export default function DashboardPage() {
         />
 
         {/* Isi halaman */}
-        <main
-          className="
-            flex
-            min-h-0
-            flex-1
-            flex-col
-            bg-[#F5F7FA]
-
-            px-3
-            py-4
-
-            sm:px-4
-            sm:py-5
-
-            md:px-6
-            md:py-6
-
-            lg:px-8
-          "
-        >
-
+        <main className="flex min-h-0 flex-1 flex-col bg-[#F5F7FA] px-5 py-6 md:px-8">
+          
           {/* Search tetap */}
-          <div className="mb-4 shrink-0 sm:mb-5">
+          <div className="mb-5 shrink-0">
             <SearchBar />
           </div>
 
           {/* Hanya tabel yang bisa di-scroll */}
-          <div className="min-h-0 min-w-0 flex-1 overflow-y-auto">
+          <div className="min-h-0 flex-1 overflow-y-auto">
             <EskulTable
               onEdit={() => setOpenEdit(true)}
             />
@@ -77,7 +56,6 @@ export default function DashboardPage() {
         open={openEdit}
         onClose={() => setOpenEdit(false)}
       />
-
     </div>
   );
 }

@@ -9,7 +9,7 @@ const josefin = Josefin_Sans({
 });
 
 const STRAPI_URL =
-  process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
+  process.env.NEXT_PUBLIC_STRAPI_URL || "https://cn17l1l4-1337.asse.devtunnels.ms/";
 
 interface EskulProps {
   dataEkskul: any[];

@@ -71,7 +71,7 @@ export function DetailEskulCard({
       return rawUrl;
     }
 
-    return `http://localhost:1337${rawUrl}`;
+    return  'https://cn17l1l4-1337.asse.devtunnels.ms/${rawUrl}';
   };
 
   // Mengambil foto dari Strapi
