@@ -51,7 +51,7 @@ export default function Home() {
       try {
         // Ganti URL ini sesuai URL ngrok Strapi kamu
         const res = await fetch(
-          "http://localhost:1337/api/ekskuls?populate=*"
+          "https://cn17l1l4-1337.asse.devtunnels.ms/api/ekskuls?populate=*"
         );
 
         if (!res.ok) {
