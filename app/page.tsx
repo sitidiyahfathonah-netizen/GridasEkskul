@@ -45,8 +45,7 @@ export default function Home() {
   useEffect(() => {
     async function fetchStrapiData() {
       try {
-        // Ganti URL ini sesuai URL ngrok Strapi kamu
-        const res = await fetch( "http://localhost:1337/api/ekskuls?populate=*");
+        const res = await fetch(`${STRAPI_URL}/api/ekskuls?populate=*`);
        
   
 
