@@ -26,81 +26,25 @@ export function TambahModal({
   };
 
   return (
-    <div
-      className="
-        fixed
-        inset-0
-        z-50
-        flex
-        items-center
-        justify-center
-        bg-black/40
-        p-3
-
-        sm:p-4
-      "
-    >
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+      
       {/* Kotak Modal */}
-      <div
-        className="
-          max-h-[92vh]
-          w-full
-          max-w-md
-          overflow-y-auto
-          rounded-2xl
-          bg-white
-          shadow-2xl
+      <div className="w-full max-w-md max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-2xl">
 
-          sm:max-h-[90vh]
-        "
-      >
         {/* Header */}
-        <div
-          className="
-            px-4
-            pt-5
-
-            sm:px-6
-            sm:pt-6
-          "
-        >
-          <h2
-            className="
-              text-2xl
-              font-bold
-              text-slate-700
-
-              sm:text-3xl
-            "
-          >
+        <div className="px-6 pt-6">
+          <h2 className="text-3xl font-bold text-slate-700">
             Tambah Ekstrakurikuler
           </h2>
 
-          <p
-            className="
-              mt-1
-              text-xs
-              text-gray-400
-
-              sm:text-sm
-            "
-          >
+          <p className="mt-1 text-sm text-gray-400">
             Tambah data ekstrakurikuler
           </p>
         </div>
 
         {/* Isi Modal */}
-        <div
-          className="
-            space-y-3
-            px-4
-            py-4
+        <div className="space-y-4 px-6 py-5">
 
-            sm:space-y-4
-            sm:px-6
-            sm:py-5
-          "
-        >
           {/* FOTO */}
           <div>
             <label className="text-sm text-gray-500">
@@ -110,30 +54,14 @@ export function TambahModal({
             <input
               type="file"
               onChange={handleImage}
-              className="
-                mt-1
-                w-full
-                rounded-lg
-                border
-                p-2
-                text-xs
-
-                sm:text-sm
-              "
+              className="mt-1 w-full rounded-lg border p-2"
             />
 
             {preview && (
               <img
                 src={preview}
                 alt="Preview"
-                className="
-                  mt-3
-                  h-28
-                  rounded-xl
-                  object-cover
-
-                  sm:h-32
-                "
+                className="mt-3 h-32 rounded-xl object-cover"
               />
             )}
           </div>
@@ -147,18 +75,7 @@ export function TambahModal({
             <input
               type="text"
               placeholder="Masukkan nama ekstrakurikuler"
-              className="
-                mt-1
-                w-full
-                rounded-lg
-                border
-                px-3
-                py-2
-                text-sm
-                outline-none
-
-                sm:text-base
-              "
+              className="mt-1 w-full rounded-lg border px-3 py-2"
             />
           </div>
 
@@ -168,20 +85,7 @@ export function TambahModal({
               Hari
             </label>
 
-            <select
-              className="
-                mt-1
-                w-full
-                rounded-lg
-                border
-                px-3
-                py-2
-                text-sm
-                outline-none
-
-                sm:text-base
-              "
-            >
+            <select className="mt-1 w-full rounded-lg border px-3 py-2">
               <option>Pilih Hari</option>
               <option>Senin</option>
               <option>Selasa</option>
@@ -193,7 +97,8 @@ export function TambahModal({
           </div>
 
           {/* JAM */}
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="grid grid-cols-2 gap-3">
+
             {/* Jam Mulai */}
             <div>
               <label className="text-sm text-gray-500">
@@ -202,17 +107,7 @@ export function TambahModal({
 
               <input
                 type="time"
-                className="
-                  mt-1
-                  w-full
-                  rounded-lg
-                  border
-                  px-3
-                  py-2
-                  text-sm
-
-                  sm:text-base
-                "
+                className="mt-1 w-full rounded-lg border px-3 py-2"
               />
             </div>
 
@@ -224,19 +119,10 @@ export function TambahModal({
 
               <input
                 type="time"
-                className="
-                  mt-1
-                  w-full
-                  rounded-lg
-                  border
-                  px-3
-                  py-2
-                  text-sm
-
-                  sm:text-base
-                "
+                className="mt-1 w-full rounded-lg border px-3 py-2"
               />
             </div>
+
           </div>
 
           {/* DESKRIPSI */}
@@ -248,83 +134,43 @@ export function TambahModal({
             <textarea
               rows={6}
               placeholder="Masukkan deskripsi ekstrakurikuler..."
-              className="
-                mt-1
-                w-full
-                resize-none
-                rounded-lg
-                border
-                p-3
-                text-sm
-                outline-none
-
-                sm:text-base
-              "
+              className="mt-1 w-full resize-none rounded-lg border p-3"
             />
           </div>
+
         </div>
 
         {/* Tombol */}
-        <div
-          className="
-            flex
-            flex-col
-            gap-2
-            px-4
-            pb-5
+        <div className="flex gap-3 px-6 pb-6">
 
-            sm:flex-row
-            sm:gap-3
-            sm:px-6
-            sm:pb-6
-          "
-        >
-          <button
-            type="button"
-            className="
-              w-full
-              rounded-xl
-              bg-[#08B84F]
-              py-2.5
-              text-sm
-              font-semibold
-              text-white
-              transition
-              duration-200
-              hover:bg-[#079E43]
-              active:bg-[#067D35]
-
-              sm:flex-1
-              sm:py-2
-              sm:text-base
-            "
-          >
-            Simpan
-          </button>
+        <button
+  type="button"
+  className="
+    flex-1
+    rounded-xl
+    bg-[#08B84F]
+    py-2
+    font-semibold
+    text-white
+    transition
+    duration-200
+    hover:bg-[#079E43]
+    active:bg-[#067D35]
+  "
+>
+  Simpan
+</button>
 
           <button
             type="button"
             onClick={onClose}
-            className="
-              w-full
-              rounded-xl
-              border
-              border-red-500
-              py-2.5
-              text-sm
-              font-semibold
-              text-red-500
-              transition
-              hover:bg-red-50
-
-              sm:flex-1
-              sm:py-2
-              sm:text-base
-            "
+            className="flex-1 rounded-xl border border-red-500 py-2 font-semibold text-red-500 transition hover:bg-red-50"
           >
             Batal
           </button>
+
         </div>
+
       </div>
     </div>
   );

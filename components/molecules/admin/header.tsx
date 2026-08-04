@@ -10,68 +10,27 @@ export default function Header({
   onTambahClick,
 }: HeaderProps) {
   return (
-    <header
-      className="
-        flex
-        h-16
-        items-center
-        justify-between
-        gap-3
-        bg-[#00598A]
-        px-4
-
-        sm:h-18
-        sm:px-5
-
-        md:h-20
-        md:px-8
-      "
-    >
-      {/* Judul */}
-      <h1
-        className="
-          min-w-0
-          truncate
-          text-lg
-          font-bold
-          tracking-wide
-          text-white
-
-          sm:text-xl
-
-          md:text-2xl
-        "
-      >
+    <header className="flex h-20 items-center justify-between bg-[#00598A] px-8">
+      <h1 className="text-2xl font-bold tracking-wide text-white">
         {title}
       </h1>
 
-      {/* Tombol Tambah */}
-      <button
-        onClick={onTambahClick}
-        className="
-          shrink-0
-          rounded-lg
-          bg-[#08B84F]
-          px-4
-          py-2
-          text-sm
-          font-bold
-          text-white
-          transition
-          duration-200
-          hover:bg-[#079E43]
-
-          sm:px-6
-          sm:py-2.5
-          sm:text-base
-
-          md:rounded-xl
-          md:px-10
-          md:py-3
-        "
-      >
-        Tambah
-      </button>
+     <button
+  onClick={onTambahClick}
+  className="
+    bg-[#08B84F]
+    hover:bg-[#079E43]
+    text-white
+    px-10
+    py-3
+    rounded-xl
+    font-bold
+    transition
+    duration-200
+  "
+>
+  Tambah
+</button>
     </header>
   );
 }
