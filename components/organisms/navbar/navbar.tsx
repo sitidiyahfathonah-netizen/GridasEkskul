@@ -190,75 +190,61 @@ export function Navbar({ onReset }: NavbarProps) {
         </button>
       </div>
 
-      {/* MENU MOBILE */}
+      {/* MENU MOBILE (DRAWER) */}
+      {/* Backdrop */}
       {menuOpen && (
-        <nav
-          className="
-            flex
-            flex-col
-            border-t
-            border-gray-200
-            bg-white
-            px-4
-            py-3
-            text-sm
-            font-semibold
+        <div
+          onClick={() => setMenuOpen(false)}
+          className="fixed inset-0 z-40 bg-black/45 backdrop-blur-xs transition-opacity duration-300 md:hidden"
+        />
+      )}
 
-            md:hidden
-          "
-        >
+      {/* Drawer */}
+      <div
+        className={`
+          fixed inset-y-0 right-0 z-50 flex w-72 flex-col bg-white p-6 shadow-2xl transition-transform duration-300 ease-in-out md:hidden
+          ${menuOpen ? "translate-x-0" : "translate-x-full"}
+        `}
+      >
+        <div className="flex items-center justify-between pb-6 border-b border-gray-100">
+          <span className="text-xs font-extrabold tracking-wider text-sky-800">
+            MENU UTAMA
+          </span>
+          <button
+            onClick={() => setMenuOpen(false)}
+            className="flex h-10 w-10 items-center justify-center rounded-lg text-2xl text-gray-500 hover:bg-gray-50 transition"
+            aria-label="Tutup menu"
+          >
+            ✕
+          </button>
+        </div>
+
+        <nav className="flex flex-col gap-2 mt-6">
           <a
             href="#home"
-            onClick={(e) =>
-              handleNavClick(e, "home")
-            }
-            className="
-              rounded-lg
-              px-4
-              py-3
-              text-sky-800
-              transition
-              hover:bg-sky-50
-            "
+            onClick={(e) => handleNavClick(e, "home")}
+            className="flex items-center rounded-xl px-4 py-3 text-base font-semibold text-sky-800 hover:bg-sky-50 transition duration-200"
           >
             Home
           </a>
 
           <a
             href="#ekskul"
-            onClick={(e) =>
-              handleNavClick(e, "ekskul")
-            }
-            className="
-              rounded-lg
-              px-4
-              py-3
-              text-sky-800
-              transition
-              hover:bg-sky-50
-            "
+            onClick={(e) => handleNavClick(e, "ekskul")}
+            className="flex items-center rounded-xl px-4 py-3 text-base font-semibold text-sky-800 hover:bg-sky-50 transition duration-200"
           >
             Eskul
           </a>
 
           <a
             href="#galeri"
-            onClick={(e) =>
-              handleNavClick(e, "galeri")
-            }
-            className="
-              rounded-lg
-              px-4
-              py-3
-              text-sky-800
-              transition
-              hover:bg-sky-50
-            "
+            onClick={(e) => handleNavClick(e, "galeri")}
+            className="flex items-center rounded-xl px-4 py-3 text-base font-semibold text-sky-800 hover:bg-sky-50 transition duration-200"
           >
             Galeri
           </a>
         </nav>
-      )}
+      </div>
     </header>
   );
 }

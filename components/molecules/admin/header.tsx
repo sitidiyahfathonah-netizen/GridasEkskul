@@ -10,8 +10,8 @@ export default function Header({
   onTambahClick,
 }: HeaderProps) {
   return (
-    <header className="flex h-20 items-center justify-between bg-[#00598A] px-8">
-      <h1 className="text-2xl font-bold tracking-wide text-white">
+    <header className="flex h-20 items-center justify-between bg-[#00598A] px-4 md:px-8">
+      <h1 className="text-xl md:text-2xl font-bold tracking-wide text-white pl-12 md:pl-0">
         {title}
       </h1>
 

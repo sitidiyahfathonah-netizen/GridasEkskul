@@ -72,7 +72,7 @@ export function Eskul({ dataEkskul, onSelect }: EskulProps) {
       <div className="w-full bg-gradient-to-b from-[#104f79] via-[#0e4468] to-[#0a314b] pb-24 px-6 md:px-16">
         <div className="max-w-6xl mx-auto">
           {/* GRID CARD EKSKUL */}
-          <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch justify-center">
+          <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 items-stretch justify-center">
             {filteredEskul.map((eskul) => {
               const namaEskul = eskul.nama_ekskul || eskul.attributes?.nama_ekskul || "";
               const deskripsiSingkat = eskul.deskripsi_singkat || eskul.attributes?.deskripsi_singkat || "Belum ada deskripsi singkat.";
