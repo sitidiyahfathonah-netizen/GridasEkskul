@@ -20,81 +20,25 @@ export function EditModal({
   if (!open) return null;
 
   return (
-    <div
-      className="
-        fixed
-        inset-0
-        z-50
-        flex
-        items-center
-        justify-center
-        bg-black/40
-        p-3
-
-        sm:p-4
-      "
-    >
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+      
       {/* Kotak Modal */}
-      <div
-        className="
-          max-h-[92vh]
-          w-full
-          max-w-md
-          overflow-y-auto
-          rounded-2xl
-          bg-white
-          shadow-2xl
+      <div className="w-full max-w-md max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-2xl">
 
-          sm:max-h-[90vh]
-        "
-      >
         {/* Header */}
-        <div
-          className="
-            px-4
-            pt-5
-
-            sm:px-6
-            sm:pt-6
-          "
-        >
-          <h2
-            className="
-              text-2xl
-              font-bold
-              text-slate-700
-
-              sm:text-3xl
-            "
-          >
+        <div className="px-6 pt-6">
+          <h2 className="text-3xl font-bold text-slate-700">
             Update Ekstrakurikuler
           </h2>
 
-          <p
-            className="
-              mt-1
-              text-xs
-              text-gray-400
-
-              sm:text-sm
-            "
-          >
+          <p className="mt-1 text-sm text-gray-400">
             Edit data Ekstrakurikuler
           </p>
         </div>
 
         {/* Isi Modal */}
-        <div
-          className="
-            space-y-3
-            px-4
-            py-4
+        <div className="space-y-4 px-6 py-5">
 
-            sm:space-y-4
-            sm:px-6
-            sm:py-5
-          "
-        >
           {/* FOTO */}
           <div>
             <label className="text-sm text-gray-500">
@@ -103,16 +47,7 @@ export function EditModal({
 
             <input
               type="file"
-              className="
-                mt-1
-                w-full
-                rounded-lg
-                border
-                p-2
-                text-xs
-
-                sm:text-sm
-              "
+              className="mt-1 w-full rounded-lg border p-2"
             />
           </div>
 
@@ -134,12 +69,9 @@ export function EditModal({
                 border
                 px-3
                 py-2
-                text-sm
                 outline-none
                 focus:ring-2
                 focus:ring-sky-500
-
-                sm:text-base
               "
             />
           </div>
@@ -160,12 +92,9 @@ export function EditModal({
                 border
                 px-3
                 py-2
-                text-sm
                 outline-none
                 focus:ring-2
                 focus:ring-sky-500
-
-                sm:text-base
               "
             >
               <option value="">Pilih Hari</option>
@@ -179,15 +108,8 @@ export function EditModal({
           </div>
 
           {/* JAM */}
-          <div
-            className="
-              grid
-              grid-cols-1
-              gap-3
+          <div className="grid grid-cols-2 gap-3">
 
-              sm:grid-cols-2
-            "
-          >
             {/* Jam Mulai */}
             <div>
               <label className="text-sm text-gray-500">
@@ -205,12 +127,9 @@ export function EditModal({
                   border
                   px-3
                   py-2
-                  text-sm
                   outline-none
                   focus:ring-2
                   focus:ring-sky-500
-
-                  sm:text-base
                 "
               />
             </div>
@@ -232,15 +151,13 @@ export function EditModal({
                   border
                   px-3
                   py-2
-                  text-sm
                   outline-none
                   focus:ring-2
                   focus:ring-sky-500
-
-                  sm:text-base
                 "
               />
             </div>
+
           </div>
 
           {/* DESKRIPSI */}
@@ -261,77 +178,55 @@ export function EditModal({
                 rounded-lg
                 border
                 p-3
-                text-sm
                 outline-none
                 focus:ring-2
                 focus:ring-sky-500
-
-                sm:text-base
               "
             />
           </div>
+
         </div>
 
         {/* Tombol */}
-        <div
-          className="
-            flex
-            flex-col
-            gap-2
-            px-4
-            pb-5
+        <div className="flex gap-3 px-6 pb-6">
 
-            sm:flex-row
-            sm:gap-3
-            sm:px-6
-            sm:pb-6
-          "
-        >
-          <button
-            className="
-              w-full
-              rounded-xl
-              bg-[#08B84F]
-              py-2.5
-              text-sm
-              font-semibold
-              text-white
-              transition
-              duration-200
-              hover:bg-[#079E43]
-
-              sm:flex-1
-              sm:py-3
-              sm:text-base
-            "
-          >
-            Update
-          </button>
+        <button
+  className="
+    flex-1
+    bg-[#08B84F]
+    hover:bg-[#079E43]
+    text-white
+    py-3
+    rounded-xl
+    font-semibold
+    transition
+    duration-200
+  "
+>
+  Update
+</button>
 
           <button
-            onClick={onClose}
-            className="
-              w-full
-              rounded-xl
-              border
-              border-[#FF2E35]
-              bg-white
-              py-2.5
-              text-sm
-              font-semibold
-              text-[#E52B32]
-              transition
-              duration-200
-              hover:bg-[#FFF1F1]
+           onClick={onClose}
+  className="
+    flex-1
+    bg-white
+    border
+    border-[#FF2E35]
+    text-[#E52B32]
+    hover:bg-[#FFF1F1]
+    py-3
+    rounded-xl
+    font-semibold
+    transition
+    duration-200
+  "
+>
+  Batal
+</button>
 
-              sm:flex-1
-              sm:py-3
-              sm:text-base
-            "
-          >
-            Batal
-          </button>
         </div>
+
       </div>
     </div>
   );
