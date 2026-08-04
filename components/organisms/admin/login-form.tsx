@@ -5,164 +5,72 @@ import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
   const router = useRouter();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
     // Proses autentikasi login di sini
     // Setelah berhasil, arahkan ke dashboard admin:
     router.push("/admin/dashboard");
   };
 
   return (
-    <div
-      className="
-        w-full
-        max-w-[900px]
-        rounded-[32px]
-        border
-        border-white/20
-        bg-[#00598A]/85
-        px-8
-        py-10
-        text-white
-        shadow-2xl
-        backdrop-blur-md
-
-        sm:px-14
-        sm:py-12
-
-        md:px-24
-        md:py-14
-      "
-    >
-      {/* Judul */}
-      <h1
-        className="
-          mb-8
-          text-center
-          text-4xl
-          font-extrabold
-          tracking-[0.08em]
-
-          sm:mb-10
-          sm:text-5xl
-        "
-      >
+    <div className="w-full max-w-md bg-[#00598A]/80 backdrop-blur-md p-8 rounded-3xl shadow-2xl text-white border border-white/20">
+      <h1 className="text-3xl font-extrabold text-center mb-8 tracking-wider">
         LOGIN
       </h1>
 
-      <form
-        onSubmit={handleSubmit}
-        className="
-          mx-auto
-          w-full
-          max-w-[650px]
-        "
-      >
+      <form onSubmit={handleSubmit} className="space-y-6">
         {/* Field Email */}
-        <div className="mb-7">
-          <label
-            htmlFor="email"
-            className="
-              mb-3
-              block
-              text-lg
-              font-bold
-            "
-          >
-            Email
-          </label>
-
+        <div className="space-y-2">
+          <label className="block text-sm font-semibold">Email</label>
           <input
-            id="email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Masukkan email"
             required
-            className="
-              h-[58px]
-              w-full
-              rounded-xl
-              border-0
-              bg-white
-              px-6
-              text-base
-              font-medium
-              text-gray-800
-              placeholder:text-gray-400
-              outline-none
-              focus:ring-4
-              focus:ring-sky-300/40
-            "
+            className="w-full px-4 py-3 rounded-xl bg-white text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-300 text-sm font-medium"
           />
         </div>
 
         {/* Field Password */}
-        <div>
-          <label
-            htmlFor="password"
-            className="
-              mb-3
-              block
-              text-lg
-              font-bold
-            "
-          >
-            Password
-          </label>
-
+        <div className="space-y-2">
+          <label className="block text-sm font-semibold">Password</label>
           <input
-            id="password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Masukkan password"
             required
-            className="
-              h-[58px]
-              w-full
-              rounded-xl
-              border-0
-              bg-white
-              px-6
-              text-base
-              font-medium
-              text-gray-800
-              placeholder:text-gray-400
-              outline-none
-              focus:ring-4
-              focus:ring-sky-300/40
-            "
+            className="w-full px-4 py-3 rounded-xl bg-white text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-300 text-sm font-medium"
           />
         </div>
 
         {/* Tombol Login */}
-        <div className="flex justify-center pt-10">
+        <div className="pt-4 flex justify-center">
           <button
             type="submit"
-            className="
-              h-[56px]
-              w-[180px]
-              rounded-xl
-              bg-white
-              text-lg
-              font-bold
-              text-[#00598A]
-              shadow-lg
-              transition
-              duration-200
-              hover:bg-gray-100
-              hover:scale-[1.02]
-              active:scale-[0.98]
-            "
-          >
-            Login
-          </button>
+           className="
+    mx-auto
+    mt-10
+    block
+    w-full
+    max-w-[220px]
+    rounded-xl
+    bg-white
+    py-4
+    text-lg
+    font-bold
+    text-[#00598A]
+    transition
+    duration-200
+    hover:bg-gray-100
+  "
+>
+  Login
+</button>
         </div>
       </form>
     </div>
