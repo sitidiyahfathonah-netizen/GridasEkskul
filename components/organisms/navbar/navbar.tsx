@@ -9,11 +9,14 @@ interface NavbarProps {
 
 export function Navbar({ onReset }: NavbarProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("home");
 
   const handleNavClick = (
     e: React.MouseEvent,
     targetId: string
   ) => {
+    setActiveSection(targetId);
+    
     if (onReset) {
       onReset();
     }
@@ -202,45 +205,76 @@ export function Navbar({ onReset }: NavbarProps) {
       {/* Drawer */}
       <div
         className={`
-          fixed inset-y-0 right-0 z-50 flex w-72 flex-col bg-white p-6 shadow-2xl transition-transform duration-300 ease-in-out md:hidden
-          ${menuOpen ? "translate-x-0" : "translate-x-full"}
+          fixed inset-y-0 left-0 z-50 flex w-[280px] flex-col bg-[#222B3C] shadow-2xl transition-transform duration-300 ease-in-out md:hidden
+          ${menuOpen ? "translate-x-0" : "-translate-x-full"}
         `}
       >
-        <div className="flex items-center justify-between pb-6 border-b border-gray-100">
-          <span className="text-xs font-extrabold tracking-wider text-sky-800">
-            MENU UTAMA
-          </span>
+        {/* Top Profile Section */}
+        <div className="bg-[#004E7A] rounded-br-[60px] pt-12 pb-10 px-6 relative flex flex-col items-center shadow-md">
           <button
             onClick={() => setMenuOpen(false)}
-            className="flex h-10 w-10 items-center justify-center rounded-lg text-2xl text-gray-500 hover:bg-gray-50 transition"
-            aria-label="Tutup menu"
+            className="absolute top-4 right-5 text-sky-200 hover:text-white text-2xl transition"
           >
             ✕
           </button>
+          
+          <div className="relative mb-3">
+            {/* The circular progress-like border ring */}
+            <div className="h-20 w-20 rounded-full border-[3px] border-l-white border-t-white border-r-white border-b-transparent p-1 flex items-center justify-center transform -rotate-12">
+              <div className="h-full w-full rounded-full bg-white flex items-center justify-center overflow-hidden shadow-inner transform rotate-12">
+                <Image
+                  src="/images/logo skolah.jpeg"
+                  alt="Logo SMKN 2 Sumedang"
+                  width={60}
+                  height={60}
+                  className="object-contain scale-90"
+                />
+              </div>
+            </div>
+          </div>
+          
+          <h3 className="text-white font-bold text-[14px] tracking-wide mt-2">SMKN 2 SUMEDANG</h3>
+          <p className="text-sky-200 text-[11px] mt-1 font-medium">Sistem Informasi Ekskul</p>
         </div>
 
-        <nav className="flex flex-col gap-2 mt-6">
+        {/* Menu Items */}
+        <nav className="flex flex-col gap-2 mt-8 px-4 flex-1">
           <a
             href="#home"
             onClick={(e) => handleNavClick(e, "home")}
-            className="flex items-center rounded-xl px-4 py-3 text-base font-semibold text-sky-800 hover:bg-sky-50 transition duration-200"
+            className={`flex items-center gap-4 px-6 py-4 rounded-3xl transition ${
+              activeSection === "home" 
+                ? "bg-[#E1E7EE] text-[#1E293B] font-bold shadow-sm"
+                : "text-slate-300 font-medium hover:bg-white/10 hover:text-white"
+            }`}
           >
-            Home
+            <svg className={`w-5 h-5 ${activeSection === "home" ? "text-[#004E7A]" : ""}`} fill="currentColor" viewBox="0 0 20 20"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
+            Dashboard
           </a>
 
           <a
             href="#ekskul"
             onClick={(e) => handleNavClick(e, "ekskul")}
-            className="flex items-center rounded-xl px-4 py-3 text-base font-semibold text-sky-800 hover:bg-sky-50 transition duration-200"
+            className={`flex items-center gap-4 px-6 py-4 rounded-3xl transition ${
+              activeSection === "ekskul"
+                ? "bg-[#E1E7EE] text-[#1E293B] font-bold shadow-sm"
+                : "text-slate-300 font-medium hover:bg-white/10 hover:text-white"
+            }`}
           >
+            <svg className={`w-5 h-5 ${activeSection === "ekskul" ? "text-[#004E7A]" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
             Eskul
           </a>
 
           <a
             href="#galeri"
             onClick={(e) => handleNavClick(e, "galeri")}
-            className="flex items-center rounded-xl px-4 py-3 text-base font-semibold text-sky-800 hover:bg-sky-50 transition duration-200"
+            className={`flex items-center gap-4 px-6 py-4 rounded-3xl transition ${
+              activeSection === "galeri"
+                ? "bg-[#E1E7EE] text-[#1E293B] font-bold shadow-sm"
+                : "text-slate-300 font-medium hover:bg-white/10 hover:text-white"
+            }`}
           >
+            <svg className={`w-5 h-5 ${activeSection === "galeri" ? "text-[#004E7A]" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
             Galeri
           </a>
         </nav>
