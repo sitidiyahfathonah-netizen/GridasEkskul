@@ -75,97 +75,101 @@ export function DetailEskulCard({ eskul, onBack, onJoin }: DetailEskulProps) {
   };
 
   return (
-    <section className={`w-full min-h-screen bg-[#6B424D]/10 py-6 sm:py-10 md:py-12 px-3 sm:px-4 md:px-6 flex justify-center items-start md:items-center relative overflow-hidden ${josefin.className}`}>
-
-      {/* ================= BACKGROUND MOTIF SAMAR FIGMA ================= */}
-      <div className="absolute inset-0 z-0">
+    <section className={`w-full min-h-screen py-6 sm:py-10 md:py-12 px-3 sm:px-6 md:px-8 flex justify-center items-start relative overflow-hidden ${josefin.className}`}>
+      
+      {/* ================= BACKGROUND LUAR (TRANSPARAN) ================= */}
+      <div className="fixed inset-0 z-0">
         <div
-          className="w-full h-full bg-cover bg-center opacity-80 filter blur-[1px]"
+          className="w-full h-full bg-cover bg-center opacity-100"
           style={{ backgroundImage: `url('/images/bgdetail.jpg')` }}
         />
-        {/* Lapisan Gradasi Warna Khas Katalog */}
-        <div className="absolute inset-0 bg-gradient-to-b z-10" />
+        <div className="absolute inset-0 bg-white/85 z-10" />
       </div>
 
-      {/* ================= BINGKAI CARD UTAMA  ================= */}
-      <div className="w-full max-w-sm sm:max-w-md md:max-w-lg bg-white rounded-[28px] sm:rounded-[35px] md:rounded-[40px] shadow-[0_20px_50px_rgba(0,0,0,0.15)] overflow-hidden border border-slate-100 relative z-20 flex flex-col">
+      {/* ================= CONTAINER UTAMA FULL WIDTH (TANPA BINGKAI CARD) ================= */}
+      <div className="w-full max-w-5xl mx-auto relative z-20 flex flex-col min-h-screen px-2 pb-8">
 
-        {/* ================= HEADER AREA (FIXED STICKY) ================= */}
-        <div className="p-4 sm:p-5 md:p-6 flex items-center justify-between border-b border-slate-50 bg-white sticky top-0 z-30">
+        {/* ================= HEADER AREA ================= */}
+        <div className="flex items-center pt-8 pb-8 relative z-30">
           <button
             onClick={onBack}
-            className="text-slate-400 hover:text-slate-600 font-bold transition text-xs sm:text-sm flex items-center gap-1"
+            className="text-[#00598A] hover:text-[#003c5e] font-bold transition text-3xl flex items-center absolute left-0"
           >
-            <span>← </span>
+            ←
           </button>
 
-          <div className="flex items-center gap-2 bg-sky-100 px-4 py-1.5 rounded-full">
-            <span className="text-sm font-bold text-sky-800 tracking-wide uppercase">
+          <div className="bg-[#E5F1F8] px-10 py-1.5 rounded-3xl mx-auto flex items-center justify-center shadow-sm">
+            <span className="text-sm font-bold text-[#00598A] tracking-wide">
               {nama}
             </span>
           </div>
-
-          <span className="text-xs font-bold text-slate-300 tracking-widest">GRIDAS</span>
         </div>
 
-        {/* CONTAINER KONTEN UTAMA */}
-        <div className="p-6 space-y-6 flex-1">
+        {/* ================= KONTEN UTAMA ================= */}
+        <div className="space-y-6 flex-1 flex flex-col mt-2">
 
-          {/* ================= BAGIAN 1: DETAIL INFORMASI UTAMA ================= */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-stretch">
-            {/* Foto Utama Ekskul dari Strapi */}
-            <div
-              className="rounded-3xl overflow-hidden h-44 shadow-sm bg-cover bg-center border border-slate-100"
-              style={{ backgroundImage: `url(${fotoUtamaUrl})` }}
-            />
+          {/* ================= BAGIAN 1: FOTO & DETAIL INFORMASI ================= */}
+          <div className="flex flex-col md:flex-row gap-4 items-stretch">
+            {/* Foto Utama Ekskul */}
+            <div className="w-full md:w-[45%] flex-shrink-0">
+              <div
+                className="w-full rounded-2xl overflow-hidden shadow-sm bg-cover bg-center"
+                style={{ 
+                  backgroundImage: `url(${fotoUtamaUrl})`,
+                  aspectRatio: "3/4",
+                  height: "100%",
+                  minHeight: "250px"
+                }}
+              />
+            </div>
 
             {/* Kotak Informasi Jadwal & Tempat */}
-            <div className=" bg-sky-100 rounded-3xl p-4 flex flex-col justify-between text-slate-700 text-xs space-y-2">
+            <div className="w-full md:w-[55%] bg-[#E5F1F8]/90 backdrop-blur-sm rounded-2xl p-6 flex flex-col justify-center space-y-6 shadow-sm border border-white/60">
               <div>
-                <span className="font-bold text-sky-800 block mb-0.5 text-xs sm:text-[11px] md:text-xs">Jadwal Pelaksanaan :</span>
-                <p className="font-normal">{jadwal}</p>
+                <span className="font-bold text-[#00598A] block mb-1 text-sm md:text-base">Jadwal Pelaksanaan :</span>
+                <p className="font-normal text-[#5b7a8a] text-sm md:text-base leading-relaxed">{jadwal}</p>
               </div>
               <div>
-                <span className="font-bold text-[#00598a] block mb-0.5 text-xs sm:text-[11px] md:text-xs">Tempat Pelaksanaan :</span>
-                <p className="font-normal">{tempat}</p>
+                <span className="font-bold text-[#00598A] block mb-1 text-sm md:text-base">Tempat Pelaksanaan :</span>
+                <p className="font-normal text-[#5b7a8a] text-sm md:text-base leading-relaxed">{tempat}</p>
               </div>
               <div>
-                <span className="font-bold text-[#00598a] block mb-0.5 text-xs sm:text-[11px] md:text-xs">Hari :</span>
-                <p className="font-normal">{hari}</p>
+                <span className="font-bold text-[#00598A] block mb-1 text-sm md:text-base">Hari :</span>
+                <p className="font-normal text-[#5b7a8a] text-sm md:text-base leading-relaxed">{hari}</p>
               </div>
             </div>
           </div>
 
-          {/* ================= BAGIAN 2: DESKRIPSI TENTANG EKSKUL (Memanggil fungsi pengaman blocks) ================= */}
-          <div className=" bg-sky-100 rounded-2xl p-4 border border-sky-100/50">
-            <p className="text-xs text-slate-600 leading-relaxed text-center font-normal font-sans whitespace-pre-line">
+          {/* ================= BAGIAN 2: DESKRIPSI ================= */}
+          <div className="w-full bg-[#E5F1F8]/90 backdrop-blur-sm rounded-3xl p-6 mt-2 shadow-sm border border-white/60">
+            <p className="text-sm md:text-base text-[#5b7a8a] leading-relaxed text-center font-normal whitespace-pre-line">
               {renderDeskripsi()}
             </p>
           </div>
 
-          {/* ================= BAGIAN 3: PRESTASI (SUDAH DINAMIS) ================= */}
+          {/* ================= BAGIAN 3: PRESTASI ================= */}
           {punyaPrestasi && (
-            <div className="py-2 flex flex-col items-center space-y-4">
-              <div className="text-center">
-                <h1 className="text-2xl font-bold text-[#00598a] tracking-tight">Prestasi</h1>
-                <h1 className="text-2xl font-bold text-[#00598a] tracking-tight -mt-1">Ekstrakurikuler</h1>
+            <div className="pt-6 flex flex-col items-center space-y-4">
+              <div className="text-center mb-2">
+                <h1 className="text-3xl md:text-4xl font-extrabold text-[#00598A] tracking-tight drop-shadow-sm">Prestasi</h1>
+                <h1 className="text-3xl md:text-4xl font-extrabold text-[#00598A] tracking-tight -mt-2 drop-shadow-sm">Estrakulikuler</h1>
               </div>
 
               {/* Card Foto Prestasi */}
               {fotoPrestasiUrl && (
-                <div className="w-full rounded-2xl overflow-hidden shadow-md  bg-slate-100 border border-slate-100">
+                <div className="w-full max-w-3xl mx-auto rounded-3xl overflow-hidden shadow-md">
                   <img
                     src={fotoPrestasiUrl}
                     alt="Foto Prestasi"
-                    className="w-full h-auto object-contain rounded-2xl"
+                    className="w-full h-auto object-cover"
                   />
                 </div>
               )}
 
-              {/* Teks Prestasi (Tersusun ke bawah / List) */}
+              {/* Teks Prestasi */}
               {eskul.prestasi && (
-                <div className="w-full text-center mt-2 px-2">
-                  <div className="text-[#00598A] text-xs sm:text-sm font-bold leading-relaxed whitespace-pre-line max-w-xs mx-auto">
+                <div className="w-full text-center mt-4">
+                  <div className="text-[#00598A] text-sm md:text-base font-bold leading-relaxed whitespace-pre-line px-4">
                     {eskul.prestasi}
                   </div>
                 </div>
@@ -174,20 +178,24 @@ export function DetailEskulCard({ eskul, onBack, onJoin }: DetailEskulProps) {
           )}
 
           {/* ================= FOOTER CALL TO ACTION (JOIN) ================= */}
-          <div className="pt-4 bg-gradient-to-t from-slate-50 to-white mt-auto text-center space-y-4">
+          <div className="mt-8 text-center space-y-6">
             <div>
-              <span className="font-bold text-sky-800 block mb-0.5"></span>
-              <p className="font-normal text-slate-700">{kata_ajakan}</p>
+              <p className="font-bold text-[#00598A] text-sm md:text-base leading-relaxed px-4 whitespace-pre-line">
+                {kata_ajakan}
+              </p>
             </div>
 
-            <button
-              onClick={() => {
-                onJoin?.(); // tetap menjalankan logika lama jika ada
-                router.push("/daftar");
-              }}
-              className="w-full bg-[#1e00a3] hover:bg-[#150080] text-white font-bold py-3.5 rounded-2xl transition duration-200 shadow-lg tracking-wide transform active:scale-[0.99] text-sm">
-              Gabung
-            </button>
+            <div className="flex justify-center pb-8">
+              <button
+                onClick={() => {
+                  onJoin?.();
+                  router.push("/daftar");
+                }}
+                className="bg-[#1e00a3] hover:bg-[#150080] text-white font-bold py-3 px-12 md:px-16 rounded-2xl md:rounded-xl transition duration-200 shadow-lg tracking-wide text-sm md:text-base"
+              >
+                Gabung
+              </button>
+            </div>
           </div>
 
         </div>
