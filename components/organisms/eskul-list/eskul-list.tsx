@@ -22,6 +22,24 @@ export function Eskul({ dataEkskul, onSelect }: EskulProps) {
     return nama.toLowerCase().includes(searchQuery.toLowerCase());
   });
 
+
+
+  // Helper fungsi untuk mengekstrak URL media Strapi secara fleksibel
+  const getStrapiMediaUrl = (media: any) => {
+    if (!media) return null;
+    const item = Array.isArray(media) ? media[0] : media;
+    const rawUrl = 
+      item?.url || 
+      item?.attributes?.url || 
+      item?.data?.attributes?.url || 
+      item?.data?.url ||
+      (Array.isArray(item?.data) ? item?.data[0]?.attributes?.url || item?.data[0]?.url : null);
+
+    if (!rawUrl) return null;
+    if (rawUrl.startsWith("http://") || rawUrl.startsWith("https://")) return rawUrl;
+    return `${STRAPI_URL}${rawUrl}`;
+  };
+
   return (
     <section id="ekskul" 
     className={`w-full ${josefin.className}`}>
@@ -78,11 +96,15 @@ export function Eskul({ dataEkskul, onSelect }: EskulProps) {
               const deskripsiSingkat = eskul.deskripsi_singkat || eskul.attributes?.deskripsi_singkat || "Belum ada deskripsi singkat.";
 
               const fotoData = eskul.foto_utama || eskul.attributes?.foto_utama;
-              const photoUrl = fotoData?.url || fotoData?.data?.attributes?.url;
+              const rawUrl = 
+                fotoData?.url || 
+                fotoData?.attributes?.url || 
+                fotoData?.data?.attributes?.url || 
+                fotoData?.data?.url || 
+                (Array.isArray(fotoData) ? fotoData[0]?.url || fotoData[0]?.attributes?.url : null) ||
+                (Array.isArray(fotoData?.data) ? fotoData?.data[0]?.attributes?.url || fotoData?.data[0]?.url : null);
 
-              const imageSrc = photoUrl 
-                ? (photoUrl.startsWith("http") ? photoUrl : `${STRAPI_URL}${photoUrl}`) 
-                : "";
+              const imageSrc = getStrapiMediaUrl(fotoData) || (rawUrl ? `http://localhost:1337${rawUrl}` : "/images/bg-katalog.jpeg");
 
               return (
                 <div 
@@ -97,9 +119,13 @@ export function Eskul({ dataEkskul, onSelect }: EskulProps) {
                         alt={namaEskul} 
                         className="w-full h-full object-cover"
                         onError={(e) => {
-                          e.currentTarget.src = "/images/bg-katalog.jpeg";
+                          const target = e.currentTarget;
+                          if (rawUrl && !target.src.includes("localhost:1337")) {
+                            target.src = `http://localhost:1337${rawUrl}`;
+                          } else {
+                            target.src = "/images/bg-katalog.jpeg";
+                          }
                         }}
-                        
                       />
                     </div>
 

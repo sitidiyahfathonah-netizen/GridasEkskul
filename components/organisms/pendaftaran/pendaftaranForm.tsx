@@ -43,7 +43,7 @@ const handleSubmit = async (e: React.FormEvent) => {
   const BASE_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
 
   try {
-    const res = await fetch("http://localhost:1337/api/pendaftarans", {
+    const res = await fetch(`${BASE_URL}/api/pendaftarans`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

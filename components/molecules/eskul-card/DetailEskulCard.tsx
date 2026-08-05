@@ -27,6 +27,8 @@ export function DetailEskulCard({ eskul, onBack, onJoin }: DetailEskulProps) {
   const kata_ajakan = eskul.kata_ajakan || eskul.attributes?.kata_ajakan || "belum diatur"
 
 
+  const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
+
   // Helper fungsi untuk membaca URL gambar dari Strapi v5 secara fleksibel
   const getStrapiMediaUrl = (media: any) => {
     if (!media) return null;
@@ -39,7 +41,7 @@ export function DetailEskulCard({ eskul, onBack, onJoin }: DetailEskulProps) {
 
     if (!rawUrl) return null;
     if (rawUrl.startsWith('http://') || rawUrl.startsWith('https://')) return rawUrl;
-    return 'https://cn17l1l4-1337.asse.devtunnels.ms/${rawUrl}';
+    return `${STRAPI_URL}${rawUrl}`;
   };
 
   // Panggil helper di atas untuk ambil foto
@@ -136,6 +138,8 @@ export function DetailEskulCard({ eskul, onBack, onJoin }: DetailEskulProps) {
               <div>
                 <span className="font-bold text-[#00598A] block mb-1 text-sm md:text-base">Hari :</span>
                 <p className="font-normal text-[#5b7a8a] text-sm md:text-base leading-relaxed">{hari}</p>
+                <span className="font-bold text-[#00598a] block mb-0.5">Hari :</span>
+                <p className="font-normal">{hari}</p>
               </div>
             </div>
           </div>
