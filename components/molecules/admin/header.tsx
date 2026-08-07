@@ -25,18 +25,7 @@ export default function Header({
 
       <button
         onClick={onTambahClick}
-        className="
-    bg-[#08B84F]
-    hover:bg-[#079E43]
-    text-white
-    px-10
-    py-3
-    rounded-xl
-    font-bold
-    transition
-    duration-200
-  "
-      >
+        className={`bg-[#08B84F] hover:bg-[#079E43] text-white px-10 py-3 rounded-xl font-bold transition duration-200 ${josefin.className}`}>
         Tambah
       </button>
     </header>
