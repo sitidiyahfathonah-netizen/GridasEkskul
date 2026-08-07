@@ -4,6 +4,12 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Josefin_Sans } from "next/font/google";
+
+const josefin = Josefin_Sans({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"]
+});
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,11 +18,10 @@ export default function Sidebar() {
   const getLinkClass = (path: string) => {
     const isActive = pathname === path;
 
-    return `block px-8 py-4 transition-all duration-200 ${
-      isActive
-        ? "bg-white/20 text-white font-bold border-r-4 border-white" // Tampilan saat AKTIF
-        : "text-white/70 hover:bg-white/10 hover:text-white font-medium" // Tampilan saat TIDAK aktif
-    }`;
+    return `block px-8 py-4 transition-all duration-200 ${isActive
+      ? "bg-white/20 text-white font-bold border-r-4 border-white" // Tampilan saat AKTIF
+      : "text-white/70 hover:bg-white/10 hover:text-white font-medium" // Tampilan saat TIDAK aktif
+      }`;
   };
 
   return (
@@ -48,6 +53,7 @@ export default function Sidebar() {
           fixed inset-y-0 left-0 z-40 flex w-64 flex-col bg-[#00598A] text-white transition-transform duration-300 ease-in-out
           md:static md:translate-x-0
           ${isOpen ? "translate-x-0" : "-translate-x-full"}
+          ${josefin.className}
         `}
       >
         <div className="flex justify-center py-8 border-b border-white/20">
