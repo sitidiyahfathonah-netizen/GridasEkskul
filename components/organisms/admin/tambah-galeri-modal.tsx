@@ -29,13 +29,12 @@ export default function TambahGaleriModal({ onClose, onSave }: TambahGaleriModal
         <form onSubmit={handleSimpan} className="space-y-4">
           <div>
             <label className="block text-xs font-semibold text-slate-600 mb-1">Foto</label>
-            
+
             {/* Custom Input File Bahasa Indonesia */}
             <div className="flex items-center gap-3 border border-slate-300 rounded-lg p-1.5 bg-white">
-              <label 
-                htmlFor="foto-upload" 
-                className="cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold py-1.5 px-3 rounded-md transition border border-slate-200 shrink-0"
-              >
+              <label
+                htmlFor="foto-upload"
+                className="cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold py-1.5 px-3 rounded-md transition border border-slate-200 shrink-0">
                 Pilih File
               </label>
 
@@ -48,8 +47,7 @@ export default function TambahGaleriModal({ onClose, onSave }: TambahGaleriModal
                 type="file"
                 accept="image/*"
                 onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
-                className="hidden"
-              />
+                className="hidden" />
             </div>
           </div>
 
@@ -63,8 +61,7 @@ export default function TambahGaleriModal({ onClose, onSave }: TambahGaleriModal
               value={namaEskul}
               onChange={(e) => setNamaEskul(e.target.value)}
               className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800"
-              required
-            />
+              required />
           </div>
 
           <div>
@@ -74,22 +71,21 @@ export default function TambahGaleriModal({ onClose, onSave }: TambahGaleriModal
               placeholder="Masukan deskripsi ekstrakurikuler"
               value={deskripsi}
               onChange={(e) => setDeskripsi(e.target.value)}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 resize-none"
-            ></textarea>
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 resize-none">
+            </textarea>
           </div>
 
           <div className="flex gap-3 pt-2">
             <button
               type="submit"
-              className="flex-1 bg-[#00a65a] hover:bg-[#008d4c] text-white font-bold py-2 rounded-lg text-sm transition shadow"
-            >
+              className="flex-1 bg-[#00a65a] hover:bg-[#008d4c] text-white font-bold py-2 rounded-lg text-sm transition shadow">
               Simpan
             </button>
+
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 bg-[#dd4b39] hover:bg-[#c9302c] text-white font-bold py-2 rounded-lg text-sm transition shadow"
-            >
+              className="flex-1 bg-[#dd4b39] hover:bg-[#c9302c] text-white font-bold py-2 rounded-lg text-sm transition shadow">
               Batal
             </button>
           </div>
