@@ -31,8 +31,7 @@ export default function LoginForm() {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Masukkan email"
             required
-            className="w-full px-4 py-3 rounded-xl bg-white text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-300 text-sm font-medium"
-          />
+            className="w-full px-4 py-3 rounded-xl bg-white text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-300 text-sm font-medium" />
         </div>
 
         {/* Field Password */}
@@ -44,33 +43,16 @@ export default function LoginForm() {
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Masukkan password"
             required
-            className="w-full px-4 py-3 rounded-xl bg-white text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-300 text-sm font-medium"
-          />
+            className="w-full px-4 py-3 rounded-xl bg-white text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-300 text-sm font-medium" />
         </div>
 
         {/* Tombol Login */}
         <div className="pt-4 flex justify-center">
           <button
             type="submit"
-           className="
-    mx-auto
-    mt-10
-    block
-    w-full
-    max-w-[220px]
-    rounded-xl
-    bg-white
-    py-4
-    text-lg
-    font-bold
-    text-[#00598A]
-    transition
-    duration-200
-    hover:bg-gray-100
-  "
->
-  Login
-</button>
+            className="mx-auto mt-10 block w-full max-w-[220px] rounded-xl bg-white py-4 text-lg font-bold text-[#00598A] transition duration-200 hover:bg-gray-100">
+            Login
+          </button>
         </div>
       </form>
     </div>
