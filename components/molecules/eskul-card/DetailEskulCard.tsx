@@ -56,6 +56,7 @@ export function DetailEskulCard({ eskul, onBack, onJoin }: DetailEskulProps) {
 
     if (!rawUrl) return null;
     if (rawUrl.startsWith('http://') || rawUrl.startsWith('https://')) return rawUrl;
+    return `https://cn17l1l4-1337.asse.devtunnels.ms/${rawUrl}`;
     return `${STRAPI_URL}${rawUrl}`;
   };
 
@@ -98,8 +99,7 @@ export function DetailEskulCard({ eskul, onBack, onJoin }: DetailEskulProps) {
       <div className="fixed inset-0 z-0">
         <div
           className="w-full h-full bg-cover bg-center opacity-100"
-          style={{ backgroundImage: `url('/images/bgdetail.jpg')` }}
-        />
+          style={{ backgroundImage: `url('/images/bgdetail.jpg')` }} />
         <div className="absolute inset-0 bg-white/85 z-10" />
       </div>
 
@@ -110,8 +110,7 @@ export function DetailEskulCard({ eskul, onBack, onJoin }: DetailEskulProps) {
         <div className="flex items-center pt-8 pb-8 relative z-30">
           <button
             onClick={onBack}
-            className="text-[#00598A] hover:text-[#003c5e] font-bold transition text-3xl flex items-center absolute left-0"
-          >
+            className="text-[#00598A] hover:text-[#003c5e] font-bold transition text-3xl flex items-center absolute left-0">
             ←
           </button>
 
@@ -136,8 +135,7 @@ export function DetailEskulCard({ eskul, onBack, onJoin }: DetailEskulProps) {
                   aspectRatio: "3/4",
                   height: "100%",
                   minHeight: "250px"
-                }}
-              />
+                }} />
             </div>
 
             {/* Kotak Informasi Jadwal & Tempat */}
@@ -179,8 +177,7 @@ export function DetailEskulCard({ eskul, onBack, onJoin }: DetailEskulProps) {
                   <img
                     src={fotoPrestasiUrl}
                     alt="Foto Prestasi"
-                    className="w-full h-auto object-cover"
-                  />
+                    className="w-full h-auto object-cover" />
                 </div>
               )}
 
@@ -209,8 +206,7 @@ export function DetailEskulCard({ eskul, onBack, onJoin }: DetailEskulProps) {
                   onJoin?.();
                   router.push("/daftar");
                 }}
-                className="bg-[#1e00a3] hover:bg-[#150080] text-white font-bold py-3 px-12 md:px-16 rounded-2xl md:rounded-xl transition duration-200 shadow-lg tracking-wide text-sm md:text-base"
-              >
+                className="bg-[#1e00a3] hover:bg-[#150080] text-white font-bold py-3 px-12 md:px-16 rounded-2xl md:rounded-xl transition duration-200 shadow-lg tracking-wide text-sm md:text-base">
                 Gabung
               </button>
             </div>

@@ -49,15 +49,13 @@ export function DeleteModal({
         <div className="flex gap-3 px-6 pb-6">
           <button
             onClick={onDelete}
-            className="flex-1 rounded-xl bg-green-500 py-2.5 font-semibold text-white transition hover:bg-green-600"
-          >
+            className="flex-1 rounded-xl bg-green-500 py-2.5 font-semibold text-white transition hover:bg-green-600">
             Ya, Hapus
           </button>
 
           <button
             onClick={onClose}
-            className="flex-1 rounded-xl border border-red-500 py-2.5 font-semibold text-red-500 transition hover:bg-red-50"
-          >
+            className="flex-1 rounded-xl border border-red-500 py-2.5 font-semibold text-red-500 transition hover:bg-red-50">
             Batal
           </button>
         </div>
