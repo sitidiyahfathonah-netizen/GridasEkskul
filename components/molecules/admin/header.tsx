@@ -1,5 +1,13 @@
 "use client";
 
+import { Josefin_Sans } from "next/font/google";
+
+const josefin = Josefin_Sans({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"]
+});
+
+
 interface HeaderProps {
   title?: string;
   onTambahClick?: () => void;
@@ -11,13 +19,13 @@ export default function Header({
 }: HeaderProps) {
   return (
     <header className="flex h-20 items-center justify-between bg-[#00598A] px-4 md:px-8">
-      <h1 className="text-xl md:text-2xl font-bold tracking-wide text-white pl-12 md:pl-0">
+      <h1 className={`text-xl md:text-2xl font-bold tracking-wide text-white pl-12 md:pl-0 ${josefin.className}`}>
         {title}
       </h1>
 
-     <button
-  onClick={onTambahClick}
-  className="
+      <button
+        onClick={onTambahClick}
+        className="
     bg-[#08B84F]
     hover:bg-[#079E43]
     text-white
@@ -28,9 +36,9 @@ export default function Header({
     transition
     duration-200
   "
->
-  Tambah
-</button>
+      >
+        Tambah
+      </button>
     </header>
   );
 }
