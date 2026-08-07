@@ -45,10 +45,8 @@ export default function Home() {
   useEffect(() => {
     async function fetchStrapiData() {
       try {
-        // Ganti URL ini sesuai URL ngrok Strapi kamu
-        const res = await fetch("https://cn17l1l4-1337.asse.devtunnels.ms/api/ekskuls?populate=*");
 
-
+        const res = await fetch(`${STRAPI_URL}/api/ekskuls?populate=*`);
 
         if (!res.ok) {
           throw new Error(`HTTP Error! Status: ${res.status}`);
