@@ -1,4 +1,5 @@
 "use client";
+import { useEffect } from "react";
 import { Josefin_Sans } from "next/font/google";
 import { useRouter } from "next/navigation";
 
@@ -15,6 +16,20 @@ interface DetailEskulProps {
 }
 
 export function DetailEskulCard({ eskul, onBack, onJoin }: DetailEskulProps) {
+
+  useEffect(() => {
+    const navbar = document.querySelector("header");
+    if (navbar) {
+      navbar.style.display = "none";
+    }
+
+    return () => {
+      if (navbar) {
+        navbar.style.display = "";
+      }
+    };
+  }, []);
+
   if (!eskul) return null;
   console.log(eskul)
   const router = useRouter();
@@ -101,8 +116,8 @@ export function DetailEskulCard({ eskul, onBack, onJoin }: DetailEskulProps) {
             ←
           </button>
 
-          <div className="bg-[#E5F1F8] px-10 py-1.5 rounded-3xl mx-auto flex items-center justify-center shadow-sm">
-            <span className="text-sm font-bold text-[#00598A] tracking-wide">
+          <div className="bg-sky-800/30 px-10 py-1.5 rounded-3xl mx-auto flex items-center justify-center shadow-sm">
+            <span className="text-2xl font-bold text-[#00598A] tracking-wide">
               {nama}
             </span>
           </div>
@@ -126,25 +141,31 @@ export function DetailEskulCard({ eskul, onBack, onJoin }: DetailEskulProps) {
             </div>
 
             {/* Kotak Informasi Jadwal & Tempat */}
-            <div className="w-full md:w-[55%] bg-[#E5F1F8]/90 backdrop-blur-sm rounded-2xl p-6 flex flex-col justify-center space-y-6 shadow-sm border border-white/60">
+            <div className="w-full md:w-[55%] bg-sky-800/30 backdrop-blur-sm rounded-2xl p-10 flex flex-col justify-center space-y-5 shadow-sm border border-white/60">
               <div>
-                <span className="font-bold text-[#00598A] block mb-1 text-sm md:text-base">Jadwal Pelaksanaan :</span>
-                <p className="font-normal text-[#5b7a8a] text-sm md:text-base leading-relaxed">{jadwal}</p>
+                <span className="font-bold text-sky-800 block mb-1 text-3xl md:text-2xl">Jadwal Pelaksanaan :</span>
+                <p className="font-normal text-[#5b7a8a] text-xl md:text-xl leading-relaxed">{jadwal}</p>
               </div>
               <div>
-                <span className="font-bold text-[#00598A] block mb-1 text-sm md:text-base">Tempat Pelaksanaan :</span>
-                <p className="font-normal text-[#5b7a8a] text-sm md:text-base leading-relaxed">{tempat}</p>
+                <span className="font-bold text-sky-800 block mb-1 text-xl md:text-xl">Tempat Pelaksanaan :</span>
+                <p className="font-normal text-[#5b7a8a] text-xl md:text-xlleading-relaxed">{tempat}</p>
               </div>
               <div>
+<<<<<<< HEAD
                 <span className="font-bold text-[#00598A] block mb-1 text-sm md:text-base">Hari :</span>
                 <p className="font-normal text-[#5b7a8a] text-sm md:text-base leading-relaxed">{hari}</p>
+=======
+                <span className="font-bold text-sky-800 block mb-1 text-xl md:text-xl">Hari :</span>
+                <p className="font-normal text-[#5b7a8a] text-xl md:text-xl leading-relaxed">{hari}</p>
+
+>>>>>>> ed61a07e2997bc395a5058b0cb1e3609a2c50e38
               </div>
             </div>
           </div>
 
           {/* ================= BAGIAN 2: DESKRIPSI ================= */}
-          <div className="w-full bg-[#E5F1F8]/90 backdrop-blur-sm rounded-3xl p-6 mt-2 shadow-sm border border-white/60">
-            <p className="text-sm md:text-base text-[#5b7a8a] leading-relaxed text-center font-normal whitespace-pre-line">
+          <div className="w-full bg-sky-800/30 backdrop-blur-sm rounded-3xl p-6 mt-2 shadow-sm border border-white/60">
+            <p className="text-xl md:text-xl text-sky-800 leading-relaxed text-center font-bold whitespace-pre-line">
               {renderDeskripsi()}
             </p>
           </div>
@@ -181,7 +202,7 @@ export function DetailEskulCard({ eskul, onBack, onJoin }: DetailEskulProps) {
           {/* ================= FOOTER CALL TO ACTION (JOIN) ================= */}
           <div className="mt-8 text-center space-y-6">
             <div>
-              <p className="font-bold text-[#00598A] text-sm md:text-base leading-relaxed px-4 whitespace-pre-line">
+              <p className="font-bold text-[#00598A] text-2xl md:text-xl leading-relaxed px-4 whitespace-pre-line">
                 {kata_ajakan}
               </p>
             </div>
