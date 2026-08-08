@@ -60,6 +60,11 @@ export function DetailEskulCard({ eskul, onBack, onJoin }: DetailEskulProps) {
     if (!rawUrl) return null;
     if (rawUrl.startsWith("http://") || rawUrl.startsWith("https://")) return rawUrl;
     return `https://cn17l1l4-1337.asse.devtunnels.ms${rawUrl}`;
+
+    if (rawUrl.startsWith("http://") || rawUrl.startsWith("https://")) {
+      return rawUrl;
+    }
+    return `${STRAPI_URL}${rawUrl}`;
   };
 
   // Panggil helper di atas untuk ambil foto
@@ -155,6 +160,8 @@ export function DetailEskulCard({ eskul, onBack, onJoin }: DetailEskulProps) {
                 <span className="font-bold text-[#00598A] block mb-1 text-lg md:text-3xl">Hari :</span>
                 <p className="font-bold text-[#3d5a6c] text-lg md:text-2xl leading-snug">{hari}</p>
 
+                <span className="font-bold text-[#00598A] block mb-1 text-sm md:text-base">Hari :</span>
+                <p className="font-normal text-[#5b7a8a] text-sm md:text-base leading-relaxed">{hari}</p>
               </div>
             </div>
           </div>

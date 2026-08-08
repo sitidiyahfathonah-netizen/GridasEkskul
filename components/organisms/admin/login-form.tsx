@@ -8,12 +8,47 @@ export default function LoginForm() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Proses autentikasi login di sini
-    // Setelah berhasil, arahkan ke dashboard admin:
-    router.push("/admin/dashboard");
+    setLoading(true);
+    setErrorMsg("");
+
+    try {
+      const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
+
+      // Request login ke endpoint Strapi
+      const res = await fetch(`${STRAPI_URL}/api/auth/local`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          identifier: email, // Strapi v4/v5 menggunakan key 'identifier'
+          password: password,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data?.error?.message || "Email atau password salah");
+      }
+
+      // Simpan JWT token ke localStorage agar bisa dipakai untuk request selanjutnya
+      localStorage.setItem("admin_token", data.jwt);
+      localStorage.setItem("user_info", JSON.stringify(data.user));
+
+      // Redirect ke dashboard admin setelah berhasil
+      router.push("/admin/dashboard");
+    } catch (err: any) {
+      console.error("Login error:", err);
+      setErrorMsg(err.message || "Gagal melakukan login. Periksa koneksi atau kredensial.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -21,6 +56,13 @@ export default function LoginForm() {
       <h1 className="text-3xl font-extrabold text-center mb-8 tracking-wider">
         LOGIN
       </h1>
+
+      {/* Tampilkan Pesan Error Jika Ada */}
+      {errorMsg && (
+        <div className="mb-4 rounded-xl bg-red-500/80 p-3 text-center text-xs font-semibold text-white">
+          {errorMsg}
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Field Email */}
@@ -32,7 +74,8 @@ export default function LoginForm() {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Masukkan email"
             required
-            className="w-full px-4 py-3 rounded-xl bg-white text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-300 text-sm font-medium" />
+            className="w-full px-4 py-3 rounded-xl bg-white text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-300 text-sm font-medium"
+          />
         </div>
 
         {/* Field Password */}
@@ -44,15 +87,17 @@ export default function LoginForm() {
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Masukkan password"
             required
-            className="w-full px-4 py-3 rounded-xl bg-white text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-300 text-sm font-medium" />
+            className="w-full px-4 py-3 rounded-xl bg-white text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-300 text-sm font-medium"
+          />
         </div>
 
         {/* Tombol Login */}
         <div className="pt-4 flex justify-center">
           <button
             type="submit"
-            className="mx-auto mt-10 block w-full max-w-[220px] rounded-xl bg-white hover:bg-blue-600 hover:text-white active:bg-[#00598A] active:text-white active:scale-95 py-4 text-lg font-bold text-[#00598A] transition-all duration-200">
-            Login
+            disabled={loading}
+            className="mx-auto mt-4 block w-full max-w-[220px] rounded-xl bg-white py-3 font-bold text-sky-800 shadow-md transition hover:bg-slate-100">
+            {loading ? "Memproses..." : "Login"}
           </button>
         </div>
       </form>
