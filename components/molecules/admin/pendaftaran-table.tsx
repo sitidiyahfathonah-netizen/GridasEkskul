@@ -1,5 +1,13 @@
 "use client";
 
+import { Josefin_Sans } from "next/font/google";
+
+const josefin = Josefin_Sans({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"]
+});
+
+
 export interface PendaftarData {
   id: number;
   documentId?: string;
@@ -18,9 +26,9 @@ interface PendaftaranTableProps {
 
 export default function PendaftaranTable({ list, isLoading, onDelete }: PendaftaranTableProps) {
   return (
-    <div className="w-full flex-1 flex flex-col">
+    <div className={`w-full flex-1 flex flex-col ${josefin.className}`}>
       {/* Header Tabel */}
-      <div className="grid grid-cols-6 gap-2 px-6 py-2 text-slate-500 font-bold text-xs md:text-sm text-center mb-2">
+      <div className={`grid grid-cols-6 gap-2 px-6 py-2 text-slate-500 font-bold text-xs md:text-sm text-center mb-2 ${josefin.className}`}>
         <div className="text-left">Nama</div>
         <div>Kelas</div>
         <div>Jurusan</div>
@@ -30,7 +38,7 @@ export default function PendaftaranTable({ list, isLoading, onDelete }: Pendafta
       </div>
 
       {/* Item List Pendaftar */}
-      <div className="space-y-3 flex-1 overflow-y-auto max-h-[420px] pr-1">
+      <div className={`space-y-3 flex-1 overflow-y-auto max-h-[420px] pr-1 ${josefin.className}`}>
         {isLoading ? (
           <div className="text-center py-12 text-slate-400 font-medium">Memuat data pendaftar...</div>
         ) : list.length === 0 ? (
@@ -43,7 +51,7 @@ export default function PendaftaranTable({ list, isLoading, onDelete }: Pendafta
             return (
               <div
                 key={targetId}
-                className="grid grid-cols-6 gap-2 items-center bg-white p-4 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition text-xs md:text-sm text-slate-700 text-center font-medium"
+                className={`grid grid-cols-6 gap-2 items-center bg-white p-4 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition text-xs md:text-sm text-slate-700 text-center font-medium ${josefin.className}`}
               >
                 <div className="text-left font-semibold text-slate-900 truncate">{item.nama}</div>
                 <div>{item.kelas}</div>
