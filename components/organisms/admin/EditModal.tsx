@@ -2,6 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { EskulItem } from "@/app/admin/dashboard/page";
+import { Josefin_Sans } from "next/font/google";
+
+const josefin = Josefin_Sans({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"]
+});
+
 
 interface EditModalProps {
   open: boolean;
@@ -28,10 +35,10 @@ export function EditModal({
       setNama(editItem.nama);
       setDeskripsi(editItem.deskripsi);
       setFoto(editItem.foto);
-      
+
       // Parse jadwal
       // expected format: "Senin\n15.00 - 17.00"
-      const parts = editItem.jadwal.split("\n");
+      const parts = editItem.jadwal_pelaksanaan.split("\n");
       if (parts.length === 2) {
         setJadwal(parts[0]);
         const times = parts[1].split(" - ");
@@ -40,7 +47,7 @@ export function EditModal({
           setJamSelesai(times[1].replace(".", ":"));
         }
       } else {
-        setJadwal(editItem.jadwal);
+        setJadwal(editItem.jadwal_pelaksanaan);
       }
     } else {
       setNama("");
@@ -54,17 +61,17 @@ export function EditModal({
 
   const handleSimpan = () => {
     if (!editItem) return;
-    
+
     // format jam back to using dot or colon depending on UI, I'll keep the input's colon but user can format if needed. Actually, defaultData uses dot "15.00", let's replace colon with dot.
     const formattedJamMulai = jamMulai.replace(":", ".");
     const formattedJamSelesai = jamSelesai.replace(":", ".");
     const newJadwal = `${jadwal}\n${formattedJamMulai} - ${formattedJamSelesai}`;
-    
+
     onSave({
       ...editItem,
       nama,
       deskripsi,
-      jadwal: newJadwal,
+      jadwal_pelaksanaan: newJadwal,
       foto: foto, // keep old foto for now since no image upload logic yet
     });
   };
@@ -72,7 +79,7 @@ export function EditModal({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+    <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 ${josefin.className}`}>
 
       {/* Kotak Modal */}
       <div className="w-full max-w-md max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-2xl">

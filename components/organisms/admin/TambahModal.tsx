@@ -2,6 +2,13 @@
 
 import { useState } from "react";
 import { EskulItem } from "@/app/admin/dashboard/page";
+import { Josefin_Sans } from "next/font/google";
+
+const josefin = Josefin_Sans({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"]
+});
+
 
 interface TambahModalProps {
   open: boolean;
@@ -26,11 +33,11 @@ export function TambahModal({
       alert("Mohon lengkapi semua data.");
       return;
     }
-    const jadwal = `${hari}\n${jamMulai} - ${jamSelesai}`;
+    const jadwal_pelaksanaan = `${hari}\n${jamMulai} - ${jamSelesai}`;
     onSave({
       nama,
       deskripsi,
-      jadwal,
+      jadwal_pelaksanaan,
       foto: preview || "/images/placeholder.jpeg", // Default image if none
     });
     // Reset form after saving
@@ -55,7 +62,7 @@ export function TambahModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+    <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 ${josefin.className}`}>
 
       {/* Kotak Modal */}
       <div className="w-full max-w-md max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-2xl">
@@ -113,9 +120,9 @@ export function TambahModal({
               Hari
             </label>
 
-            <select 
-              value={hari} 
-              onChange={(e) => setHari(e.target.value)} 
+            <select
+              value={hari}
+              onChange={(e) => setHari(e.target.value)}
               className="mt-1 w-full rounded-lg border px-3 py-2"
             >
               <option value="">Pilih Hari</option>
@@ -174,7 +181,7 @@ export function TambahModal({
         </div>
 
         {/* Tombol */}
-        <div className="flex gap-3 px-6 pb-6">
+        <div className={`flex gap-3 px-6 pb-6 ${josefin.className}`}>
 
           <button
             type="button"
