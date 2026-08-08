@@ -96,8 +96,7 @@ export default function LoginForm() {
           <button
             type="submit"
             disabled={loading}
-            className="mx-auto mt-4 block w-full max-w-[220px] rounded-xl bg-white py-4 text-lg font-bold text-[#00598A] transition duration-200 hover:bg-gray-100 disabled:opacity-50"
-          >
+            className="mx-auto mt-4 block w-full max-w-[220px] rounded-xl bg-white py-3 font-bold text-sky-800 shadow-md transition hover:bg-slate-100">
             {loading ? "Memproses..." : "Login"}
           </button>
         </div>

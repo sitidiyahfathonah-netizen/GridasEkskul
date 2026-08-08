@@ -47,13 +47,13 @@ export function DetailEskulCard({ eskul, onBack, onJoin }: DetailEskulProps) {
   // Helper fungsi untuk membaca URL gambar dari Strapi v5 secara fleksibel
   const getStrapiMediaUrl = (media: any) => {
     if (!media) return null;
-    
+
     // Cari URL dari berbagai struktur JSON Strapi (V4/V5)
-    const rawUrl = 
-      media?.url || 
-      media?.attributes?.url || 
-      media?.data?.attributes?.url || 
-      media?.data?.url || 
+    const rawUrl =
+      media?.url ||
+      media?.attributes?.url ||
+      media?.data?.attributes?.url ||
+      media?.data?.url ||
       (Array.isArray(media) ? media[0]?.url || media[0]?.attributes?.url : null) ||
       (Array.isArray(media?.data) ? media?.data[0]?.attributes?.url || media?.data[0]?.url : null);
 
@@ -146,16 +146,20 @@ export function DetailEskulCard({ eskul, onBack, onJoin }: DetailEskulProps) {
             </div>
 
             {/* Kotak Informasi Jadwal & Tempat */}
-            <div className="w-full md:w-[55%] bg-sky-800/30 backdrop-blur-sm rounded-2xl p-10 flex flex-col justify-center space-y-5 shadow-sm border border-white/60">
+            <div className="w-full md:w-[55%] bg-sky-800/30 backdrop-blur-sm rounded-2xl p-10 flex flex-col justify-center space-y-24 shadow-sm border border-white/60">
               <div>
-                <span className="font-bold text-sky-800 block mb-1 text-3xl md:text-2xl">Jadwal Pelaksanaan :</span>
-                <p className="font-normal text-[#5b7a8a] text-xl md:text-xl leading-relaxed">{jadwal}</p>
+                <span className="font-bold text-sky-800 block mb-1 text-lg md:text-3xl">Jadwal Pelaksanaan :</span>
+                <p className="font-bold text-[#3d5a6c] text-lg md:text-2xl leading-snug">Setelah pulang sekolah</p>
+                <p className="font-bold text-[#3d5a6c] text-lg md:text-2xl leading-snug">( {jadwal} )</p>
               </div>
               <div>
-                <span className="font-bold text-sky-800 block mb-1 text-xl md:text-xl">Tempat Pelaksanaan :</span>
-                <p className="font-normal text-[#5b7a8a] text-xl md:text-xlleading-relaxed">{tempat}</p>
+                <span className="font-bold text-sky-800 block mb-1 text-lg md:text-3xl">Tempat Pelaksanaan :</span>
+                <p className="font-bold text-[#3d5a6c] text-lg md:text-2xl leading-snug">{tempat}</p>
               </div>
               <div>
+                <span className="font-bold text-[#00598A] block mb-1 text-lg md:text-3xl">Hari :</span>
+                <p className="font-bold text-[#3d5a6c] text-lg md:text-2xl leading-snug">{hari}</p>
+
                 <span className="font-bold text-[#00598A] block mb-1 text-sm md:text-base">Hari :</span>
                 <p className="font-normal text-[#5b7a8a] text-sm md:text-base leading-relaxed">{hari}</p>
               </div>
@@ -212,7 +216,7 @@ export function DetailEskulCard({ eskul, onBack, onJoin }: DetailEskulProps) {
                   onJoin?.();
                   router.push("/daftar");
                 }}
-                className="bg-[#1e00a3] hover:bg-[#150080] text-white font-bold py-3 px-12 md:px-16 rounded-2xl md:rounded-xl transition duration-200 shadow-lg tracking-wide text-sm md:text-base">
+                className="bg-blue-900 hover:bg-blue-950 text-white active:bg-white active:text-[#1e00a3] active:border-[#1e00a3] active:scale-95 border-2 border-transparent font-bold py-3 px-12 md:px-16 rounded-2xl md:rounded-xl transition-all duration-200 shadow-lg tracking-wide text-sm md:text-base">
                 Gabung
               </button>
             </div>

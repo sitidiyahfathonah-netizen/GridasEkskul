@@ -152,13 +152,8 @@ export function Eskul({ dataEkskul, onSelect }: EskulProps) {
                   {/* Tombol Detail */}
                   <div className="pt-2">
                     <button
-                      onClick={() => {
-                        if (typeof onSelect === 'function') {
-                          onSelect(eskul);
-                        }
-                      }}
-                      className="w-full bg-sky-800 hover:bg-[#006aa7] text-white font-bold py-3 rounded-2xl transition duration-200 shadow-md text-base tracking-wide transform active:scale-[0.98]"
-                    >
+                      onClick={() => onSelect(eskul)}
+                      className="bg-[#0092DA] hover:bg-[#007AB8] active:bg-white active:text-[#0092DA] active:border-[#0092DA] active:scale-95 border-2 border-transparent text-white font-bold py-2 md:py-2.5 px-4 rounded-xl text-xs md:text-sm shadow-sm transition-all duration-200 flex-1 w-full">
                       Lihat Detail
                     </button>
                   </div>

@@ -12,8 +12,7 @@ export function Hero() {
       {/* Gambar Background Sekolah */}
       <div
         className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url('/images/bg-sekolah.png')` }}
-      >
+        style={{ backgroundImage: `url('/images/bg-sekolah.png')` }}>
         {/* Overlay Gradient Biru persis Figma (Biru Sekolah -> Transparan) */}
         <div className="absolute inset-0 z-10 bg-gradient-to-r from-[#005893] via-[#005893] via-[45%] to-transparent to-[80%] md:via-[50%]" />
       </div>
@@ -49,8 +48,7 @@ export function Hero() {
         <div className="pt-2">
           <a
             href="#ekskul"
-            className="inline-block rounded-xl bg-[#1e00a3] px-7 py-3 text-sm font-semibold text-white shadow-lg transition duration-300 hover:bg-[#150080] hover:shadow-xl sm:px-8 sm:text-base"
-          >
+            className="inline-block rounded-xl bg-blue-900 px-7 py-3 text-sm font-semibold text-white shadow-lg transition duration-300 hover:bg-blue-950 hover:shadow-xl sm:px-8 sm:text-base">
             Lihat Ekskul
           </a>
         </div>
