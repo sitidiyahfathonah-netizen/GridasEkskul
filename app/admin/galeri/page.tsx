@@ -36,8 +36,9 @@ export default function AdminGaleriPage() {
 
       if (res.ok && result.data) {
         const formatted = result.data.map((item: any) => {
+          const attrs = item.attributes || item;
           let imgUrl = "/images/tatarias.jpeg";
-          const fotoObj = item.foto || item.gambar || item.foto_utama;
+          const fotoObj = attrs.foto || attrs.gambar || attrs.foto_utama;
 
           if (fotoObj) {
             const mediaObj = Array.isArray(fotoObj) ? fotoObj[0] : fotoObj;
@@ -47,10 +48,26 @@ export default function AdminGaleriPage() {
             }
           }
 
+          // Parsing Nama Ekskul dari Relation Strapi atau pemecahan judul_kegiatan
+          const ekskulData = attrs.ekskul || attrs.ekskuls;
+          let namaEkskul =
+            ekskulData?.nama_ekskul ||
+            ekskulData?.attributes?.nama_ekskul ||
+            ekskulData?.data?.attributes?.nama_ekskul ||
+            (Array.isArray(ekskulData) ? ekskulData[0]?.nama_ekskul || ekskulData[0]?.attributes?.nama_ekskul : null) ||
+            attrs.nama_ekskul ||
+            attrs.nama;
+
+          // Ekstrak nama ekskul jika judul_kegiatan menggunakan format "Ekskul - Deskripsi"
+          const rawJudul = attrs.judul_kegiatan || "";
+          if (!namaEkskul && rawJudul.includes("-")) {
+            namaEkskul = rawJudul.split("-")[0].trim();
+          }
+
           return {
             id: item.id,
             documentId: item.documentId,
-            nama: item.nama_ekskul || item.nama || item.ekskul?.nama_ekskul || "Galeri Ekskul",
+            nama: namaEkskul || "Lainnya",
             image: imgUrl,
           };
         });
@@ -64,7 +81,7 @@ export default function AdminGaleriPage() {
 
   // Handler Tambah Galeri Baru
   const handleSimpan = async (
-    namaEskul: string,
+    namaEskul: string | number,
     deskripsi: string,
     file: File | null
   ) => {
@@ -75,17 +92,17 @@ export default function AdminGaleriPage() {
 
     try {
       // 1. Ambil Token JWT dari localStorage
-      const token = localStorage.getItem("admin_token") || localStorage.getItem("jwt") || localStorage.getItem("token");
+      const token =
+        localStorage.getItem("admin_token") ||
+        localStorage.getItem("token") ||
+        localStorage.getItem("jwt") ||
+        localStorage.getItem("accessToken");
 
-      // Validasi ketersediaan token
-      if (!token || token === "null" || token === "undefined") {
-        alert("Sesi login kamu tidak ditemukan atau telah berakhir. Silakan re-login terlebih dahulu.");
-        return;
+      const headersConfig: Record<string, string> = {};
+
+      if (token && token !== "null" && token !== "undefined") {
+        headersConfig["Authorization"] = `Bearer ${token}`;
       }
-
-      const headersConfig: HeadersInit = {
-        Authorization: `Bearer ${token}`,
-      };
 
       // 2. Upload File Foto ke Strapi
       const formData = new FormData();
@@ -101,7 +118,7 @@ export default function AdminGaleriPage() {
 
       if (!uploadRes.ok) {
         console.error("Gagal upload foto:", uploadData);
-        alert(`Upload gagal: ${uploadData?.error?.message || "Cek izin role Authenticated di Strapi"}`);
+        alert(`Upload gagal: ${uploadData?.error?.message || "Cek izin role Public/Authenticated di Strapi"}`);
         return;
       }
 
@@ -112,20 +129,26 @@ export default function AdminGaleriPage() {
         return;
       }
 
-      // 3. Simpan Data ke Content-Type 'galeris'
+      // 3. Menyiapkan Payload
+      const payloadData: Record<string, any> = {
+        judul_kegiatan:
+          typeof namaEskul === "number" || !isNaN(Number(namaEskul))
+            ? deskripsi
+            : `${namaEskul} - ${deskripsi}`,
+        foto: uploadedImgId,
+      };
+
+      if (typeof namaEskul === "number" || !isNaN(Number(namaEskul))) {
+        payloadData.ekskul = Number(namaEskul);
+      }
+
       const res = await fetch(`${STRAPI_URL}/api/galeris`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           ...headersConfig,
         },
-        body: JSON.stringify({
-          data: {
-            nama_ekskul: namaEskul,
-            deskripsi: deskripsi,
-            foto: uploadedImgId,
-          },
-        }),
+        body: JSON.stringify({ data: payloadData }),
       });
 
       if (res.ok) {
@@ -142,32 +165,60 @@ export default function AdminGaleriPage() {
     }
   };
 
-  // Handler Hapus Galeri
+  // Handler Hapus Galeri (Diperbaiki)
   const handleHapusData = async () => {
     if (!selectedItemToDelete) return;
 
     try {
-      const token = localStorage.getItem("admin_token") || localStorage.getItem("token");
-      const headersConfig: HeadersInit = token
-        ? { Authorization: `Bearer ${token}` }
-        : {};
+      // Ambil token dari berbagai variasi nama key localStorage
+      const token =
+        localStorage.getItem("admin_token") ||
+        localStorage.getItem("token") ||
+        localStorage.getItem("jwt") ||
+        localStorage.getItem("accessToken");
 
+      const headersConfig: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+
+      if (token && token !== "null" && token !== "undefined") {
+        headersConfig["Authorization"] = `Bearer ${token}`;
+      }
+
+      // Prioritaskan documentId (Strapi v5), fallback ke id angka (Strapi v4)
       const targetId = selectedItemToDelete.documentId || selectedItemToDelete.id;
 
-      const res = await fetch(`${STRAPI_URL}/api/galeris/${targetId}`, {
+      let res = await fetch(`${STRAPI_URL}/api/galeris/${targetId}`, {
         method: "DELETE",
         headers: headersConfig,
       });
+
+      // Jika mencoba documentId gagal, coba hapus menggunakan numeric ID
+      if (!res.ok && selectedItemToDelete.documentId && selectedItemToDelete.id) {
+        res = await fetch(`${STRAPI_URL}/api/galeris/${selectedItemToDelete.id}`, {
+          method: "DELETE",
+          headers: headersConfig,
+        });
+      }
 
       if (res.ok) {
         setShowConfirmDelete(false);
         setShowSuccessDelete(true);
         fetchGaleriData();
       } else {
-        alert("Gagal menghapus data dari server.");
+        const errJson = await res.json().catch(() => ({}));
+        console.error("Error Hapus Strapi:", res.status, errJson);
+
+        // Memberikan info penyebab error yang spesifik
+        if (res.status === 403) {
+          alert("Gagal menghapus (403 Forbidden): Pastikan izin 'delete' untuk Galeri sudah di-centang juga di Settings > Roles > Public di Strapi.");
+        } else {
+          alert(`Gagal menghapus data dari server [Status ${res.status}]: ${errJson?.error?.message || "Cek console browser"}`);
+        }
       }
     } catch (err) {
       console.error("Gagal menghapus foto:", err);
+      alert("Terjadi kesalahan koneksi saat menghapus data.");
     }
   };
 

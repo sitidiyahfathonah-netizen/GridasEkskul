@@ -24,7 +24,7 @@ export function Galeri() {
   const [activeItem, setActiveItem] = useState<GaleriItem | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // Helper untuk memproses URL foto dari Strapi secara fleksibel
+  // Helper memproses URL foto dari Strapi
   const getStrapiMediaUrl = (media: any) => {
     if (!media) return null;
     const item = Array.isArray(media) ? media[0] : media;
@@ -39,7 +39,7 @@ export function Galeri() {
     return `${STRAPI_URL}${rawUrl}`;
   };
 
-  // FETCH DATA DARI API STRAPI
+  // FETCH DATA GALERI DARI STRAPI
   useEffect(() => {
     const fetchGaleri = async () => {
       try {
@@ -51,20 +51,36 @@ export function Galeri() {
           const attrs = item.attributes || item;
           const fotoData = attrs.foto;
           const ekskulData = attrs.ekskul || attrs.ekskuls;
+          const rawJudul = attrs.judul_kegiatan || "Tanpa Judul";
 
-          // Ambil nama ekskul dari relasi
-          const namaEkskul =
+          // 1. Ambil nama ekskul dari relation Strapi (memeriksa semua kemungkinan hirarki JSON Strapi)
+          let namaEkskul =
             ekskulData?.nama_ekskul ||
             ekskulData?.attributes?.nama_ekskul ||
-            (Array.isArray(ekskulData) ? ekskulData[0]?.nama_ekskul || ekskulData[0]?.attributes?.nama_ekskul : null) ||
-            "Lainnya";
+            ekskulData?.data?.attributes?.nama_ekskul ||
+            ekskulData?.data?.nama_ekskul ||
+            (Array.isArray(ekskulData?.data) ? ekskulData.data[0]?.attributes?.nama_ekskul : null) ||
+            (Array.isArray(ekskulData) ? ekskulData[0]?.nama_ekskul || ekskulData[0]?.attributes?.nama_ekskul : null);
+
+          // 2. Jika relasi Strapi tidak terhubung, ekstrak dari judul_kegiatan (contoh: "Tata Busana - Proses sketsa...")
+          if ((!namaEkskul || namaEkskul === "Lainnya" || namaEkskul === "Galeri Ekskul") && rawJudul.includes("-")) {
+            const parts = rawJudul.split("-");
+            if (parts.length > 0 && parts[0].trim().length > 0) {
+              namaEkskul = parts[0].trim();
+            }
+          }
+
+          // Fallback terakhir jika benar-benar tidak terdeteksi
+          if (!namaEkskul) {
+            namaEkskul = "Lainnya";
+          }
 
           const imageSrc =
             getStrapiMediaUrl(fotoData) || "/images/bg-katalog.jpeg";
 
           return {
             id: item.id || item.documentId,
-            judul_kegiatan: attrs.judul_kegiatan || "Tanpa Judul",
+            judul_kegiatan: rawJudul,
             nama_ekskul: namaEkskul,
             imageSrc: imageSrc,
           };
@@ -81,13 +97,13 @@ export function Galeri() {
     fetchGaleri();
   }, []);
 
-  // Filter daftar ekskul unik untuk tombol pilihan
-  const listEkskul = [
+  // Filter pilihan nama ekskul untuk tombol pills
+  const listEkskulFilter = [
     "Semua",
     ...Array.from(new Set(galeriData.map((g) => g.nama_ekskul))),
   ];
 
-  // Data yang difilter sesuai tombol ekskul yang aktif
+  // Menampilkan foto sesuai pilihan filter
   const filteredItems =
     selectedEkskul === "Semua"
       ? galeriData
@@ -96,7 +112,7 @@ export function Galeri() {
   return (
     <div className={`min-h-screen bg-white text-slate-800 flex flex-col justify-between ${josefin.className}`}>
 
-      {/* 1. CONTAINER UTAMA */}
+      {/* CONTAINER UTAMA */}
       <main className="max-w-7xl mx-auto px-6 py-10 flex-1 w-full">
 
         {/* HEADER GALERI */}
@@ -109,15 +125,15 @@ export function Galeri() {
           </p>
         </div>
 
-        {/* FILTER PER KELOMPOK EKSKUL (POIN 3) */}
+        {/* FILTER PILLS */}
         <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-8 scrollbar-none">
-          {listEkskul.map((ekskul) => (
+          {listEkskulFilter.map((ekskul) => (
             <button
               key={ekskul}
               onClick={() => setSelectedEkskul(ekskul)}
               className={`px-5 py-2 rounded-full text-sm font-semibold transition-all whitespace-nowrap cursor-pointer ${selectedEkskul === ekskul
-                ? "bg-[#005187] text-white shadow-md"
-                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                  ? "bg-[#005187] text-white shadow-md"
+                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                 }`}
             >
               {ekskul}
@@ -132,39 +148,37 @@ export function Galeri() {
           </div>
         )}
 
-        {/* GRID CARD GALERI */}
+        {/* GRID DAFTAR FOTO KEGIATAN */}
         {!isLoading && (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {filteredItems.map((item) => (
               <div
                 key={item.id}
                 onClick={() => setActiveItem(item)}
-                className="group cursor-pointer bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 flex flex-col justify-between transform hover:-translate-y-1"
+                className="group cursor-pointer relative h-52 w-full rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 bg-slate-100"
               >
                 {/* Visual Foto */}
-                <div className="relative w-full aspect-[4/3] overflow-hidden bg-slate-100">
-                  <img
-                    src={item.imageSrc}
-                    alt={item.judul_kegiatan}
-                    className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-                  />
-                  <span className="absolute top-3 left-3 bg-[#005187]/90 text-white text-xs px-3 py-1 rounded-full font-semibold backdrop-blur-sm">
-                    {item.nama_ekskul}
-                  </span>
-                </div>
+                <img
+                  src={item.imageSrc}
+                  alt={item.judul_kegiatan}
+                  className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                />
 
-                {/* Judul Kegiatan (Keterangan) */}
-                <div className="p-4 bg-white text-center">
-                  <p className="text-sm font-semibold text-slate-700 line-clamp-2">
-                    {item.judul_kegiatan}
-                  </p>
+                {/* Overlay Gradient Gelap */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+
+                {/* Nama Ekskul Melayang di Atas Foto */}
+                <div className="absolute bottom-4 left-5 right-5 z-10">
+                  <h3 className="text-white font-bold text-lg drop-shadow-md">
+                    {item.nama_ekskul}
+                  </h3>
                 </div>
               </div>
             ))}
           </div>
         )}
 
-        {/* KONDISI JIKA FOTO KOSONG */}
+        {/* JIKA FOTO KOSONG */}
         {!isLoading && filteredItems.length === 0 && (
           <div className="text-center py-16 text-slate-400">
             Belum ada foto galeri untuk ekskul ini.
@@ -172,47 +186,57 @@ export function Galeri() {
         )}
       </main>
 
-      {/* 2. POP UP / MODAL DETAIL FOTO (POIN 2) */}
+      {/* POP-UP MODAL DETAIL FOTO */}
       {activeItem && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm transition-all"
           onClick={() => setActiveItem(null)}
         >
           <div
-            className="bg-white rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl transform transition-all relative animate-in fade-in zoom-in duration-200"
+            className="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl transform transition-all relative animate-in fade-in zoom-in duration-200"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Tombol Tutup Modal */}
-            <button
-              onClick={() => setActiveItem(null)}
-              className="absolute top-4 right-4 w-9 h-9 bg-black/50 hover:bg-black/80 text-white rounded-full flex items-center justify-center z-10 transition cursor-pointer"
-            >
-              ✕
-            </button>
-
-            {/* Gambar Besar Modal */}
-            <div className="w-full max-h-[70vh] bg-black flex items-center justify-center overflow-hidden">
-              <img
-                src={activeItem.imageSrc}
-                alt={activeItem.judul_kegiatan}
-                className="w-full h-full object-contain"
-              />
+            {/* Header Modal */}
+            <div className="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+              <div>
+                <h2 className="text-xl font-bold text-[#005187]">
+                  {activeItem.nama_ekskul}
+                </h2>
+                <p className="text-xs text-slate-500">
+                  Dokumentasi kegiatan
+                </p>
+              </div>
+              <button
+                onClick={() => setActiveItem(null)}
+                className="w-8 h-8 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold flex items-center justify-center transition cursor-pointer"
+              >
+                ✕
+              </button>
             </div>
 
-            {/* Informasi Detail */}
-            <div className="p-6 space-y-2">
-              <div className="inline-block bg-[#005187] text-white text-xs font-bold px-3 py-1 rounded-md">
-                {activeItem.nama_ekskul}
+            {/* Content Modal */}
+            <div className="p-6 space-y-4">
+              <div className="w-full h-64 bg-slate-100 rounded-2xl overflow-hidden shadow-inner">
+                <img
+                  src={activeItem.imageSrc}
+                  alt={activeItem.judul_kegiatan}
+                  className="w-full h-full object-cover"
+                />
               </div>
-              <h3 className="text-xl font-bold text-slate-900">
-                {activeItem.judul_kegiatan}
-              </h3>
+
+              {/* Keterangan Kegiatan */}
+              <div className="text-center bg-slate-50 p-4 rounded-xl border border-slate-100">
+                <p className="text-sm font-semibold text-slate-700">
+                  {activeItem.judul_kegiatan}
+                </p>
+              </div>
+
             </div>
           </div>
         </div>
       )}
 
-      {/* 3. FOOTER MINIMALIS FIGMA (POIN 4) */}
+      {/* FOOTER */}
       <footer className="w-full bg-white border-t border-slate-200 py-6 px-6 md:px-16 mt-12">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-sm">
           <p className="font-bold text-[#005187]">
