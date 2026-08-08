@@ -55,8 +55,10 @@ export function DetailEskulCard({ eskul, onBack, onJoin }: DetailEskulProps) {
       item?.data?.url;
 
     if (!rawUrl) return null;
-    if (rawUrl.startsWith('http://') || rawUrl.startsWith('https://')) return rawUrl;
-    return `https://cn17l1l4-1337.asse.devtunnels.ms/${rawUrl}`;
+
+    if (rawUrl.startsWith("http://") || rawUrl.startsWith("https://")) {
+      return rawUrl;
+    }
     return `${STRAPI_URL}${rawUrl}`;
   };
 
