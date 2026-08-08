@@ -51,7 +51,7 @@ export default function LoginForm() {
         <div className="pt-4 flex justify-center">
           <button
             type="submit"
-            className="mx-auto mt-10 block w-full max-w-[220px] rounded-xl bg-white py-4 text-lg font-bold text-[#00598A] transition duration-200 hover:bg-gray-100">
+            className="mx-auto mt-10 block w-full max-w-[220px] rounded-xl bg-white hover:bg-blue-600 hover:text-white active:bg-[#00598A] active:text-white active:scale-95 py-4 text-lg font-bold text-[#00598A] transition-all duration-200">
             Login
           </button>
         </div>

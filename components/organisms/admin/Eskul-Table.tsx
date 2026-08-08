@@ -80,15 +80,13 @@ export function EskulTable({
                     <div className="flex justify-center gap-3">
                       <button
                         onClick={() => onEdit(item)}
-                        className="bg-[#1E3A8A] hover:bg-[#172F72] text-white px-4 py-2 rounded-lg font-semibold text-sm transition duration-200"
-                      >
+                        className="bg-blue-900 hover:bg-blue-950 active:bg-[#0f1f4d] active:scale-95 text-white px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-200">
                         Edit
                       </button>
 
                       <button
                         onClick={() => onDelete(item.id, item.nama)}
-                        className="bg-[#FF2E35] hover:bg-[#E5242B] text-white px-4 py-2 rounded-lg font-semibold text-sm transition duration-200"
-                      >
+                        className="bg-red-600 hover:bg-[#E5242B] active:bg-red-800 active:scale-95 text-white px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-200">
                         Hapus
                       </button>
                     </div>

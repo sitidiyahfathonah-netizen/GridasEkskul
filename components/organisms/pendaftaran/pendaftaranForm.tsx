@@ -2,7 +2,7 @@
 import { Josefin_Sans } from "next/font/google";
 import { useSearchParams } from "next/navigation";
 
-const josefin = Josefin_Sans({ 
+const josefin = Josefin_Sans({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"]
 });
@@ -12,7 +12,7 @@ interface PendaftaranFormProps {
   onSuccess?: () => void;
 }
 
-export  function PendaftaranForm({ onSuccess }: { onSuccess?: () => void }) {
+export function PendaftaranForm({ onSuccess }: { onSuccess?: () => void }) {
 
   const searchParams = useSearchParams();
   const ekskulId = searchParams.get("ekskulId");
@@ -26,51 +26,51 @@ export  function PendaftaranForm({ onSuccess }: { onSuccess?: () => void }) {
   const [isSuccess, setIsSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
-   const handleKembaliKeKatalog = () => {
-  setIsSuccess(false);
-  if (onSuccess) {
-    onSuccess();
-  }
-};
-
-
-  
-
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setLoading(true);
-
-  const BASE_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
-
-  try {
-    const res = await fetch(`${BASE_URL}/api/pendaftarans`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        data: {
-          nama: formData.nama,
-          kelas: formData.kelas,
-          no_telp: formData.no_telp,
-         ekskuls: ekskulId ? [ekskulId]:[]
-        },
-      }),
-    });
-
-    if (res.ok) {
-      setIsSuccess(true);
-      setFormData({ nama: "", kelas: "", no_telp: "", jurusan: "" });
-    } else {
-      alert("Gagal mengirim pendaftaran, coba lagi!");
+  const handleKembaliKeKatalog = () => {
+    setIsSuccess(false);
+    if (onSuccess) {
+      onSuccess();
     }
-  } catch (error) {
-    console.error("Error submitting form:", error);
-    alert("Terjadi kesalahan koneksi ke server.");
-  } finally {
-    setLoading(false);
-  }
-};
+  };
+
+
+
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    const BASE_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
+
+    try {
+      const res = await fetch(`${BASE_URL}/api/pendaftarans`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          data: {
+            nama: formData.nama,
+            kelas: formData.kelas,
+            no_telp: formData.no_telp,
+            ekskuls: ekskulId ? [ekskulId] : []
+          },
+        }),
+      });
+
+      if (res.ok) {
+        setIsSuccess(true);
+        setFormData({ nama: "", kelas: "", no_telp: "", jurusan: "" });
+      } else {
+        alert("Gagal mengirim pendaftaran, coba lagi!");
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("Terjadi kesalahan koneksi ke server.");
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     /* SEAKAN SATU HALAMAN PENUH DESKTOP */
     <section className="w-full min-h-screen bg-cover bg-center relative flex flex-col justify-center items-center px-6 md:px-16"
@@ -81,8 +81,8 @@ const handleSubmit = async (e: React.FormEvent) => {
 
       <div className="relative z-10 w-full max-w-2xl flex flex-col justify-center h-full space-y-6 py-12">
 
-        
-        
+
+
         {/* INPUT FORM & JUDUL (Semua Sejajar Menggunakan Grid yang Sama) */}
         {isSuccess ? (
           /* STATUS SUKSES */
@@ -91,24 +91,23 @@ const handleSubmit = async (e: React.FormEvent) => {
               <span className="text-white text-xl font-bold">✓</span>
             </div>
             <h3 className="text-lg font-bold text-white">Pendaftaran Berhasil!</h3>
-            <button 
-              onClick={() =>{
+            <button
+              onClick={() => {
                 setIsSuccess(false);
                 if (onSuccess) onSuccess();
               }}
-              className="px-8 py-1.5 bg-white text-blue-900 rounded-none text-xs font-bold transition hover:bg-slate-100"
-            >
-              Kembali
+              className="px-10 py-2.5 bg-green-500 hover:bg-green-700 active:bg-[#056b2d] active:scale-95 text-white rounded-lg text-sm font-bold transition-all duration-200">
+              Oke
             </button>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-5 w-full">
-            
+
             {/* JUDUL FORM*/}
             <div className="grid grid-cols-1 sm:grid-cols-4 items-center gap-2 sm:gap-4 mb-4">
               <div className="sm:col-start-2 sm:col-span-3">
-                 <h1 className="text-3xl sm:text-4xl md:text-[60px] font-bold tracking-tight leading-tight text-white [text-shadow:-12px_4px_4px_rgba(0,0,0,0.25)]">
-                  Form Pendaftaran 
+                <h1 className="text-3xl sm:text-4xl md:text-[60px] font-bold tracking-tight leading-tight text-white [text-shadow:-12px_4px_4px_rgba(0,0,0,0.25)]">
+                  Form Pendaftaran
                 </h1>
               </div>
             </div>
@@ -116,7 +115,7 @@ const handleSubmit = async (e: React.FormEvent) => {
             {/* 1. Nama */}
             <div className="grid grid-cols-1 sm:grid-cols-4 items-start sm:items-center gap-2 sm:gap-4">
               <label className="text-base font-medium text-white">Nama</label>
-              <input 
+              <input
                 type="text"
                 required
                 value={formData.nama}
@@ -128,7 +127,7 @@ const handleSubmit = async (e: React.FormEvent) => {
             {/* 2. Kelas */}
             <div className="grid grid-cols-1 sm:grid-cols-4 items-start sm:items-center gap-2 sm:gap-4">
               <label className="text-base font-medium text-white">Kelas</label>
-              <select 
+              <select
                 required
                 value={formData.kelas}
                 onChange={(e) => setFormData({ ...formData, kelas: e.target.value })}
@@ -144,7 +143,7 @@ const handleSubmit = async (e: React.FormEvent) => {
             {/* 3. No.Telp */}
             <div className="grid grid-cols-1 sm:grid-cols-4 items-start sm:items-center gap-2 sm:gap-4">
               <label className="text-base font-medium text-white">No.Telp</label>
-              <input 
+              <input
                 type="tel"
                 required
                 value={formData.no_telp}
@@ -156,7 +155,7 @@ const handleSubmit = async (e: React.FormEvent) => {
             {/* 4. Jurusan */}
             <div className="grid grid-cols-1 sm:grid-cols-4 items-start sm:items-center gap-2 sm:gap-4">
               <label className="text-base font-medium text-white">Jurusan</label>
-              <select 
+              <select
                 required
                 value={formData.jurusan}
                 onChange={(e) => setFormData({ ...formData, jurusan: e.target.value })}
@@ -173,9 +172,9 @@ const handleSubmit = async (e: React.FormEvent) => {
             {/* TOMBOL DAFTAR KOTAK PUTIH (Lurus di bawah textfield) */}
             <div className="grid grid-cols-1 sm:grid-cols-4 items-center gap-2 sm:gap-4 pt-4">
               <div className="sm:col-start-2 sm:col-span-3">
-                <button 
+                <button
                   type="submit"
-                  className="w-full sm:w-auto px-10 py-2 bg-white hover:bg-slate-100 text-[#16357a] font-bold text-sm rounded-none transition duration-150 shadow-md tracking-wider"
+                  className="w-full sm:w-auto px-10 py-2 bg-white hover:bg-slate-100 active:bg-slate-200 active:scale-95 text-[#16357a] font-bold text-sm rounded-none transition-all duration-200 shadow-md tracking-wider"
                 >
                   Daftar
                 </button>
