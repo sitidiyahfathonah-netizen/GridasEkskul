@@ -47,14 +47,19 @@ export function DetailEskulCard({ eskul, onBack, onJoin }: DetailEskulProps) {
   // Helper fungsi untuk membaca URL gambar dari Strapi v5 secara fleksibel
   const getStrapiMediaUrl = (media: any) => {
     if (!media) return null;
-    const item = Array.isArray(media) ? media[0] : media;
-    const rawUrl =
-      item?.url ||
-      item?.attributes?.url ||
-      item?.data?.attributes?.url ||
-      item?.data?.url;
+    
+    // Cari URL dari berbagai struktur JSON Strapi (V4/V5)
+    const rawUrl = 
+      media?.url || 
+      media?.attributes?.url || 
+      media?.data?.attributes?.url || 
+      media?.data?.url || 
+      (Array.isArray(media) ? media[0]?.url || media[0]?.attributes?.url : null) ||
+      (Array.isArray(media?.data) ? media?.data[0]?.attributes?.url || media?.data[0]?.url : null);
 
     if (!rawUrl) return null;
+    if (rawUrl.startsWith("http://") || rawUrl.startsWith("https://")) return rawUrl;
+    return `https://cn17l1l4-1337.asse.devtunnels.ms${rawUrl}`;
 
     if (rawUrl.startsWith("http://") || rawUrl.startsWith("https://")) {
       return rawUrl;
@@ -63,8 +68,8 @@ export function DetailEskulCard({ eskul, onBack, onJoin }: DetailEskulProps) {
   };
 
   // Panggil helper di atas untuk ambil foto
-  const fotoUtamaUrl = getStrapiMediaUrl(eskul.foto_utama) || '';
-  const fotoPrestasiUrl = getStrapiMediaUrl(eskul.foto_prestasi);
+  const fotoUtamaUrl = getStrapiMediaUrl(eskul.foto_utama || eskul.attributes?.foto_utama);
+  const fotoPrestasiUrl = getStrapiMediaUrl(eskul.foto_prestasi || eskul.attributes?.foto_prestasi);
 
   // Penentu apakah section prestasi muncul atau tidak
   const punyaPrestasi = Boolean(fotoPrestasiUrl || eskul.prestasi);
@@ -133,7 +138,7 @@ export function DetailEskulCard({ eskul, onBack, onJoin }: DetailEskulProps) {
               <div
                 className="w-full rounded-2xl overflow-hidden shadow-sm bg-cover bg-center"
                 style={{
-                  backgroundImage: `url(${fotoUtamaUrl})`,
+                  backgroundImage: fotoUtamaUrl ? `url("${fotoUtamaUrl}")` : 'none',
                   aspectRatio: "3/4",
                   height: "100%",
                   minHeight: "250px"
@@ -151,9 +156,8 @@ export function DetailEskulCard({ eskul, onBack, onJoin }: DetailEskulProps) {
                 <p className="font-normal text-[#5b7a8a] text-xl md:text-xlleading-relaxed">{tempat}</p>
               </div>
               <div>
-                <span className="font-bold text-sky-800 block mb-1 text-xl md:text-xl">Hari :</span>
-                <p className="font-normal text-[#5b7a8a] text-xl md:text-xl leading-relaxed">{hari}</p>
-
+                <span className="font-bold text-[#00598A] block mb-1 text-sm md:text-base">Hari :</span>
+                <p className="font-normal text-[#5b7a8a] text-sm md:text-base leading-relaxed">{hari}</p>
               </div>
             </div>
           </div>
