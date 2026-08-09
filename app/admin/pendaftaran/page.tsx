@@ -25,40 +25,29 @@ export default function PendaftaranAdminPage() {
   const fetchPendaftarData = async () => {
     setIsLoading(true);
     try {
-      const token =
-        localStorage.getItem("admin_token") ||
-        localStorage.getItem("token") ||
-        localStorage.getItem("jwt");
-
-      const headersConfig: Record<string, string> = {};
-      if (token && token !== "null" && token !== "undefined") {
-        headersConfig["Authorization"] = `Bearer ${token}`;
-      }
-
-      const res = await fetch(`${STRAPI_URL}/api/pendaftarans?populate=*`, {
-        headers: headersConfig,
-      });
+      // Tembak API tanpa menyertakan Authorization Header
+      const res = await fetch(`${STRAPI_URL}/api/pendaftarans?populate=*`);
       const result = await res.json();
+
+      console.log("Data dari Strapi:", result);
 
       if (res.ok && result.data) {
         const formatted = result.data.map((item: any) => {
-          const attrs = item.attributes || item;
-          const ekskulObj = attrs.ekskul || attrs.ekskuls;
+          const attrs = item.attributes ? item.attributes : item;
+          const ekskulData = attrs.ekskul || attrs.ekskuls;
           let namaEkskul = "-";
 
-          if (ekskulObj) {
-            const dataEkskul = Array.isArray(ekskulObj) ? ekskulObj[0] : ekskulObj;
-            namaEkskul =
-              dataEkskul?.nama_ekskul ||
-              dataEkskul?.attributes?.nama_ekskul ||
-              dataEkskul?.data?.attributes?.nama_ekskul ||
-              attrs.nama_ekskul ||
-              "-";
+          if (ekskulData) {
+            if (Array.isArray(ekskulData) && ekskulData.length > 0) {
+              namaEkskul = ekskulData[0]?.nama_ekskul || ekskulData[0]?.attributes?.nama_ekskul || "-";
+            } else if (typeof ekskulData === "object") {
+              namaEkskul = ekskulData?.nama_ekskul || ekskulData?.data?.attributes?.nama_ekskul || "-";
+            }
           }
 
           return {
             id: item.id,
-            documentId: item.documentId,
+            documentId: item.documentId || item.id,
             nama: attrs.nama || "-",
             kelas: attrs.kelas || "-",
             jurusan: attrs.jurusan || "-",
@@ -76,46 +65,25 @@ export default function PendaftaranAdminPage() {
     }
   };
 
-  const handleDeletePendaftar = async (targetId: string | number) => {
-    const konfirmasi = confirm("Apakah Anda yakin ingin menghapus data pendaftar ini?");
-    if (!konfirmasi) return;
+  const handleDeletePendaftar = async (id: number | string) => {
+    if (!confirm("Apakah Anda yakin ingin menghapus data pendaftar ini?")) return;
 
     try {
-      const token =
-        localStorage.getItem("admin_token") ||
-        localStorage.getItem("token") ||
-        localStorage.getItem("jwt");
-
-      const headersConfig: Record<string, string> = {};
-      if (token && token !== "null" && token !== "undefined") {
-        headersConfig["Authorization"] = `Bearer ${token}`;
-      }
-
-      let res = await fetch(`${STRAPI_URL}/api/pendaftarans/${targetId}`, {
+      const res = await fetch(`${STRAPI_URL}/api/pendaftarans/${id}`, {
         method: "DELETE",
-        headers: headersConfig,
+        // Jangan pakai Authorization header jika menggunakan izin Public
       });
 
-      const itemToDelete = pendaftarList.find(
-        (i) => i.documentId === targetId || i.id === targetId
-      );
-      if (!res.ok && itemToDelete?.id && typeof targetId === "string") {
-        res = await fetch(`${STRAPI_URL}/api/pendaftarans/${itemToDelete.id}`, {
-          method: "DELETE",
-          headers: headersConfig,
-        });
-      }
-
       if (res.ok) {
-        alert("Pendaftar berhasil dihapus!");
-        fetchPendaftarData();
+        alert("Data berhasil dihapus!");
+        fetchPendaftarData(); // Refresh list
       } else {
         const errJson = await res.json().catch(() => ({}));
-        alert(`Gagal menghapus: ${errJson?.error?.message || "Periksa izin role Strapi"}`);
+        alert(`Gagal menghapus: ${errJson?.error?.message || "Terjadi kesalahan"}`);
       }
     } catch (err) {
-      console.error("Gagal menghapus pendaftar:", err);
-      alert("Terjadi kesalahan koneksi.");
+      console.error("Error deleting:", err);
+      alert("Gagal terhubung ke server.");
     }
   };
 
