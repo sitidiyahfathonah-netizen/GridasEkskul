@@ -10,7 +10,7 @@ import { PendaftaranForm } from "@/components/organisms/pendaftaran";
 
 
 export default function Home() {
-  const [selectedEkskul, setSelectedEskul] = useState<any | null>(null);
+  const [selectedEskul, setSelectedEskul] = useState<any | null>(null);
   const [showPendaftaranOnly, setShowPendaftaranOnly] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -79,34 +79,24 @@ export default function Home() {
           <div className="pt-20">
             <Suspense fallback={<div className="min-h-screen bg-[#16357a] text-white flex items-center justify-center">Loading...</div>}>
               <PendaftaranForm
+                ekskulId={selectedEskul?.documentId || selectedEskul?.id}
                 onSuccess={() => {
                   setShowPendaftaranOnly(false);
-                  setTimeout(() => {
-                    const element = document.getElementById("ekskul");
-                    if (element) {
-                      element.scrollIntoView({ behavior: "smooth" });
-                    }
-                  }, 100);
+                  setSelectedEskul(null);
                 }}
               />
             </Suspense>
           </div>
-        ) : selectedEkskul ? (
+        ) : selectedEskul ? (
           /* KONDISI 2: Jika sedang membuka Detail Ekskul */
           <DetailEskulCard
-            eskul={selectedEkskul}
+            eskul={selectedEskul}
             onBack={() => {
               setSelectedEskul(null);
-              setTimeout(() => {
-                const element = document.getElementById("ekskul");
-                if (element) {
-                  element.scrollIntoView({ behavior: "smooth" });
-                }
-              }, 50);
             }}
             onJoin={() => {
-              handleGabung();
-              setSelectedEskul(null);
+              // KUNCI UTAMA: Jangan ubah/reset selectedEskul saat gabung!
+              // Cukup buka tampilan form pendaftaran saja.
               setShowPendaftaranOnly(true);
               window.scrollTo(0, 0);
             }}

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Sidebar } from "@/components/molecules/admin";
 import SearchBar from "@/components/molecules/admin/SearchBar";
 import PendaftaranTable, { PendaftarData } from "@/components/molecules/admin/pendaftaran-table";
+import { DeleteConfirmModal } from "@/components/organisms/admin/DeleteConfirmModal";
 import { Josefin_Sans } from "next/font/google";
 
 const josefin = Josefin_Sans({
@@ -18,6 +19,11 @@ export default function PendaftaranAdminPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
+  // State untuk Modal Hapus (Custom Organism)
+  const [selectedDeleteId, setSelectedDeleteId] = useState<number | string | null>(null);
+  const [showDeleteSuccess, setShowDeleteSuccess] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
   useEffect(() => {
     fetchPendaftarData();
   }, []);
@@ -25,11 +31,11 @@ export default function PendaftaranAdminPage() {
   const fetchPendaftarData = async () => {
     setIsLoading(true);
     try {
-      // Tembak API tanpa menyertakan Authorization Header
-      const res = await fetch(`${STRAPI_URL}/api/pendaftarans?populate=*`);
+
+      const res = await fetch(`${STRAPI_URL}/api/pendaftarans?populate=ekskul`);
       const result = await res.json();
 
-      console.log("Data dari Strapi:", result);
+
 
       if (res.ok && result.data) {
         const formatted = result.data.map((item: any) => {
@@ -38,10 +44,16 @@ export default function PendaftaranAdminPage() {
           let namaEkskul = "-";
 
           if (ekskulData) {
+            // 1. Jika ekskulData berbentuk Array
             if (Array.isArray(ekskulData) && ekskulData.length > 0) {
-              namaEkskul = ekskulData[0]?.nama_ekskul || ekskulData[0]?.attributes?.nama_ekskul || "-";
-            } else if (typeof ekskulData === "object") {
-              namaEkskul = ekskulData?.nama_ekskul || ekskulData?.data?.attributes?.nama_ekskul || "-";
+              const firstEkskul = ekskulData[0];
+              const eAttrs = firstEkskul.attributes || firstEkskul;
+              namaEkskul = eAttrs.judul || eAttrs.nama || eAttrs.nama_ekskul || eAttrs.title || "-";
+            }
+            // 2. Jika ekskulData berbentuk Object
+            else if (typeof ekskulData === "object") {
+              const eAttrs = ekskulData.data?.attributes || ekskulData.attributes || ekskulData.data || ekskulData;
+              namaEkskul = eAttrs.judul || eAttrs.nama || eAttrs.nama_ekskul || eAttrs.title || "-";
             }
           }
 
@@ -65,25 +77,34 @@ export default function PendaftaranAdminPage() {
     }
   };
 
-  const handleDeletePendaftar = async (id: number | string) => {
-    if (!confirm("Apakah Anda yakin ingin menghapus data pendaftar ini?")) return;
+  // Trigger saat tombol Hapus di tabel diklik -> Buka Modal
+  const handleOpenDeleteModal = (id: number | string) => {
+    setSelectedDeleteId(id);
+  };
 
+  // Eksekusi Hapus saat tombol "Ya" di Modal diklik
+  const handleConfirmDelete = async () => {
+    if (!selectedDeleteId) return;
+
+    setIsDeleting(true);
     try {
-      const res = await fetch(`${STRAPI_URL}/api/pendaftarans/${id}`, {
+      const res = await fetch(`${STRAPI_URL}/api/pendaftarans/${selectedDeleteId}`, {
         method: "DELETE",
-        // Jangan pakai Authorization header jika menggunakan izin Public
+
       });
 
       if (res.ok) {
-        alert("Data berhasil dihapus!");
-        fetchPendaftarData(); // Refresh list
+        setSelectedDeleteId(null);
+        setShowDeleteSuccess(true);
+        fetchPendaftarData(); // Refresh data tabel
       } else {
-        const errJson = await res.json().catch(() => ({}));
-        alert(`Gagal menghapus: ${errJson?.error?.message || "Terjadi kesalahan"}`);
+        alert("Gagal menghapus data dari server.");
       }
     } catch (err) {
       console.error("Error deleting:", err);
-      alert("Gagal terhubung ke server.");
+      alert("Terjadi kesalahan koneksi.");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -99,7 +120,7 @@ export default function PendaftaranAdminPage() {
       <Sidebar />
 
       <main className="flex-1 flex-col min-w-0">
-        {/* Header Biru Atas (Presisi seperti Figma) */}
+        {/* Header Biru Atas */}
         <div className="bg-[#00598a] w-full py-8 px-5">
           <h1 className={`text-3xl md:text-4xl font-extrabold text-white tracking-wider ${josefin.className}`}>
             PENDAFTAR
@@ -116,10 +137,20 @@ export default function PendaftaranAdminPage() {
           <PendaftaranTable
             list={filteredList}
             isLoading={isLoading}
-            onDelete={handleDeletePendaftar}
+            onDelete={handleOpenDeleteModal}
           />
         </div>
       </main>
+
+      {/* Modal Custom dari Organisms */}
+      <DeleteConfirmModal
+        isOpen={Boolean(selectedDeleteId)}
+        isSuccess={showDeleteSuccess}
+        isDeleting={isDeleting}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setSelectedDeleteId(null)}
+        onCloseSuccess={() => setShowDeleteSuccess(false)}
+      />
     </div>
   );
 }
