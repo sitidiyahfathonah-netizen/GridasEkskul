@@ -160,8 +160,6 @@ export function DetailEskulCard({ eskul, onBack, onJoin }: DetailEskulProps) {
                 <span className="font-bold text-[#00598A] block mb-1 text-lg md:text-3xl">Hari :</span>
                 <p className="font-bold text-[#3d5a6c] text-lg md:text-2xl leading-snug">{hari}</p>
 
-                <span className="font-bold text-[#00598A] block mb-1 text-sm md:text-base">Hari :</span>
-                <p className="font-normal text-[#5b7a8a] text-sm md:text-base leading-relaxed">{hari}</p>
               </div>
             </div>
           </div>

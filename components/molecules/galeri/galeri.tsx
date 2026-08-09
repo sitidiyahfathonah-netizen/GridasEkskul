@@ -150,7 +150,7 @@ export function Galeri() {
 
         {/* GRID DAFTAR FOTO KEGIATAN */}
         {!isLoading && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-6">
             {filteredItems.map((item) => (
               <div
                 key={item.id}
@@ -193,44 +193,23 @@ export function Galeri() {
           onClick={() => setActiveItem(null)}
         >
           <div
-            className="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl transform transition-all relative animate-in fade-in zoom-in duration-200"
+            className="bg-white rounded-[32px] max-w-md w-full shadow-2xl transform transition-all relative animate-in fade-in zoom-in duration-200 flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Header Modal */}
-            <div className="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-              <div>
-                <h2 className="text-xl font-bold text-[#005187]">
-                  {activeItem.nama_ekskul}
-                </h2>
-                <p className="text-xs text-slate-500">
-                  Dokumentasi kegiatan
-                </p>
-              </div>
-              <button
-                onClick={() => setActiveItem(null)}
-                className="w-8 h-8 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold flex items-center justify-center transition cursor-pointer"
-              >
-                ✕
-              </button>
+            {/* Visual Foto */}
+            <div className="w-full h-64 md:h-80 rounded-t-[32px] overflow-hidden bg-slate-100">
+              <img
+                src={activeItem.imageSrc}
+                alt={activeItem.judul_kegiatan}
+                className="w-full h-full object-cover"
+              />
             </div>
 
-            {/* Content Modal */}
-            <div className="p-6 space-y-4">
-              <div className="w-full h-64 bg-slate-100 rounded-2xl overflow-hidden shadow-inner">
-                <img
-                  src={activeItem.imageSrc}
-                  alt={activeItem.judul_kegiatan}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-
-              {/* Keterangan Kegiatan */}
-              <div className="text-center bg-slate-50 p-4 rounded-xl border border-slate-100">
-                <p className="text-sm font-semibold text-slate-700">
-                  {activeItem.judul_kegiatan}
-                </p>
-              </div>
-
+            {/* Keterangan Kegiatan */}
+            <div className="px-6 py-6 text-center flex flex-col items-center justify-center min-h-[100px]">
+              <p className="text-xl md:text-2xl font-bold text-black leading-snug">
+                {activeItem.judul_kegiatan}
+              </p>
             </div>
           </div>
         </div>
