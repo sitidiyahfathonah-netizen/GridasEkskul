@@ -192,11 +192,11 @@ export default function AdminGaleriPage() {
         "Content-Type": "application/json",
       };
 
-      // Hanya sertakan token jika benar-benar ada
       if (token) {
         headersConfig["Authorization"] = `Bearer ${token}`;
       }
 
+      // 1. Utamakan documentId (Strapi v5), jika tidak ada gunakan id (Strapi v4)
       const primaryId = selectedItemToDelete.documentId || selectedItemToDelete.id;
 
       if (!primaryId) {
@@ -204,12 +204,13 @@ export default function AdminGaleriPage() {
         return;
       }
 
+      // Request pertama hapus data
       let res = await fetch(`${STRAPI_URL}/api/galeris/${primaryId}`, {
         method: "DELETE",
         headers: headersConfig,
       });
 
-      // Fallback untuk versi Strapi (id vs documentId)
+      // 2. Fallback: Jika gagal dengan documentId, coba pakai numeric id (atau sebaliknya)
       if (!res.ok && selectedItemToDelete.documentId && selectedItemToDelete.id) {
         const fallbackId =
           primaryId === selectedItemToDelete.documentId
@@ -230,29 +231,18 @@ export default function AdminGaleriPage() {
         const errJson = await res.json().catch(() => ({}));
         console.error("Error Hapus Strapi:", res.status, errJson);
 
-        // Jika token invalid/expired (401), bersihkan token & coba sekali lagi tanpa token
-        if (res.status === 401) {
-          localStorage.removeItem("token");
-          localStorage.removeItem("jwt");
-
-          // Coba hapus ulang menggunakan izin Public (tanpa header Authorization)
-          const retryRes = await fetch(`${STRAPI_URL}/api/galeris/${primaryId}`, {
-            method: "DELETE",
-            headers: { "Content-Type": "application/json" },
-          });
-
-          if (retryRes.ok) {
-            setShowConfirmDelete(false);
-            setShowSuccessDelete(true);
-            fetchGaleriData();
-            return;
-          }
+        if (res.status === 403 || res.status === 401) {
+          alert(
+            `Gagal menghapus (Status ${res.status}): Akses ditolak. Cek kembali token login atau centang izin 'delete' untuk Role Public/Authenticated di Strapi Admin Settings.`
+          );
+        } else if (res.status === 404) {
+          alert("Gagal menghapus: Data tidak ditemukan di server (404).");
+        } else {
+          alert(
+            `Gagal menghapus [Status ${res.status}]: ${errJson?.error?.message || "Periksa log di konsole browser."
+            }`
+          );
         }
-
-        alert(
-          `Gagal menghapus [Status ${res.status}]: ${errJson?.error?.message || "Cek console browser"
-          }`
-        );
       }
     } catch (err) {
       console.error("Gagal menghapus foto:", err);
