@@ -61,13 +61,13 @@ export function HapusGaleriModal({
                     <div className="flex w-full items-center justify-center gap-3">
                         <button
                             onClick={onConfirm}
-                            className="w-20 rounded-lg border border-red-500 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50"
+                            className="w-20 rounded-lg border border-red-500 bg-white hover:bg-red-500 hover:text-white active:bg-red-700 active:text-white active:scale-95 py-1.5 text-xs font-bold text-red-600 transition-all duration-200"
                         >
                             Ya
                         </button>
                         <button
                             onClick={onCancel}
-                            className="w-24 rounded-lg border border-red-500 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50"
+                            className="w-24 rounded-lg border border-red-500 bg-white hover:bg-red-500 hover:text-white active:bg-red-700 active:text-white active:scale-95 py-1.5 text-xs font-bold text-red-600 transition-all duration-200"
                         >
                             Pikir Lagi
                         </button>

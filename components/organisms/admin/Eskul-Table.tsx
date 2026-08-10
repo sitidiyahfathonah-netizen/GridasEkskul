@@ -21,10 +21,10 @@ export function EskulTable({
   onDelete,
 }: EskulTableProps) {
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       {/* Cukup gunakan 1 elemen table agar kolom header & body SELALU presisi */}
-      <div className="max-h-[calc(100vh-320px)] overflow-y-auto pr-2">
-        <table className="w-full border-separate border-spacing-y-4 text-left">
+      <div className="max-h-[calc(100vh-250px)] overflow-y-auto overflow-x-auto pr-2">
+        <table className="w-full min-w-[800px] border-separate border-spacing-y-4 text-left">
           {/* Header Tabel */}
           <thead className="sticky top-0 bg-[#F5F7FA] z-10">
             <tr className={`text-[#00598A] text-lg font-bold ${josefin.className}`}>
@@ -70,10 +70,32 @@ export function EskulTable({
                     {item.deskripsi}
                   </td>
 
-                  {/* 4. Jadwal */}
-                  <td className="font-semibold text-gray-600 text-sm align-middle whitespace-pre-line">
-                    {item.jadwal_pelaksanaan}
-                  </td>
+                 {/* 4. Jadwal */}
+<td className="align-middle text-sm">
+  {item.jadwal_pelaksanaan && item.jadwal_pelaksanaan !== "-" ? (
+    <div className="flex flex-col">
+      {item.jadwal_pelaksanaan.includes(",") || item.jadwal_pelaksanaan.includes("\n") ? (
+        <>
+          {/* Baris 1: Hari (Tebal) */}
+          <span className="font-semibold text-slate-700">
+            {item.jadwal_pelaksanaan.split(/[\n,]/)[0]?.trim()}
+          </span>
+          {/* Baris 2: Jam (Abu-abu & Lebih Kecil) */}
+          <span className="text-xs text-gray-500 font-normal mt-0.5">
+            {item.jadwal_pelaksanaan.split(/[\n,]/)[1]?.trim()}
+          </span>
+        </>
+      ) : (
+        /* Jika cuma ada jam saja atau hari saja */
+        <span className="font-semibold text-gray-600">
+          {item.jadwal_pelaksanaan}
+        </span>
+      )}
+    </div>
+  ) : (
+    <span className="text-gray-400 font-normal">-</span>
+  )}
+</td>
 
                   {/* 5. Aksi */}
                   <td className="p-4 rounded-r-xl align-middle">

@@ -35,13 +35,21 @@ export default function TambahGaleriModal({
             <label className="block text-xs font-semibold text-slate-600 mb-1">
               Foto
             </label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
-              className="w-full rounded-lg border border-slate-300 text-xs text-slate-500 file:mr-2 file:rounded-md file:border-0 file:bg-slate-400 file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-white"
-              required
-            />
+            <div className="flex items-center w-full border border-slate-300 rounded-lg overflow-hidden bg-white">
+              <label className="cursor-pointer bg-[#A1AAB4] hover:bg-[#8F98A2] text-gray-900 font-semibold text-xs px-4 py-2 transition-colors shrink-0">
+                Pilih File
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+                  className="hidden"
+                  required
+                />
+              </label>
+              <span className="px-3 text-xs text-slate-400 truncate w-full">
+                {selectedFile ? selectedFile.name : "Tidak ada file yang dipilih"}
+              </span>
+            </div>
           </div>
 
           {/* Nama Ekstrakurikuler */}
