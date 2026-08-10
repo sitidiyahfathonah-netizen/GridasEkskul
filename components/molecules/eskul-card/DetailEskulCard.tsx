@@ -2,6 +2,7 @@
 import { useEffect } from "react";
 import { Josefin_Sans } from "next/font/google";
 import { useRouter } from "next/navigation";
+import { ChevronLeftIcon } from '@heroicons/react/24/outline';
 
 // Pemanggil Font 
 const josefin = Josefin_Sans({
@@ -117,12 +118,12 @@ export function DetailEskulCard({ eskul, onBack, onJoin }: DetailEskulProps) {
         <div className="flex items-center pt-8 pb-8 relative z-30">
           <button
             onClick={onBack}
-            className="text-[#00598A] hover:text-[#003c5e] font-bold transition text-3xl flex items-center absolute left-0">
+            className="text-[#00598A] hover:text-[#003c5e] font-extrabold transition text-3xl flex items-center absolute left-0">
             ←
           </button>
 
           <div className="bg-sky-800/30 px-10 py-1.5 rounded-3xl mx-auto flex items-center justify-center shadow-sm">
-            <span className="text-2xl font-bold text-[#00598A] tracking-wide">
+            <span className="text-3xl font-extrabold text-[#00598A] tracking-tight drop-shadow-sm">
               {nama}
             </span>
           </div>
@@ -149,16 +150,16 @@ export function DetailEskulCard({ eskul, onBack, onJoin }: DetailEskulProps) {
             <div className="w-full md:w-[55%] bg-sky-800/30 backdrop-blur-sm rounded-2xl p-10 flex flex-col justify-center space-y-24 shadow-sm border border-white/60">
               <div>
                 <span className="font-bold text-sky-800 block mb-1 text-lg md:text-3xl">Jadwal Pelaksanaan :</span>
-                <p className="font-bold text-[#3d5a6c] text-lg md:text-2xl leading-snug">Setelah pulang sekolah</p>
-                <p className="font-bold text-[#3d5a6c] text-lg md:text-2xl leading-snug">( {jadwal} )</p>
+                <p className="font-semibold text-[#3d5a6c] text-lg md:text-2xl leading-snug">Setelah pulang sekolah</p>
+                <p className="font-semibold text-[#3d5a6c] text-lg md:text-2xl leading-snug">( {jadwal} )</p>
               </div>
               <div>
-                <span className="font-bold text-sky-800 block mb-1 text-lg md:text-3xl">Tempat Pelaksanaan :</span>
-                <p className="font-bold text-[#3d5a6c] text-lg md:text-2xl leading-snug">{tempat}</p>
+                <span className="font-bold text-[#00598A] block mb-1 text-lg md:text-3xl">Tempat Pelaksanaan :</span>
+                <p className="font-semibold text-[#3d5a6c] text-lg md:text-2xl leading-snug">{tempat}</p>
               </div>
               <div>
                 <span className="font-bold text-[#00598A] block mb-1 text-lg md:text-3xl">Hari :</span>
-                <p className="font-bold text-[#3d5a6c] text-lg md:text-2xl leading-snug">{hari}</p>
+                <p className="font-semibold text-[#3d5a6c] text-lg md:text-2xl leading-snug">{hari}</p>
 
               </div>
             </div>
@@ -166,7 +167,7 @@ export function DetailEskulCard({ eskul, onBack, onJoin }: DetailEskulProps) {
 
           {/* ================= BAGIAN 2: DESKRIPSI ================= */}
           <div className="w-full bg-sky-800/30 backdrop-blur-sm rounded-3xl p-6 mt-2 shadow-sm border border-white/60">
-            <p className="text-xl md:text-xl text-sky-800 leading-relaxed text-center font-bold whitespace-pre-line">
+            <p className="text-xl md:text-xl text-sky-800 leading-relaxed text-center font-semibold whitespace-pre-line">
               {renderDeskripsi()}
             </p>
           </div>
@@ -176,7 +177,7 @@ export function DetailEskulCard({ eskul, onBack, onJoin }: DetailEskulProps) {
             <div className="pt-6 flex flex-col items-center space-y-4">
               <div className="text-center mb-2">
                 <h1 className="text-3xl md:text-4xl font-extrabold text-[#00598A] tracking-tight drop-shadow-sm">Prestasi</h1>
-                <h1 className="text-3xl md:text-4xl font-extrabold text-[#00598A] tracking-tight -mt-2 drop-shadow-sm">Estrakulikuler</h1>
+                <h1 className="text-3xl md:text-4xl font-extrabold text-[#00598A] tracking-tight mt-2 drop-shadow-sm">Estrakulikuler</h1>
               </div>
 
               {/* Card Foto Prestasi */}
@@ -191,19 +192,25 @@ export function DetailEskulCard({ eskul, onBack, onJoin }: DetailEskulProps) {
 
               {/* Teks Prestasi */}
               {eskul.prestasi && (
-                <div className="w-full text-center mt-4">
-                  <div className="text-[#00598A] text-sm md:text-base font-bold leading-relaxed whitespace-pre-line px-4">
-                    {eskul.prestasi}
-                  </div>
-                </div>
-              )}
+  <div className="w-full text-center text-[#00598A] mt-4 px-4">
+    {/* Prestasi 1 (Paling Besar) */}
+    <div className="text-2xl md:text-3xl font-extrabold leading-relaxed mb-3">
+      {eskul.prestasi.split('\n')[0]}
+    </div>
+
+    {/* Prestasi 2, 3, dst (Lebih Kecil) */}
+    <div className="font-bold text-[#00598A] text-xl md:text leading-normal px-4 whitespace-pre-line">
+      {eskul.prestasi.split('\n').slice(1).join('\n')}
+    </div>
+  </div>
+)}
             </div>
           )}
 
           {/* ================= FOOTER CALL TO ACTION (JOIN) ================= */}
           <div className="mt-8 text-center space-y-6">
             <div>
-              <p className="font-bold text-[#00598A] text-2xl md:text-xl leading-relaxed px-4 whitespace-pre-line">
+              <p className="text-base md:text-xl font-medium text-[#00598A] leading-relaxed whitespace-pre-line mt-2">
                 {kata_ajakan}
               </p>
             </div>
