@@ -14,10 +14,7 @@ const geistMono = Geist_Mono({
 
 
 export const metadata: Metadata = {
-  // Tambahkan baris metadataBase ini:
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL || "https://gridas-ekskul.vercel.app"
-  ),
+  metadataBase: new URL("https://gridas-ekskul.vercel.app"),
   title: "GRIDAS EKSKUL",
   description: "Portal resmi kegiatan ekstrakurikuler GRIDAS",
   openGraph: {
@@ -27,9 +24,11 @@ export const metadata: Metadata = {
     siteName: "GRIDAS EKSKUL",
     images: [
       {
-        url: "/favicon.ico", // Sekarang path relatif ini aman dari warning
+        // Langsung panggil dari /images/... (tanpa menulis kata 'public')
+        url: "/images/logo-sekolah.jpeg",
         width: 800,
         height: 600,
+        alt: "Logo Sekolah GRIDAS",
       },
     ],
     type: "website",
