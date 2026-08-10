@@ -5,6 +5,7 @@ import { Sidebar, Header, GaleriGrid } from "@/components/molecules/admin";
 import SearchBar from "@/components/molecules/admin/SearchBar";
 import TambahGaleriModal from "@/components/organisms/admin/tambah-galeri-modal";
 import { HapusGaleriModal } from "@/components/organisms/admin/HapusGaleriModal";
+import TambahGaleriSuksesModal from "@/components/organisms/admin/TambahGaleriSuksesModal";
 
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
 
@@ -21,6 +22,7 @@ export default function AdminGaleriPage() {
 
   // State Modals
   const [showTambahModal, setShowTambahModal] = useState(false);
+  const [showSuccessTambah, setShowSuccessTambah] = useState(false);
   const [selectedItemToDelete, setSelectedItemToDelete] = useState<GaleriItem | null>(null);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [showSuccessDelete, setShowSuccessDelete] = useState(false);
@@ -28,6 +30,19 @@ export default function AdminGaleriPage() {
   useEffect(() => {
     fetchGaleriData();
   }, []);
+
+  // Helper untuk mendapatkan token valid dari localStorage
+  const getAuthToken = (): string | null => {
+    if (typeof window === "undefined") return null;
+    const keys = ["jwt", "token", "admin_token", "accessToken", "strapi_jwt"];
+    for (const key of keys) {
+      const val = localStorage.getItem(key);
+      if (val && val !== "null" && val !== "undefined" && val.trim() !== "") {
+        return val;
+      }
+    }
+    return null;
+  };
 
   const fetchGaleriData = async () => {
     try {
@@ -79,6 +94,7 @@ export default function AdminGaleriPage() {
     }
   };
 
+
   // Handler Tambah Galeri Baru
   const handleSimpan = async (
     namaEskul: string | number,
@@ -91,26 +107,22 @@ export default function AdminGaleriPage() {
     }
 
     try {
-      // 1. Ambil Token JWT dari localStorage
-      const token =
-        localStorage.getItem("admin_token") ||
-        localStorage.getItem("token") ||
-        localStorage.getItem("jwt") ||
-        localStorage.getItem("accessToken");
+      // 1. Ambil token autentikasi (sesuaikan nama key localStorage kamu)
+      const token = localStorage.getItem("token") || localStorage.getItem("jwt");
 
-      const headersConfig: Record<string, string> = {};
-
-      if (token && token !== "null" && token !== "undefined") {
-        headersConfig["Authorization"] = `Bearer ${token}`;
+      // Siapkan headers
+      const headers: Record<string, string> = {};
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
       }
 
-      // 2. Upload File Foto ke Strapi
+      // 2. Upload File Gambar ke Strapi (/api/upload)
       const formData = new FormData();
       formData.append("files", file);
 
       const uploadRes = await fetch(`${STRAPI_URL}/api/upload`, {
         method: "POST",
-        headers: headersConfig,
+        headers: headers, // Kirim Authorization jika token ada
         body: formData,
       });
 
@@ -118,18 +130,22 @@ export default function AdminGaleriPage() {
 
       if (!uploadRes.ok) {
         console.error("Gagal upload foto:", uploadData);
-        alert(`Upload gagal: ${uploadData?.error?.message || "Cek izin role Public/Authenticated di Strapi"}`);
+        alert(
+          `Upload gagal: ${uploadData?.error?.message ||
+          "Missing or invalid credentials. Cek izin Role Public/Authenticated di Strapi Settings."
+          }`
+        );
         return;
       }
 
+      // Ambil ID gambar hasil upload
       const uploadedImgId = uploadData[0]?.id;
-
       if (!uploadedImgId) {
-        alert("Gagal memproses gambar.");
+        alert("Gagal memproses gambar hasil upload.");
         return;
       }
 
-      // 3. Menyiapkan Payload
+      // 3. Simpan Data Galeri Baru ke Strapi
       const payloadData: Record<string, any> = {
         judul_kegiatan:
           typeof namaEskul === "number" || !isNaN(Number(namaEskul))
@@ -142,22 +158,23 @@ export default function AdminGaleriPage() {
         payloadData.ekskul = Number(namaEskul);
       }
 
-      const res = await fetch(`${STRAPI_URL}/api/galeris`, {
+      const postRes = await fetch(`${STRAPI_URL}/api/galeris`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          ...headersConfig,
+          ...headers,
         },
         body: JSON.stringify({ data: payloadData }),
       });
 
-      if (res.ok) {
+      if (postRes.ok) {
         setShowTambahModal(false);
-        fetchGaleriData();
+        setShowSuccessTambah(true);
+        fetchGaleriData(); // Refresh list galeri
       } else {
-        const resData = await res.json();
-        console.error("Gagal simpan galeri:", resData);
-        alert(`Gagal menyimpan: ${resData?.error?.message || "Periksa skema field Strapi"}`);
+        const postErrData = await postRes.json();
+        console.error("Gagal simpan galeri:", postErrData);
+        alert(`Gagal menyimpan: ${postErrData?.error?.message || "Terjadi kesalahan"}`);
       }
     } catch (err) {
       console.error("Error jaringan/server:", err);
@@ -165,37 +182,41 @@ export default function AdminGaleriPage() {
     }
   };
 
-  // Handler Hapus Galeri (Diperbaiki)
+  // Handler Hapus Galeri
   const handleHapusData = async () => {
     if (!selectedItemToDelete) return;
 
     try {
-      // Ambil token dari berbagai variasi nama key localStorage
-      const token =
-        localStorage.getItem("admin_token") ||
-        localStorage.getItem("token") ||
-        localStorage.getItem("jwt") ||
-        localStorage.getItem("accessToken");
-
+      const token = getAuthToken();
       const headersConfig: Record<string, string> = {
         "Content-Type": "application/json",
       };
 
-      if (token && token !== "null" && token !== "undefined") {
+      // Hanya sertakan token jika benar-benar ada
+      if (token) {
         headersConfig["Authorization"] = `Bearer ${token}`;
       }
 
-      // Prioritaskan documentId (Strapi v5), fallback ke id angka (Strapi v4)
-      const targetId = selectedItemToDelete.documentId || selectedItemToDelete.id;
+      const primaryId = selectedItemToDelete.documentId || selectedItemToDelete.id;
 
-      let res = await fetch(`${STRAPI_URL}/api/galeris/${targetId}`, {
+      if (!primaryId) {
+        alert("Gagal menghapus: ID item tidak ditemukan.");
+        return;
+      }
+
+      let res = await fetch(`${STRAPI_URL}/api/galeris/${primaryId}`, {
         method: "DELETE",
         headers: headersConfig,
       });
 
-      // Jika mencoba documentId gagal, coba hapus menggunakan numeric ID
+      // Fallback untuk versi Strapi (id vs documentId)
       if (!res.ok && selectedItemToDelete.documentId && selectedItemToDelete.id) {
-        res = await fetch(`${STRAPI_URL}/api/galeris/${selectedItemToDelete.id}`, {
+        const fallbackId =
+          primaryId === selectedItemToDelete.documentId
+            ? selectedItemToDelete.id
+            : selectedItemToDelete.documentId;
+
+        res = await fetch(`${STRAPI_URL}/api/galeris/${fallbackId}`, {
           method: "DELETE",
           headers: headersConfig,
         });
@@ -209,12 +230,29 @@ export default function AdminGaleriPage() {
         const errJson = await res.json().catch(() => ({}));
         console.error("Error Hapus Strapi:", res.status, errJson);
 
-        // Memberikan info penyebab error yang spesifik
-        if (res.status === 403) {
-          alert("Gagal menghapus (403 Forbidden): Pastikan izin 'delete' untuk Galeri sudah di-centang juga di Settings > Roles > Public di Strapi.");
-        } else {
-          alert(`Gagal menghapus data dari server [Status ${res.status}]: ${errJson?.error?.message || "Cek console browser"}`);
+        // Jika token invalid/expired (401), bersihkan token & coba sekali lagi tanpa token
+        if (res.status === 401) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("jwt");
+
+          // Coba hapus ulang menggunakan izin Public (tanpa header Authorization)
+          const retryRes = await fetch(`${STRAPI_URL}/api/galeris/${primaryId}`, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+          });
+
+          if (retryRes.ok) {
+            setShowConfirmDelete(false);
+            setShowSuccessDelete(true);
+            fetchGaleriData();
+            return;
+          }
         }
+
+        alert(
+          `Gagal menghapus [Status ${res.status}]: ${errJson?.error?.message || "Cek console browser"
+          }`
+        );
       }
     } catch (err) {
       console.error("Gagal menghapus foto:", err);
@@ -257,7 +295,13 @@ export default function AdminGaleriPage() {
         />
       )}
 
-      {/* Modal Hapus & Sukses */}
+      {/* Pop Up Sukses Tambah (Organism) */}
+      <TambahGaleriSuksesModal
+        show={showSuccessTambah}
+        onClose={() => setShowSuccessTambah(false)}
+      />
+
+      {/* Modal Hapus & Sukses Hapus */}
       <HapusGaleriModal
         showConfirm={showConfirmDelete}
         showSuccess={showSuccessDelete}

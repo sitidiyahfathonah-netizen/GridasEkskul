@@ -13,7 +13,7 @@ const josefin = Josefin_Sans({
 interface DetailEskulProps {
   eskul: any | null; // Ubah ke any dulu agar flexibel menerima object dari Strapi
   onBack: () => void;
-  onJoin?: () => void;
+  onJoin?: (eskul?: any) => void;
 }
 
 export function DetailEskulCard({ eskul, onBack, onJoin }: DetailEskulProps) {
@@ -218,8 +218,7 @@ export function DetailEskulCard({ eskul, onBack, onJoin }: DetailEskulProps) {
             <div className="flex justify-center pb-8">
               <button
                 onClick={() => {
-                  onJoin?.();
-                  router.push("/daftar");
+                  if (onJoin) onJoin(eskul);
                 }}
                 className="bg-blue-900 hover:bg-blue-950 text-white active:bg-white active:text-[#1e00a3] active:border-[#1e00a3] active:scale-95 border-2 border-transparent font-bold py-3 px-12 md:px-16 rounded-2xl md:rounded-xl transition-all duration-200 shadow-lg tracking-wide text-sm md:text-base">
                 Gabung
