@@ -7,6 +7,10 @@ const nextConfig: NextConfig = {
         protocol: 'http',
         hostname: 'localhost',
         port: '1337'
+      },
+      {
+        protocol: 'https',
+        hostname: 'cn17l1l4-1337.asse.devtunnels.ms'
       }
     ]
   }
