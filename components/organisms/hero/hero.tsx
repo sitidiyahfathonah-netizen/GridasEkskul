@@ -21,7 +21,7 @@ export function Hero() {
       <div className="relative z-20 w-full max-w-2xl space-y-5 px-6 sm:px-10 md:ml-16 lg:ml-24">
         {/* Judul Utama */}
         <div className="space-y-1">
-          <p className="text-xl font-light tracking-wide text-white/90 sm:text-2xl md:text-3xl">
+          <p className="text-xl font-semibold tracking-wide text-white/90 sm:text-2xl md:text-3xl">
             Selamat Datang
           </p>
           <h1 className="text-4xl md:text-[60px] font-bold tracking-tight text-white drop-shadow sm:text-10xl md:text-6xl">
@@ -30,7 +30,7 @@ export function Hero() {
         </div>
 
         {/* Deskripsi (Dua Baris Sesuai Figma) */}
-        <div className="space-y-3 text-sm font-light tracking-wide text-white/95 sm:text-base md:text-lg leading-relaxed">
+        <div className="space-y-3 text-sm font-semi tracking-wide text-white/95 sm:text-base md:text-lg leading-relaxed">
           <p>
             Temukanlah kegiatan yang sesuai
             <br></br>
