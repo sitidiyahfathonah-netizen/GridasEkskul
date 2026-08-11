@@ -94,17 +94,7 @@ export default function Sidebar() {
             onClick={() => {
               window.location.href = "/admin/login";
             }}
-            className="
-              w-full
-              bg-white
-              hover:bg-gray-100
-              text-[#00598A]
-              py-3
-              rounded-xl
-              font-bold
-              transition
-              duration-200
-            "
+            className="w-full bg-white hover:bg-[#3b82f6] hover:text-white active:bg-[#1e3a8a] active:text-white active:scale-95 text-[#00598A] py-3 rounded-xl font-bold transition-all duration-200"
           >
             Logout
           </button>

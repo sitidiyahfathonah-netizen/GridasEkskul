@@ -14,7 +14,7 @@ import { EditModal } from "@/components/organisms/admin/EditModal";
 
 const josefin = Josefin_Sans({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"]
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
@@ -28,7 +28,13 @@ export interface EskulItem {
   foto: string;
 }
 
-// Helper untuk ekstrak teks Rich Text Strapi
+// Helper untuk mengambil token bersih tanpa tanda petik ganda
+function getCleanToken(): string {
+  if (typeof window === "undefined") return "";
+  const token = localStorage.getItem("admin_token") || "";
+  return token.replace(/^"(.*)"$/, "$1").trim();
+}
+
 function extractRichText(content: any): string {
   if (!content) return "";
   if (typeof content === "string") return content;
@@ -55,7 +61,7 @@ export default function DashboardPage() {
   const [itemToEdit, setItemToEdit] = useState<EskulItem | null>(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("admin_token");
+    const token = getCleanToken();
     if (!token) {
       router.push("/admin/login");
       return;
@@ -65,17 +71,26 @@ export default function DashboardPage() {
 
   const fetchData = async () => {
     try {
-      const res = await fetch(`${STRAPI_URL}/api/ekskuls?populate=*`);
+      const token = getCleanToken();
+      const res = await fetch(`${STRAPI_URL}/api/ekskuls?populate=*`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+
+      if (res.status === 401) {
+        alert("Sesi login Anda telah berakhir. Silakan login kembali.");
+        localStorage.removeItem("admin_token");
+        router.push("/admin/login");
+        return;
+      }
+
       const result = await res.json();
 
       if (res.ok && result.data) {
         const formatted = result.data.map((item: any) => {
-          // Ambil URL foto
-          let imgUrl = "/images/tatarias.jpeg"; // Fallback default
+          let imgUrl = "/images/tatarias.jpeg";
           const fotoData = item.foto_utama || item.foto || item.gambar;
 
           if (fotoData) {
-            // Mengecek apakah data dibungkus dalam array, 'data', atau objek langsung
             const mediaObj = Array.isArray(fotoData)
               ? fotoData[0]
               : fotoData.data
@@ -98,12 +113,18 @@ export default function DashboardPage() {
             documentId: item.documentId,
             nama: item.nama_ekskul || item.nama || "",
             deskripsi: extractRichText(item.deskripsi),
-            jadwal_pelaksanaan: extractRichText(item.jadwal_pelaksanaa) || item.jadwal_pelaksanaan || "-",
+            jadwal_pelaksanaan:
+              extractRichText(item.jadwal_pelaksanaan) || item.jadwal_pelaksanaan || "-",
             foto: imgUrl,
           };
         });
 
-        setDataEskul(formatted);
+        // Hapus duplikat data jika Strapi mengembalikan versi Draft & Published bersamaan
+        const uniqueData = Array.from(
+          new Map(formatted.map((item: any) => [item.documentId || item.id, item])).values()
+        );
+
+        setDataEskul(uniqueData as EskulItem[]);
       }
     } catch (err) {
       console.error("Gagal load data:", err);
@@ -111,8 +132,8 @@ export default function DashboardPage() {
   };
 
   const handleTambah = async (newItem: Omit<EskulItem, "id">) => {
-    const token = localStorage.getItem("admin_token");
-    await fetch(`${STRAPI_URL}/api/ekskuls`, {
+    const token = getCleanToken();
+    const res = await fetch(`${STRAPI_URL}/api/ekskuls`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -126,75 +147,129 @@ export default function DashboardPage() {
         },
       }),
     });
+
+    if (res.status === 401) {
+      alert("Sesi login kadaluarsa. Silakan login kembali.");
+      router.push("/admin/login");
+      return;
+    }
+
     setOpenTambah(false);
     fetchData();
   };
 
   const handleEdit = async (updatedItem: EskulItem) => {
-    const token = localStorage.getItem("admin_token");
+    const token = getCleanToken();
     const targetId = updatedItem.documentId || updatedItem.id;
-    await fetch(`${STRAPI_URL}/api/ekskuls/${targetId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        data: {
-          nama_ekskul: updatedItem.nama,
-          deskripsi: updatedItem.deskripsi,
-          jadwal_pelaksanaan: updatedItem.jadwal_pelaksanaan,
+    if (!targetId) return;
+
+    const payloadPlain: any = {};
+    if (updatedItem.nama !== undefined) payloadPlain.nama_ekskul = updatedItem.nama;
+    if (updatedItem.deskripsi !== undefined) payloadPlain.deskripsi = updatedItem.deskripsi;
+    if (updatedItem.jadwal_pelaksanaan !== undefined) payloadPlain.jadwal_pelaksanaan = updatedItem.jadwal_pelaksanaan;
+
+    const payloadBlocks: any = { ...payloadPlain };
+    if (updatedItem.deskripsi !== undefined) {
+      payloadBlocks.deskripsi = updatedItem.deskripsi
+        ? [{ type: "paragraph", children: [{ type: "text", text: updatedItem.deskripsi }] }]
+        : [];
+    }
+
+    if (Object.keys(payloadPlain).length === 0) {
+      setOpenEdit(false);
+      setItemToEdit(null);
+      return;
+    }
+
+    try {
+      // Direct Request 1: Coba kirim format biasa
+      let res = await fetch(`${STRAPI_URL}/api/ekskuls/${targetId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-      }),
-    });
-    setOpenEdit(false);
-    setItemToEdit(null);
-    fetchData();
+        body: JSON.stringify({ data: payloadPlain }),
+      });
+
+      // Jika 401, artinya token tidak sah/invalid
+      if (res.status === 401) {
+        alert("Sesi login kadaluarsa. Silakan login kembali.");
+        localStorage.removeItem("admin_token");
+        router.push("/admin/login");
+        return;
+      }
+
+      // Jika gagal karena validation (400/422), coba format Blocks
+      if (!res.ok) {
+        res = await fetch(`${STRAPI_URL}/api/ekskuls/${targetId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ data: payloadBlocks }),
+        });
+      }
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        console.error("Detail Error Strapi:", errorData);
+        alert(`Gagal update: ${errorData?.error?.message || "Format tidak sesuai"}`);
+        return;
+      }
+
+      setOpenEdit(false);
+      setItemToEdit(null);
+      fetchData();
+    } catch (error) {
+      console.error("Gagal update data:", error);
+    }
   };
 
   const handleDelete = async (id: number, nama: string) => {
     if (window.confirm(`Apakah kamu yakin ingin menghapus ${nama}?`)) {
-      const token = localStorage.getItem("admin_token");
+      const token = getCleanToken();
       const targetItem = dataEskul.find((item) => item.id === id);
       const targetId = targetItem?.documentId || id;
 
-      await fetch(`${STRAPI_URL}/api/ekskuls/${targetId}`, {
+      const res = await fetch(`${STRAPI_URL}/api/ekskuls/${targetId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
+
+      if (res.status === 401) {
+        alert("Sesi login kadaluarsa. Silakan login kembali.");
+        router.push("/admin/login");
+        return;
+      }
+
       fetchData();
     }
   };
 
-  // Filter pencarian
-  const filteredData = dataEskul.filter((item) =>
-    item.nama.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.deskripsi.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredData = dataEskul.filter(
+    (item) =>
+      item.nama.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.deskripsi.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#F5F7FA]">
-
+    <div className={`flex h-screen overflow-hidden bg-[#F5F7FA] ${josefin.className}`}>
       <Sidebar />
 
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-
-        <Header
-          title="GRIDAS EKSKUL"
-          onTambahClick={() => setOpenTambah(true)}
-        />
-
+        <Header title="GRIDAS EKSKUL" onTambahClick={() => setOpenTambah(true)} />
 
         <main className="flex min-h-0 flex-1 flex-col bg-[#F5F7FA] px-5 py-6 md:px-8">
-
           <div className="mb-5 shrink-0">
-
             <SearchBar
               value={searchQuery}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setSearchQuery(e.target.value)
+              }
             />
           </div>
-
 
           <div className="min-h-0 flex-1 overflow-y-auto">
             <EskulTable
@@ -206,17 +281,14 @@ export default function DashboardPage() {
               onDelete={handleDelete}
             />
           </div>
-
         </main>
       </div>
-
 
       <TambahModal
         open={openTambah}
         onClose={() => setOpenTambah(false)}
-        onSave={handleTambah} />
-
-
+        onSave={handleTambah}
+      />
 
       <EditModal
         open={openEdit}

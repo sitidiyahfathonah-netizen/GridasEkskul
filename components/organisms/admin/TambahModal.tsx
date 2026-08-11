@@ -22,6 +22,7 @@ export function TambahModal({
   onSave,
 }: TambahModalProps) {
   const [preview, setPreview] = useState<string>("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [nama, setNama] = useState("");
   const [hari, setHari] = useState("");
   const [jamMulai, setJamMulai] = useState("");
@@ -42,6 +43,7 @@ export function TambahModal({
     });
     // Reset form after saving
     setPreview("");
+    setSelectedFile(null);
     setNama("");
     setHari("");
     setJamMulai("");
@@ -51,14 +53,13 @@ export function TambahModal({
 
   if (!open) return null;
 
-  const handleImage = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-
-    if (!file) return;
-
-    setPreview(URL.createObjectURL(file));
+    if (file) {
+      setSelectedFile(file);
+      const url = URL.createObjectURL(file);
+      setPreview(url);
+    }
   };
 
   return (
@@ -83,14 +84,22 @@ export function TambahModal({
 
           {/* FOTO */}
           <div>
-            <label className="text-sm text-gray-500">
+            <label className="text-sm text-gray-500 mb-1 block">
               Foto
             </label>
 
-            <input
-              type="file"
-              onChange={handleImage}
-              className="mt-1 w-full rounded-lg border p-2" />
+            <div className="flex items-center w-full border border-gray-300 rounded-lg overflow-hidden bg-white">
+              <label className="cursor-pointer bg-[#A1AAB4] hover:bg-[#8F98A2] text-gray-900 font-semibold text-sm px-5 py-2.5 transition-colors shrink-0">
+                Pilih File
+                <input
+                  type="file"
+                  onChange={handleImage}
+                  className="hidden" />
+              </label>
+              <span className="px-4 text-sm text-gray-400 truncate w-full">
+                {selectedFile ? selectedFile.name : "Tidak ada file yang dipilih"}
+              </span>
+            </div>
 
             {preview && (
               <img
@@ -186,14 +195,14 @@ export function TambahModal({
           <button
             type="button"
             onClick={handleSimpan}
-            className="flex-1 rounded-xl bg-[#08B84F] py-2 font-semibold text-white transition duration-200 hover:bg-[#079E43] active:bg-[#067D35]">
+            className="flex-1 rounded-xl bg-green-500 hover:bg-[#079E43] active:bg-[#056b2d] active:scale-95 py-2 font-semibold text-white transition-all duration-200">
             Simpan
           </button>
 
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 rounded-xl border border-red-500 py-2 font-semibold text-red-500 transition hover:bg-red-50">
+            className="flex-1 rounded-xl border border-red-500 bg-white text-red-500 hover:bg-red-500 hover:text-white active:bg-red-700 active:text-white active:scale-95 py-2 font-semibold transition-all duration-200">
             Batal
           </button>
 
