@@ -132,8 +132,8 @@ export function Galeri() {
               key={ekskul}
               onClick={() => setSelectedEkskul(ekskul)}
               className={`px-5 py-2 rounded-full text-sm font-semibold transition-all whitespace-nowrap cursor-pointer ${selectedEkskul === ekskul
-                  ? "bg-[#005187] text-white shadow-md"
-                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                ? "bg-[#005187] text-white shadow-md"
+                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                 }`}
             >
               {ekskul}
