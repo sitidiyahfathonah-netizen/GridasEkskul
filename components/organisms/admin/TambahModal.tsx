@@ -13,7 +13,7 @@ const josefin = Josefin_Sans({
 interface TambahModalProps {
   open: boolean;
   onClose: () => void;
-  onSave: (newItem: Omit<EskulItem, "id">) => void;
+  onSave: (newItem: Omit<EskulItem, "id">, file: File | null) => void;
 }
 
 export function TambahModal({
@@ -28,6 +28,15 @@ export function TambahModal({
   const [jamMulai, setJamMulai] = useState("");
   const [jamSelesai, setJamSelesai] = useState("");
   const [deskripsi, setDeskripsi] = useState("");
+  const [slug, setSlug] = useState("");
+const [tempatPelaksanaan, setTempatPelaksanaan] = useState("");
+const [deskripsiSingkat, setDeskripsiSingkat] = useState("");
+const [kataAjakan, setKataAjakan] = useState("");
+const [prestasi, setPrestasi] = useState("");
+
+const [previewPrestasi, setPreviewPrestasi] = useState<string>("");
+const [selectedPrestasiFile, setSelectedPrestasiFile] =
+  useState<File | null>(null);
 
   const handleSimpan = () => {
     if (!nama || !hari || !jamMulai || !jamSelesai || !deskripsi) {
@@ -39,8 +48,8 @@ export function TambahModal({
       nama,
       deskripsi,
       jadwal_pelaksanaan,
-      foto: preview || "/images/placeholder.jpeg", // Default image if none
-    });
+      foto: "", // Akan ditimpa oleh hasil upload API di DashboardPage
+    }, selectedFile);
     // Reset form after saving
     setPreview("");
     setSelectedFile(null);
@@ -123,6 +132,35 @@ export function TambahModal({
               className="mt-1 w-full rounded-lg border px-3 py-2" />
           </div>
 
+{/* SLUG */}
+<div>
+  <label className="text-sm text-gray-500">
+    Slug
+  </label>
+
+  <input
+    type="text"
+    value={slug}
+    onChange={(e) => setSlug(e.target.value)}
+    placeholder="Ekskul-"
+    className="mt-1 w-full rounded-lg border px-3 py-2"
+  />
+</div>
+
+{/* TEMPAT PELAKSANAAN */}
+<div>
+  <label className="text-sm text-gray-500">
+    Tempat Pelaksanaan
+  </label>
+
+  <input
+    type="text"
+    value={tempatPelaksanaan}
+    onChange={(e) => setTempatPelaksanaan(e.target.value)}
+    placeholder="Masukkan tempat pelaksanaan"
+    className="mt-1 w-full rounded-lg border px-3 py-2"
+  />
+</div>
           {/* HARI */}
           <div>
             <label className="text-sm text-gray-500">
@@ -188,6 +226,93 @@ export function TambahModal({
               className="mt-1 w-full resize-none rounded-lg border p-3" />
           </div>
         </div>
+
+{/* DESKRIPSI SINGKAT */}
+<div>
+  <label className="text-sm text-gray-500">
+    Deskripsi Singkat
+  </label>
+
+  <textarea
+    rows={3}
+    value={deskripsiSingkat}
+    onChange={(e) => setDeskripsiSingkat(e.target.value)}
+    placeholder="Masukkan deskripsi singkat ekstrakurikuler..."
+    className="mt-1 w-full resize-none rounded-lg border p-3"
+  />
+</div>
+
+{/* KATA AJAKAN */}
+<div>
+  <label className="text-sm text-gray-500">
+    Kata Ajakan
+  </label>
+
+  <input
+    type="text"
+    value={kataAjakan}
+    onChange={(e) => setKataAjakan(e.target.value)}
+    placeholder="Masukkan kata-kata ajakan..."
+    className="mt-1 w-full rounded-lg border px-3 py-2"
+  />
+</div>
+{/* FOTO PRESTASI */}
+<div>
+  <label className="mb-1 block text-sm text-gray-500">
+    Foto Prestasi
+  </label>
+
+  <div className="flex items-center w-full border border-gray-300 rounded-lg overflow-hidden bg-white">
+    <label className="cursor-pointer bg-[#A1AAB4] hover:bg-[#8F98A2] text-gray-900 font-semibold text-sm px-5 py-2.5 transition-colors shrink-0">
+      Pilih File
+
+      <input
+        type="file"
+        accept="image/*"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+
+          if (file) {
+            setSelectedPrestasiFile(file);
+
+            const url = URL.createObjectURL(file);
+            setPreviewPrestasi(url);
+          }
+        }}
+        className="hidden"
+      />
+    </label>
+
+    <span className="px-4 text-sm text-gray-400 truncate w-full">
+      {selectedPrestasiFile
+        ? selectedPrestasiFile.name
+        : "Tidak ada file yang dipilih"}
+    </span>
+  </div>
+
+  {previewPrestasi && (
+    <img
+      src={previewPrestasi}
+      alt="Preview Prestasi"
+      className="mt-3 h-32 rounded-xl object-cover"
+    />
+  )}
+</div>
+
+{/* DESKRIPSI PRESTASI */}
+<div>
+  <label className="text-sm text-gray-500">
+    Deskripsi Prestasi
+  </label>
+
+  <textarea
+    rows={4}
+    value={prestasi}
+    onChange={(e) => setPrestasi(e.target.value)}
+    placeholder="Masukkan prestasi..."
+    className="mt-1 w-full resize-none rounded-lg border p-3"
+  />
+</div>
 
         {/* Tombol */}
         <div className={`flex gap-3 px-6 pb-6 ${josefin.className}`}>
