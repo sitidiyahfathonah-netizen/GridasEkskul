@@ -11,6 +11,7 @@ import SearchBar from "@/components/molecules/admin/SearchBar";
 import { EskulTable } from "@/components/organisms/admin/Eskul-Table";
 import { TambahModal } from "@/components/organisms/admin/TambahModal";
 import { EditModal } from "@/components/organisms/admin/EditModal";
+import { DeleteModal } from "@/components/organisms/admin/DeleteModal";
 
 const josefin = Josefin_Sans({
   subsets: ["latin"],
@@ -59,6 +60,9 @@ export default function DashboardPage() {
   const [openTambah, setOpenTambah] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [itemToEdit, setItemToEdit] = useState<EskulItem | null>(null);
+  const [openDelete, setOpenDelete] = useState(false);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [highlightedId, setHighlightedId] = useState<number | null>(null);
 
   useEffect(() => {
     const token = getCleanToken();
@@ -131,31 +135,94 @@ export default function DashboardPage() {
     }
   };
 
-  const handleTambah = async (newItem: Omit<EskulItem, "id">) => {
+  const handleTambah = async (newItem: Omit<EskulItem, "id">, file?: File | null) => {
     const token = getCleanToken();
-    const res = await fetch(`${STRAPI_URL}/api/ekskuls`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        data: {
-          nama_ekskul: newItem.nama,
-          deskripsi: newItem.deskripsi,
-          jadwal_pelaksanaan: newItem.jadwal_pelaksanaan,
-        },
-      }),
-    });
+    let uploadedImgId = null;
 
-    if (res.status === 401) {
-      alert("Sesi login kadaluarsa. Silakan login kembali.");
-      router.push("/admin/login");
-      return;
+    if (file) {
+      const formData = new FormData();
+      formData.append("files", file);
+
+      const uploadRes = await fetch(`${STRAPI_URL}/api/upload`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+
+      if (uploadRes.ok) {
+        const uploadData = await uploadRes.json();
+        uploadedImgId = uploadData[0]?.id;
+      } else {
+        const errData = await uploadRes.json();
+        console.error("Upload error:", errData);
+        alert(`Gagal mengupload foto: ${errData?.error?.message || "Kesalahan server Strapi"}`);
+        return;
+      }
     }
 
-    setOpenTambah(false);
-    fetchData();
+    const payloadPlain = {
+      nama_ekskul: newItem.nama,
+      deskripsi: newItem.deskripsi,
+      jadwal_pelaksanaan: newItem.jadwal_pelaksanaan,
+      ...(uploadedImgId ? { foto_utama: uploadedImgId } : {}),
+    };
+
+    const payloadBlocks = {
+      nama_ekskul: newItem.nama,
+      deskripsi: newItem.deskripsi
+        ? [{ type: "paragraph", children: [{ type: "text", text: newItem.deskripsi }] }]
+        : [],
+      jadwal_pelaksanaan: newItem.jadwal_pelaksanaan,
+      ...(uploadedImgId ? { foto_utama: uploadedImgId } : {}),
+    };
+
+    try {
+      let res = await fetch(`${STRAPI_URL}/api/ekskuls`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ data: payloadBlocks }), // Coba Blocks format duluan untuk v5
+      });
+
+      if (res.status === 401) {
+        alert("Sesi login kadaluarsa. Silakan login kembali.");
+        router.push("/admin/login");
+        return;
+      }
+
+      // Jika gagal, coba format plain text
+      if (!res.ok) {
+        res = await fetch(`${STRAPI_URL}/api/ekskuls`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ data: payloadPlain }),
+        });
+      }
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        console.error("Detail Error Strapi:", errorData);
+        alert(`Gagal tambah data: ${errorData?.error?.message || "Format tidak sesuai"}`);
+        return;
+      }
+
+      const addedData = await res.json();
+      if (addedData?.data?.id) {
+        setHighlightedId(addedData.data.id);
+      } else if (addedData?.data?.documentId) {
+        setHighlightedId(addedData.data.documentId);
+      }
+
+      setOpenTambah(false);
+      fetchData();
+    } catch (error) {
+      console.error("Gagal tambah data:", error);
+    }
   };
 
   const handleEdit = async (updatedItem: EskulItem) => {
@@ -182,17 +249,15 @@ export default function DashboardPage() {
     }
 
     try {
-      // Direct Request 1: Coba kirim format biasa
       let res = await fetch(`${STRAPI_URL}/api/ekskuls/${targetId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ data: payloadPlain }),
+        body: JSON.stringify({ data: payloadBlocks }), // Coba Blocks format duluan
       });
 
-      // Jika 401, artinya token tidak sah/invalid
       if (res.status === 401) {
         alert("Sesi login kadaluarsa. Silakan login kembali.");
         localStorage.removeItem("admin_token");
@@ -200,7 +265,6 @@ export default function DashboardPage() {
         return;
       }
 
-      // Jika gagal karena validation (400/422), coba format Blocks
       if (!res.ok) {
         res = await fetch(`${STRAPI_URL}/api/ekskuls/${targetId}`, {
           method: "PUT",
@@ -208,7 +272,7 @@ export default function DashboardPage() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ data: payloadBlocks }),
+          body: JSON.stringify({ data: payloadPlain }),
         });
       }
 
@@ -227,12 +291,18 @@ export default function DashboardPage() {
     }
   };
 
-  const handleDelete = async (id: number, nama: string) => {
-    if (window.confirm(`Apakah kamu yakin ingin menghapus ${nama}?`)) {
-      const token = getCleanToken();
-      const targetItem = dataEskul.find((item) => item.id === id);
-      const targetId = targetItem?.documentId || id;
+  const handleDelete = (id: number) => {
+    setDeleteId(id);
+    setOpenDelete(true);
+  };
 
+  const confirmDelete = async (): Promise<boolean> => {
+    if (!deleteId) return false;
+    const token = getCleanToken();
+    const targetItem = dataEskul.find((item) => item.id === deleteId);
+    const targetId = targetItem?.documentId || deleteId;
+
+    try {
       const res = await fetch(`${STRAPI_URL}/api/ekskuls/${targetId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
@@ -241,10 +311,20 @@ export default function DashboardPage() {
       if (res.status === 401) {
         alert("Sesi login kadaluarsa. Silakan login kembali.");
         router.push("/admin/login");
-        return;
+        return false;
+      }
+
+      if (!res.ok) {
+        alert("Gagal menghapus data");
+        return false;
       }
 
       fetchData();
+      return true;
+    } catch (error) {
+      console.error("Gagal menghapus:", error);
+      alert("Terjadi kesalahan jaringan.");
+      return false;
     }
   };
 
@@ -274,6 +354,7 @@ export default function DashboardPage() {
           <div className="min-h-0 flex-1 overflow-y-auto">
             <EskulTable
               dataEskul={filteredData}
+              highlightedId={highlightedId}
               onEdit={(item) => {
                 setItemToEdit(item);
                 setOpenEdit(true);
@@ -298,6 +379,12 @@ export default function DashboardPage() {
           setItemToEdit(null);
         }}
         onSave={handleEdit}
+      />
+
+      <DeleteModal
+        open={openDelete}
+        onClose={() => setOpenDelete(false)}
+        onDelete={confirmDelete}
       />
     </div>
   );
