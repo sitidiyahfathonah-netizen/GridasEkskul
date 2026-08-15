@@ -44,6 +44,7 @@ const [selectedPrestasiFile, setSelectedPrestasiFile] =
       return;
     }
     const jadwal_pelaksanaan = `${hari}\n${jamMulai} - ${jamSelesai}`;
+    console.log("DESKRIPSI YANG DIKIRIM:", deskripsi);
     onSave({
       nama,
       deskripsi,
@@ -132,37 +133,36 @@ const [selectedPrestasiFile, setSelectedPrestasiFile] =
               className="mt-1 w-full rounded-lg border px-3 py-2" />
           </div>
 
-{/* SLUG */}
-<div>
-  <label className="text-sm text-gray-500">
-    Slug
-  </label>
+            {/* SLUG */}
+            <div>
+              <label className="text-sm text-gray-500">
+                Slug
+              </label>
 
-  <input
-    type="text"
-    value={slug}
-    onChange={(e) => setSlug(e.target.value)}
-    placeholder="Ekskul-"
-    className="mt-1 w-full rounded-lg border px-3 py-2"
-  />
-</div>
+              <input
+                type="text"
+                value={slug}
+                onChange={(e) => setSlug(e.target.value)}
+                placeholder="Ekskul-"
+                className="mt-1 w-full rounded-lg border px-3 py-2"/>
+            </div>
 
-{/* TEMPAT PELAKSANAAN */}
-<div>
-  <label className="text-sm text-gray-500">
-    Tempat Pelaksanaan
-  </label>
+            {/* TEMPAT PELAKSANAAN */}
+            <div>
+              <label className="text-sm text-gray-500">
+                Tempat Pelaksanaan
+              </label>
 
-  <input
-    type="text"
-    value={tempatPelaksanaan}
-    onChange={(e) => setTempatPelaksanaan(e.target.value)}
-    placeholder="Masukkan tempat pelaksanaan"
-    className="mt-1 w-full rounded-lg border px-3 py-2"
-  />
-</div>
-          {/* HARI */}
-          <div>
+              <input
+                type="text"
+                value={tempatPelaksanaan}
+                onChange={(e) => setTempatPelaksanaan(e.target.value)}
+                placeholder="Masukkan tempat pelaksanaan"
+                className="mt-1 w-full rounded-lg border px-3 py-2"/>
+            </div>
+
+            {/* HARI */}
+            <div>
             <label className="text-sm text-gray-500">
               Hari
             </label>
@@ -170,8 +170,7 @@ const [selectedPrestasiFile, setSelectedPrestasiFile] =
             <select
               value={hari}
               onChange={(e) => setHari(e.target.value)}
-              className="mt-1 w-full rounded-lg border px-3 py-2"
-            >
+              className="mt-1 w-full rounded-lg border px-3 py-2">
               <option value="">Pilih Hari</option>
               <option value="Senin">Senin</option>
               <option value="Selasa">Selasa</option>
@@ -225,113 +224,110 @@ const [selectedPrestasiFile, setSelectedPrestasiFile] =
               placeholder="Masukkan deskripsi ekstrakurikuler..."
               className="mt-1 w-full resize-none rounded-lg border p-3" />
           </div>
-        </div>
+        
 
-{/* DESKRIPSI SINGKAT */}
-<div>
-  <label className="text-sm text-gray-500">
-    Deskripsi Singkat
-  </label>
+        {/* DESKRIPSI SINGKAT */}
+        <div>
+          <label className="text-sm text-gray-500">
+            Deskripsi Singkat
+          </label>
 
-  <textarea
-    rows={3}
-    value={deskripsiSingkat}
-    onChange={(e) => setDeskripsiSingkat(e.target.value)}
-    placeholder="Masukkan deskripsi singkat ekstrakurikuler..."
-    className="mt-1 w-full resize-none rounded-lg border p-3"
-  />
-</div>
+          <textarea
+            rows={3}
+            value={deskripsiSingkat}
+            onChange={(e) => setDeskripsiSingkat(e.target.value)}
+            placeholder="Masukkan deskripsi singkat ekstrakurikuler..."
+            className="mt-1 w-full resize-none rounded-lg border p-3"/>
+          </div>
 
-{/* KATA AJAKAN */}
-<div>
-  <label className="text-sm text-gray-500">
-    Kata Ajakan
-  </label>
+          {/* KATA AJAKAN */}
+          <div>
+            <label className="text-sm text-gray-500">
+              Kata Ajakan
+            </label>
 
-  <input
-    type="text"
-    value={kataAjakan}
-    onChange={(e) => setKataAjakan(e.target.value)}
-    placeholder="Masukkan kata-kata ajakan..."
-    className="mt-1 w-full rounded-lg border px-3 py-2"
-  />
-</div>
-{/* FOTO PRESTASI */}
-<div>
-  <label className="mb-1 block text-sm text-gray-500">
-    Foto Prestasi
-  </label>
+            <textarea
+              rows={2}
+              value={kataAjakan}
+              onChange={(e) => setKataAjakan(e.target.value)}
+              placeholder="Masukkan kata-kata ajakan..."
+              className="mt-1 w-full resize-none rounded-lg border p-3"/>
+          </div>
+            
+            {/* FOTO PRESTASI */}
+            <div>
+              <label className="mb-1 block text-sm text-gray-500">
+                Foto Prestasi
+              </label>
 
-  <div className="flex items-center w-full border border-gray-300 rounded-lg overflow-hidden bg-white">
-    <label className="cursor-pointer bg-[#A1AAB4] hover:bg-[#8F98A2] text-gray-900 font-semibold text-sm px-5 py-2.5 transition-colors shrink-0">
-      Pilih File
+              <div className="flex items-center w-full border border-gray-300 rounded-lg overflow-hidden bg-white">
+                <label className="cursor-pointer bg-[#A1AAB4] hover:bg-[#8F98A2] text-gray-900 font-semibold text-sm px-5 py-2.5 transition-colors shrink-0">
+                  Pilih File
 
-      <input
-        type="file"
-        accept="image/*"
-        onChange={(e) => {
-          const file = e.target.files?.[0];
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
 
-          if (file) {
-            setSelectedPrestasiFile(file);
+                      if (file) {
+                        setSelectedPrestasiFile(file);
 
-            const url = URL.createObjectURL(file);
-            setPreviewPrestasi(url);
-          }
-        }}
-        className="hidden"
-      />
-    </label>
+                        const url = URL.createObjectURL(file);
+                        setPreviewPrestasi(url);
+                      }
+                    }}
+                    className="hidden"/>
+                  </label>
 
-    <span className="px-4 text-sm text-gray-400 truncate w-full">
-      {selectedPrestasiFile
-        ? selectedPrestasiFile.name
-        : "Tidak ada file yang dipilih"}
-    </span>
-  </div>
+                  <span className="px-4 text-sm text-gray-400 truncate w-full">
+                    {selectedPrestasiFile
+                      ? selectedPrestasiFile.name
+                      : "Tidak ada file yang dipilih"}
+                  </span>
+                </div>
 
-  {previewPrestasi && (
-    <img
-      src={previewPrestasi}
-      alt="Preview Prestasi"
-      className="mt-3 h-32 rounded-xl object-cover"
-    />
-  )}
-</div>
+                {previewPrestasi && (
+                  <img
+                    src={previewPrestasi}
+                    alt="Preview Prestasi"
+                    className="mt-3 h-32 rounded-xl object-cover"/>
+                )}
+              </div>
 
-{/* DESKRIPSI PRESTASI */}
-<div>
-  <label className="text-sm text-gray-500">
-    Deskripsi Prestasi
-  </label>
+              {/* DESKRIPSI PRESTASI */}
+              <div>
+                <label className="text-sm text-gray-500">
+                  Deskripsi Prestasi
+                </label>
 
-  <textarea
-    rows={4}
-    value={prestasi}
-    onChange={(e) => setPrestasi(e.target.value)}
-    placeholder="Masukkan prestasi..."
-    className="mt-1 w-full resize-none rounded-lg border p-3"
-  />
-</div>
+                <textarea
+                  rows={6}
+                  value={prestasi}
+                  onChange={(e) => setPrestasi(e.target.value)}
+                  placeholder="Masukkan prestasi..."
+                  className="mt-1 w-full resize-none rounded-lg border p-3"/>
+              </div>
+              </div>
 
-        {/* Tombol */}
-        <div className={`flex gap-3 px-6 pb-6 ${josefin.className}`}>
+              {/* Tombol */}
+              <div className={`flex gap-3 px-6 pb-6 ${josefin.className}`}>
 
-          <button
-            type="button"
-            onClick={handleSimpan}
-            className="flex-1 rounded-xl bg-green-500 hover:bg-[#079E43] active:bg-[#056b2d] active:scale-95 py-2 font-semibold text-white transition-all duration-200">
-            Simpan
-          </button>
+                <button
+                  type="button"
+                  onClick={handleSimpan}
+                  className="flex-1 rounded-xl bg-green-500 hover:bg-[#079E43] active:bg-[#056b2d] active:scale-95 py-2 font-semibold text-white transition-all duration-200">
+                  Simpan
+                </button>
 
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex-1 rounded-xl border border-red-500 bg-white text-red-500 hover:bg-red-500 hover:text-white active:bg-red-700 active:text-white active:scale-95 py-2 font-semibold transition-all duration-200">
-            Batal
-          </button>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="flex-1 rounded-xl border border-red-500 bg-white text-red-500 hover:bg-red-500 hover:text-white active:bg-red-700 active:text-white active:scale-95 py-2 font-semibold transition-all duration-200">
+                  Batal
+                </button>
 
-        </div>
+              </div>
       </div>
     </div>
   );
