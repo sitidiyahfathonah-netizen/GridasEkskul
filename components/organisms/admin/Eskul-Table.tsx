@@ -23,17 +23,19 @@ export function EskulTable({
 }: EskulTableProps) {
   return (
     <div className="p-4 md:p-8">
-      {/* Cukup gunakan 1 elemen table agar kolom header & body SELALU presisi */}
+
       <div className="max-h-[calc(100vh-250px)] overflow-y-auto overflow-x-auto pr-2">
-        <table className="w-full min-w-[800px] border-separate border-spacing-y-4 text-left">
+        {/* Tambahkan table-fixed agar browser mematuhi persentase lebar kolom */}
+        <table className="w-full min-w-[900px] table-fixed border-separate border-spacing-y-4 text-left">
           {/* Header Tabel */}
           <thead className="sticky top-0 bg-[#F5F7FA] z-10">
             <tr className={`text-[#00598A] text-lg font-bold ${josefin.className}`}>
-              <th className="pb-3 pl-4 w-[150px]">Foto</th>
-              <th className="pb-3 w-[180px]">Nama</th>
-              <th className="pb-3">Deskripsi</th>
-              <th className="pb-3 w-[180px]">Jadwal</th>
-              <th className="pb-3 text-center w-[200px]">Aksi</th>
+              <th className="pb-3 pl-4 w-[140px]">Foto</th>
+              <th className="pb-3 w-[160px]">Nama</th>
+              {/* Beri persentase lebar paling besar untuk Deskripsi */}
+              <th className="pb-3 w-[45%]">Deskripsi</th>
+              <th className="pb-3 w-[140px]">Jadwal</th>
+              <th className="pb-3 text-center w-[180px]">Aksi</th>
             </tr>
           </thead>
 
@@ -48,13 +50,13 @@ export function EskulTable({
                   {/* 1. Foto */}
                   <td className="p-4 rounded-l-xl align-middle">
                     <div className="relative w-[120px] h-[70px] overflow-hidden rounded-lg bg-gray-100">
-                      {/* Menggunakan tag img standar agar tidak error domain Next Image */}
+
                       <img
                         src={item.foto}
                         alt={item.nama}
                         className="w-full h-full object-cover"
                         onError={(e) => {
-                          // Fallback jika gambar gagal dimuat
+
                           (e.target as HTMLImageElement).src = "/images/tatarias.jpeg";
                         }}
                       />
@@ -62,32 +64,32 @@ export function EskulTable({
                   </td>
 
                   {/* 2. Nama */}
-                  <td className="font-bold text-gray-700 align-middle">
+                  <td className="font-bold text-gray-700 align-middle pr-2">
                     {item.nama}
                   </td>
 
                   {/* 3. Deskripsi */}
-                  <td className="text-gray-600 text-sm align-middle pr-4 leading-relaxed">
+                  <td className="text-gray-600 text-sm align-middle pr-6 leading-relaxed">
                     {item.deskripsi}
                   </td>
 
                   {/* 4. Jadwal */}
-                  <td className="align-middle text-sm">
+                  <td className="align-middle text-sm pr-2">
                     {item.jadwal_pelaksanaan && item.jadwal_pelaksanaan !== "-" ? (
                       <div className="flex flex-col">
                         {item.jadwal_pelaksanaan.includes(",") || item.jadwal_pelaksanaan.includes("\n") ? (
                           <>
-                            {/* Baris 1: Hari (Tebal) */}
+
                             <span className="font-semibold text-slate-700">
                               {item.jadwal_pelaksanaan.split(/[\n,]/)[0]?.trim()}
                             </span>
-                            {/* Baris 2: Jam (Abu-abu & Lebih Kecil) */}
+
                             <span className="text-xs text-gray-500 font-normal mt-0.5">
                               {item.jadwal_pelaksanaan.split(/[\n,]/)[1]?.trim()}
                             </span>
                           </>
                         ) : (
-                          /* Jika cuma ada jam saja atau hari saja */
+
                           <span className="font-semibold text-gray-600">
                             {item.jadwal_pelaksanaan}
                           </span>
@@ -100,16 +102,18 @@ export function EskulTable({
 
                   {/* 5. Aksi */}
                   <td className="p-4 rounded-r-xl align-middle">
-                    <div className="flex justify-center gap-3">
+                    <div className="flex justify-center gap-2">
                       <button
                         onClick={() => onEdit(item)}
-                        className="bg-blue-900 hover:bg-blue-950 active:bg-[#0f1f4d] active:scale-95 text-white px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-200">
+                        className="bg-blue-900 hover:bg-blue-950 active:bg-[#0f1f4d] active:scale-95 text-white px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-200"
+                      >
                         Edit
                       </button>
 
                       <button
                         onClick={() => onDelete(item.id, item.nama)}
-                        className="bg-red-600 hover:bg-[#E5242B] active:bg-red-800 active:scale-95 text-white px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-200">
+                        className="bg-red-600 hover:bg-[#E5242B] active:bg-red-800 active:scale-95 text-white px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-200"
+                      >
                         Hapus
                       </button>
                     </div>
