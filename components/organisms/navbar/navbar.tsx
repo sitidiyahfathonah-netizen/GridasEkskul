@@ -40,7 +40,7 @@ export function Navbar({ onReset }: NavbarProps) {
     <header
       className="sticky top-0 z-50 w-full bg-white text-gray-800 shadow-sm">
       <div
-        className="flex items-center justify-between px-4 py-3 sm:px-6 sm:py-4 md:px-10 lg:px-16">
+        className="flex items-center justify-between px-10 py-5 sm:px-6 sm:py-5 md:px-10 lg:px-16">
         {/* LOGO & NAMA SEKOLAH */}
         <div
           onClick={(e) =>
