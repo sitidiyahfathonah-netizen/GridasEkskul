@@ -26,7 +26,7 @@ export default function GaleriGrid({ items, onCardClick }: GaleriGridProps) {
           <div
             key={item.id}
             onClick={() => setActiveCardId(isActive ? null : item.id)}
-            className="group relative h-52 w-full cursor-pointer overflow-hidden rounded-2xl shadow-md transition-all duration-300 hover:shadow-xl"
+            className="group cursor-pointer relative w-full aspect-[16/9] rounded-2xl md:rounded-[24px] overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 bg-slate-100"
           >
             <img
               src={item.image}
