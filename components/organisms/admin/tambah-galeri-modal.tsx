@@ -1,4 +1,10 @@
 "use client";
+import { Josefin_Sans } from "next/font/google";
+
+const josefin = Josefin_Sans({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"]
+});
 
 import { useState } from "react";
 
@@ -26,7 +32,7 @@ export default function TambahGaleriModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs">
       <div className="w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl">
-        <h2 className="text-lg font-bold text-slate-800">Tambah Foto Ekskul</h2>
+        <h2 className={`text-lg font-bold text-slate-800 ${josefin.className}`}>Tambah Foto Ekskul</h2>
         <p className="text-xs text-slate-400 mb-4">Tambah foto untuk galeri</p>
 
         <form onSubmit={handleSubmit} className="space-y-3">
@@ -85,7 +91,7 @@ export default function TambahGaleriModal({
           <div className="flex items-center gap-2 pt-2">
             <button
               type="submit"
-              className="flex-1 rounded-full bg-[#10B981] py-2 text-xs font-bold text-white shadow-sm hover:bg-emerald-600"
+              className="flex-1 rounded-full bg-[#08B84F] py-2 text-xs font-bold text-white shadow-sm hover:bg-emerald-600"
             >
               Simpan
             </button>
