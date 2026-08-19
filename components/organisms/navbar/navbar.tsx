@@ -137,7 +137,7 @@ export function Navbar({ onReset }: NavbarProps) {
               ? "bg-[#E1E7EE] text-[#1E293B] font-bold shadow-sm"
               : "text-slate-300 font-medium hover:bg-white/10 hover:text-white"}`}>
             <Squares2X2Icon className={`w-5 h-5 ${activeSection === "home" ? "text-[#004E7A]" : ""}`} />
-            Dashboard
+            Home
           </a>
 
           {/* 2. Menu Eskul */}

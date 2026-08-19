@@ -13,7 +13,7 @@ const josefin = Josefin_Sans({
 interface TambahModalProps {
   open: boolean;
   onClose: () => void;
-  onSave: (newItem: Omit<EskulItem, "id">, file: File | null) => void;
+  onSave: (newItem: Omit<EskulItem, "id">, file: File | null, prestasiFile: File | null) => void;
 }
 
 export function TambahModal({
@@ -29,13 +29,13 @@ export function TambahModal({
   const [jamSelesai, setJamSelesai] = useState("");
   const [deskripsi, setDeskripsi] = useState("");
   const [slug, setSlug] = useState("");
-const [tempatPelaksanaan, setTempatPelaksanaan] = useState("");
-const [deskripsiSingkat, setDeskripsiSingkat] = useState("");
-const [kataAjakan, setKataAjakan] = useState("");
-const [prestasi, setPrestasi] = useState("");
+  const [tempatPelaksanaan, setTempatPelaksanaan] = useState("");
+  const [deskripsiSingkat, setDeskripsiSingkat] = useState("");
+  const [kataAjakan, setKataAjakan] = useState("");
+  const [prestasi, setPrestasi] = useState("");
 
-const [previewPrestasi, setPreviewPrestasi] = useState<string>("");
-const [selectedPrestasiFile, setSelectedPrestasiFile] =
+  const [previewPrestasi, setPreviewPrestasi] = useState<string>("");
+  const [selectedPrestasiFile, setSelectedPrestasiFile] =
   useState<File | null>(null);
 
   const handleSimpan = () => {
@@ -43,14 +43,18 @@ const [selectedPrestasiFile, setSelectedPrestasiFile] =
       alert("Mohon lengkapi semua data.");
       return;
     }
-    const jadwal_pelaksanaan = `${hari}\n${jamMulai} - ${jamSelesai}`;
+    const jadwal_pelaksanaan = `${jamMulai} - ${jamSelesai}`;
     console.log("DESKRIPSI YANG DIKIRIM:", deskripsi);
     onSave({
-      nama,
-      deskripsi,
-      jadwal_pelaksanaan,
-      foto: "", // Akan ditimpa oleh hasil upload API di DashboardPage
-    }, selectedFile);
+    nama,
+    deskripsi,
+    deskripsi_singkat: deskripsiSingkat,
+    hari,
+    tempat_pelaksanaan: tempatPelaksanaan,
+    jadwal_pelaksanaan,
+    prestasi,
+    foto: "",
+}, selectedFile, selectedPrestasiFile);
     // Reset form after saving
     setPreview("");
     setSelectedFile(null);
@@ -59,6 +63,10 @@ const [selectedPrestasiFile, setSelectedPrestasiFile] =
     setJamMulai("");
     setJamSelesai("");
     setDeskripsi("");
+    setDeskripsiSingkat("");
+    setKataAjakan("");
+    setPrestasi("");
+    setTempatPelaksanaan("");
   };
 
   if (!open) return null;
@@ -295,7 +303,7 @@ const [selectedPrestasiFile, setSelectedPrestasiFile] =
                 )}
               </div>
 
-              {/* DESKRIPSI PRESTASI */}
+              {/* PRESTASI */}
               <div>
                 <label className="text-sm text-gray-500">
                   Deskripsi Prestasi
@@ -305,7 +313,7 @@ const [selectedPrestasiFile, setSelectedPrestasiFile] =
                   rows={6}
                   value={prestasi}
                   onChange={(e) => setPrestasi(e.target.value)}
-                  placeholder="Masukkan prestasi..."
+                  placeholder="Masukkan deskripsi prestasi..."
                   className="mt-1 w-full resize-none rounded-lg border p-3"/>
               </div>
               </div>

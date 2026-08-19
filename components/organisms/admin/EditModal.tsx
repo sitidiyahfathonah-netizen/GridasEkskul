@@ -13,7 +13,7 @@ interface EditModalProps {
   open: boolean;
   editItem: EskulItem | null;
   onClose: () => void;
-  onSave: (updatedItem: EskulItem) => void;
+  onSave: (updatedItem: EskulItem, file?: File | null, prestasiFile?: File | null) => void;
 }
 
 const LIST_HARI = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
@@ -21,10 +21,18 @@ const LIST_HARI = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu
 export function EditModal({ open, editItem, onClose, onSave }: EditModalProps) {
   const [nama, setNama] = useState("");
   const [jadwal, setJadwal] = useState("");
+  const [hari, setHari] = useState("");
+  const [tempatPelaksanaan, setTempatPelaksanaan] = useState("");
   const [jamMulai, setJamMulai] = useState("");
   const [jamSelesai, setJamSelesai] = useState("");
   const [deskripsi, setDeskripsi] = useState("");
+  const [deskripsiSingkat, setDeskripsiSingkat] = useState("");
+  const [kataAjakan, setKataAjakan] = useState("");
+  const [prestasi, setPrestasi] = useState("");
+
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedPrestasiFile, setSelectedPrestasiFile] = useState<File | null>(null);
+  const [fotoPrestasi, setFotoPrestasi] = useState("");
 
   useEffect(() => {
     if (editItem) {
@@ -36,32 +44,40 @@ export function EditModal({ open, editItem, onClose, onSave }: EditModalProps) {
       } else {
         setDeskripsi("");
       }
-
+      
+      setDeskripsiSingkat(editItem.deskripsi_singkat || "");
+      setKataAjakan(editItem.kata_ajakan || "");
+      setPrestasi(editItem.prestasi || "");
+      setTempatPelaksanaan(editItem.tempat_pelaksanaan || "");
+      setFotoPrestasi(editItem.foto_prestasi || "");
+      setHari(editItem.hari || "");
       const rawJadwal = editItem.jadwal_pelaksanaan || "";
-
-      const foundHari = LIST_HARI.find((hari) =>
-        rawJadwal.toLowerCase().includes(hari.toLowerCase())
-      ) || "";
-      setJadwal(foundHari);
-
-      let jamText = rawJadwal;
-      if (foundHari) {
-        jamText = rawJadwal
-          .replace(new RegExp(foundHari, "gi"), "")
-          .replace(/^[\s,:-]+/, "")
-          .trim();
+      const timeMatches = rawJadwal.match(/\b\d{1,2}:\d{2}\b/g);
+      
+      if (timeMatches && timeMatches.length >= 2) {
+        setJamMulai(timeMatches[0]);
+        setJamSelesai(timeMatches[1]);
+      } else if (timeMatches && timeMatches.length === 1) {
+        setJamMulai(timeMatches[0]);
+        setJamSelesai("");
+      } else {
+        const jamParts = rawJadwal.split("-").map((s) => s.trim().substring(0, 5));
+        setJamMulai(jamParts[0] || "");
+        setJamSelesai(jamParts[1] || "");
       }
-
-      const jamParts = jamText.split("-").map((s) => s.trim());
-      setJamMulai(jamParts[0] || "");
-      setJamSelesai(jamParts[1] || "");
     } else {
       setNama("");
       setJadwal("");
+      setTempatPelaksanaan("");
       setJamMulai("");
       setJamSelesai("");
       setDeskripsi("");
+      setDeskripsiSingkat("");
+      setKataAjakan("");
+      setPrestasi("");
       setSelectedFile(null);
+      setSelectedPrestasiFile(null);
+      setFotoPrestasi("");
     }
   }, [editItem]);
 
@@ -75,12 +91,7 @@ export function EditModal({ open, editItem, onClose, onSave }: EditModalProps) {
       formatJam = jamMulai || jamSelesai;
     }
 
-    let newJadwal = "";
-    if (jadwal && formatJam) {
-      newJadwal = `${jadwal}, ${formatJam}`;
-    } else {
-      newJadwal = jadwal || formatJam;
-    }
+    let newJadwal = formatJam;
 
     const changedFields: Partial<EskulItem> = {
       id: editItem.id,
@@ -90,8 +101,13 @@ export function EditModal({ open, editItem, onClose, onSave }: EditModalProps) {
     if (nama.trim() !== "" && nama !== editItem.nama) changedFields.nama = nama.trim();
     if (deskripsi !== editItem.deskripsi) changedFields.deskripsi = deskripsi;
     if (newJadwal !== editItem.jadwal_pelaksanaan) changedFields.jadwal_pelaksanaan = newJadwal;
+    if (tempatPelaksanaan !== editItem.tempat_pelaksanaan) changedFields.tempat_pelaksanaan = tempatPelaksanaan;
+    if (hari !== editItem.hari) { changedFields.hari = hari;}
+    if (deskripsiSingkat !== editItem.deskripsi_singkat) changedFields.deskripsi_singkat = deskripsiSingkat;
+    if (kataAjakan !== editItem.kata_ajakan) changedFields.kata_ajakan = kataAjakan;
+    if (prestasi !== editItem.prestasi) changedFields.prestasi = prestasi;
 
-    onSave(changedFields as EskulItem);
+    onSave(changedFields as EskulItem, selectedFile, selectedPrestasiFile);
     onClose();
   };
 
@@ -114,13 +130,18 @@ export function EditModal({ open, editItem, onClose, onSave }: EditModalProps) {
                 <input
                   type="file"
                   className="hidden"
-                  onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
-                />
+                  onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}/>
               </label>
               <span className="px-4 text-sm text-[#8A94A6] truncate w-full">
                 {selectedFile ? selectedFile.name : "Tidak ada file yang dipilih"}
               </span>
             </div>
+            {(selectedFile || editItem?.foto) && (
+              <img
+                src={selectedFile ? URL.createObjectURL(selectedFile) : editItem?.foto}
+                alt="Preview"
+                className="mt-3 h-32 rounded-xl object-cover"/>
+            )}
           </div>
 
           <div>
@@ -129,42 +150,49 @@ export function EditModal({ open, editItem, onClose, onSave }: EditModalProps) {
               type="text"
               value={nama}
               onChange={(e) => setNama(e.target.value)}
-              className="mt-1 w-full rounded-lg border px-3 py-2 outline-none focus:ring-2 focus:ring-sky-500"
-            />
+              className="mt-1 w-full rounded-lg border px-3 py-2 outline-none focus:ring-2 focus:ring-sky-500"/>
           </div>
 
           <div>
             <label className="text-sm font-semibold text-[#8A94A6] mb-1 block">Hari (Opsional)</label>
             <select
-              value={jadwal}
-              onChange={(e) => setJadwal(e.target.value)}
-              className="mt-1 w-full rounded-lg border px-3 py-2 outline-none focus:ring-2 focus:ring-sky-500"
-            >
-              <option value="">Pilih Hari (Opsional)</option>
+              value={hari}
+              onChange={(e) => setHari(e.target.value)}
+              className="mt-1 w-full rounded-lg border px-3 py-2 outline-none focus:ring-2 focus:ring-sky-500">
+            <option value="">Pilih Hari (Opsional)</option>
               {LIST_HARI.map((h) => (
-                <option key={h} value={h}>{h}</option>
+            <option key={h} value={h}>{h}</option>
               ))}
             </select>
           </div>
+        <div>
+            <label className="text-sm font-semibold text-[#8A94A6] mb-1 block">
+            Tempat Pelaksanaan
+            </label>
+            <input
+                type="text"
+                value={tempatPelaksanaan}
+                onChange={(e) => setTempatPelaksanaan(e.target.value)}
+                placeholder="Masukkan tempat pelaksanaan"
+                className="mt-1 w-full rounded-lg border px-3 py-2 outline-none focus:ring-2 focus:ring-sky-500"/>
+            </div>
 
-          <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="text-sm font-semibold text-[#8A94A6] mb-1 block">Jam Mulai</label>
               <input
-                type="text"
+                type="time"
                 value={jamMulai}
                 onChange={(e) => setJamMulai(e.target.value)}
-                placeholder="15:00"
-                className="mt-1 w-full rounded-lg border px-3 py-2 outline-none focus:ring-2 focus:ring-sky-500"
-              />
+                className="mt-1 w-full rounded-lg border px-3 py-2 outline-none focus:ring-2 focus:ring-sky-500"/>
             </div>
+
             <div>
               <label className="text-sm font-semibold text-[#8A94A6] mb-1 block">Jam Selesai</label>
               <input
-                type="text"
+                type="time"
                 value={jamSelesai}
                 onChange={(e) => setJamSelesai(e.target.value)}
-                placeholder="17:00"
                 className="mt-1 w-full rounded-lg border px-3 py-2 outline-none focus:ring-2 focus:ring-sky-500"
               />
             </div>
@@ -173,26 +201,93 @@ export function EditModal({ open, editItem, onClose, onSave }: EditModalProps) {
           <div>
             <label className="text-sm font-semibold text-[#8A94A6] mb-1 block">Deskripsi</label>
             <textarea
-              rows={5}
+              rows={6}
               value={deskripsi}
               onChange={(e) => setDeskripsi(e.target.value)}
               placeholder="Masukkan deskripsi..."
-              className="mt-1 w-full resize-none rounded-lg border p-3 outline-none focus:ring-2 focus:ring-sky-500"
-            />
+              className="mt-1 w-full resize-none rounded-lg border p-3 outline-none focus:ring-2 focus:ring-sky-500"/>
           </div>
-        </div>
+        
+
+          <div>
+            <label className="text-sm font-semibold text-[#8A94A6] mb-1 block">
+              Deskripsi Singkat
+            </label>
+
+            <textarea
+              rows={3}
+              value={deskripsiSingkat}
+              onChange={(e) => setDeskripsiSingkat(e.target.value)}
+              placeholder="Masukkan deskripsi singkat..."
+              className="mt-1 w-full resize-none rounded-lg border p-3 outline-none focus:ring-2 focus:ring-sky-500"/>
+            </div>
+
+            <div>
+              <label className="text-sm font-semibold text-[#8A94A6] mb-1 block">
+                Kata Ajakan
+              </label>
+
+              <textarea
+                rows={6}
+                value={kataAjakan}
+                onChange={(e) => setKataAjakan(e.target.value)}
+                placeholder="Masukkan kata ajakan..."
+                className="mt-1 w-full resize-none rounded-lg border p-3 outline-none focus:ring-2 focus:ring-sky-500"/>
+            </div>
+
+            <div>
+              <label className="text-sm font-semibold text-[#8A94A6] mb-1 block">
+                Foto Prestasi
+              </label>
+
+              <div className="flex items-center w-full border border-gray-300 rounded-lg overflow-hidden bg-white">
+                <label className="cursor-pointer bg-[#A1AAB4] hover:bg-[#8F98A2] text-gray-900 font-semibold text-sm px-5 py-2.5 transition-colors shrink-0">
+                  Pilih File
+
+                  <input
+                    type="file"
+                    className="hidden"
+                    onChange={(e) =>
+                      setSelectedPrestasiFile(e.target.files?.[0] || null)}/>
+                </label>
+
+                <span className="px-4 text-sm text-[#8A94A6] truncate w-full">
+                  {selectedPrestasiFile
+                    ? selectedPrestasiFile.name
+                    : "Tidak ada file yang dipilih"}
+                </span>
+              </div>
+              {(selectedPrestasiFile || fotoPrestasi) && (
+                <img
+                  src={selectedPrestasiFile ? URL.createObjectURL(selectedPrestasiFile) : fotoPrestasi}
+                  alt="Preview Prestasi"
+                  className="mt-3 h-32 rounded-xl object-cover"/>
+              )}
+            </div>
+
+            <div>
+              <label className="text-sm font-semibold text-[#8A94A6] mb-1 block">
+                Deskripsi Prestasi
+              </label>
+
+              <textarea
+                rows={6}
+                value={prestasi}
+                onChange={(e) => setPrestasi(e.target.value)}
+                placeholder="Masukkan deskripsi prestasi..."
+                className="mt-1 w-full resize-none rounded-lg border p-3 outline-none focus:ring-2 focus:ring-sky-500"/>
+            </div>
+          </div>
 
         <div className="flex gap-3 px-6 pb-6">
           <button
             onClick={onSubmit}
-            className="flex-1 bg-[#08B84F] hover:bg-[#079E43] text-white py-3 rounded-xl font-semibold transition-all"
-          >
+            className="flex-1 bg-[#08B84F] hover:bg-[#079E43] text-white py-3 rounded-xl font-semibold transition-all">
             Update
           </button>
           <button
             onClick={onClose}
-            className="flex-1 bg-white border border-[#FF2E35] text-[#E52B32] hover:bg-[#FF2E35] hover:text-white py-3 rounded-xl font-semibold transition-all"
-          >
+            className="flex-1 bg-white border border-[#FF2E35] text-[#E52B32] hover:bg-[#FF2E35] hover:text-white py-3 rounded-xl font-semibold transition-all">
             Batal
           </button>
         </div>
