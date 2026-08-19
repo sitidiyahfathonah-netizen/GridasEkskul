@@ -175,13 +175,13 @@ export function DetailEskulCard({ eskul, onBack, onJoin }: DetailEskulProps) {
           {punyaPrestasi && (
             <div className="pt-6 flex flex-col items-center space-y-4">
               <div className="text-center mb-2">
-                <h1 className="text-3xl md:text-4xl font-extrabold text-[#00598A] tracking-tight drop-shadow-sm">Prestasi</h1>
-                <h1 className="text-3xl md:text-4xl font-extrabold text-[#00598A] tracking-tight mt-2 drop-shadow-sm">Estrakulikuler</h1>
+                <h1 className="text-4xl md:text-5xl font-extrabold text-[#00598A] tracking-tight drop-shadow-sm">Prestasi</h1>
+                <h1 className="text-4xl md:text-5xl font-extrabold text-[#00598A] tracking-tight mt-2 drop-shadow-sm">Estrakulikuler</h1>
               </div>
 
               {/* Card Foto Prestasi */}
               {fotoPrestasiUrl && (
-                <div className="w-full max-w-3xl mx-auto rounded-3xl overflow-hidden shadow-md">
+                <div className="w-full max-w-2xl mx-auto rounded-2xl overflow-hidden shadow-md">
                   <img
                     src={fotoPrestasiUrl}
                     alt="Foto Prestasi"
