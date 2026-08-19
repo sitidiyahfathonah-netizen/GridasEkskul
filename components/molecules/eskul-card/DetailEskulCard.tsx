@@ -37,7 +37,10 @@ export function DetailEskulCard({ eskul, onBack, onJoin }: DetailEskulProps) {
 
   // Mapping field dari skema Strapi v5 kamu
   const nama = eskul.nama_ekskul || "";
-  const jadwal = eskul.jadwal || eskul.jadwal_pelaksanaan || eskul.waktu || "Belum diatur";
+  const rawJadwal = eskul.jadwal || eskul.jadwal_pelaksanaan || eskul.waktu || "Belum diatur";
+  const timeMatches = typeof rawJadwal === 'string' ? rawJadwal.match(/\b\d{1,2}:\d{2}\b/g) : null;
+  const jadwal = timeMatches ? timeMatches.join(" - ") : rawJadwal;
+  
   const tempat = eskul.tempat || eskul.tempat_pelaksanaan || eskul.lokasi || "Belum diatur";
   const hari = eskul.hari || "Belum diatur";
   const kata_ajakan = eskul.kata_ajakan || eskul.attributes?.kata_ajakan || "belum diatur"
@@ -60,11 +63,7 @@ export function DetailEskulCard({ eskul, onBack, onJoin }: DetailEskulProps) {
 
     if (!rawUrl) return null;
     if (rawUrl.startsWith("http://") || rawUrl.startsWith("https://")) return rawUrl;
-    return `https://cn17l1l4-1337.asse.devtunnels.ms${rawUrl}`;
-
-    if (rawUrl.startsWith("http://") || rawUrl.startsWith("https://")) {
-      return rawUrl;
-    }
+    
     return `${STRAPI_URL}${rawUrl}`;
   };
 

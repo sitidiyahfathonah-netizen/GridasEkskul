@@ -25,8 +25,16 @@ export interface EskulItem {
   documentId?: string;
   nama: string;
   deskripsi: string;
+  hari?: string;
   jadwal_pelaksanaan: string;
   foto: string;
+  tempat_pelaksanaan?: string;
+  deskripsi_singkat?: string;
+  kata_ajakan?: string;
+  prestasi?: string;
+  deskripsi_prestasi?: string;
+  foto_prestasi?: string;
+  
 }
 
 // Helper untuk mengambil token bersih tanpa tanda petik ganda
@@ -93,6 +101,28 @@ export default function DashboardPage() {
         const formatted = result.data.map((item: any) => {
           let imgUrl = "/images/tatarias.jpeg";
           const fotoData = item.foto_utama || item.foto || item.gambar;
+          const fotoPrestasiData = item.foto_prestasi;
+
+          let fotoPrestasiUrl = "";
+          if (fotoPrestasiData) {
+          const mediaObj = Array.isArray(fotoPrestasiData)
+          ? fotoPrestasiData[0]
+          : fotoPrestasiData.data
+          ? fotoPrestasiData.data
+          : fotoPrestasiData;
+
+          const path =
+          mediaObj?.attributes?.url ||
+          mediaObj?.url ||
+          mediaObj?.formats?.medium?.url ||
+          mediaObj?.formats?.thumbnail?.url;
+
+          if (path) {
+          fotoPrestasiUrl = path.startsWith("http")
+          ? path
+          : `${STRAPI_URL}${path}`;
+          }
+          }
 
           if (fotoData) {
             const mediaObj = Array.isArray(fotoData)
@@ -117,9 +147,15 @@ export default function DashboardPage() {
             documentId: item.documentId,
             nama: item.nama_ekskul || item.nama || "",
             deskripsi: extractRichText(item.deskripsi),
-            jadwal_pelaksanaan:
-              extractRichText(item.jadwal_pelaksanaan) || item.jadwal_pelaksanaan || "-",
+            jadwal_pelaksanaan: extractRichText(item.jadwal_pelaksanaan) || item.jadwal_pelaksanaan || "-",
+            tempat_pelaksanaan: item.tempat_pelaksanaan || "",
+            hari: item.hari || "",
+            deskripsi_singkat: extractRichText(item.deskripsi_singkat) || item.deskripsi_singkat || "",
+            kata_ajakan: extractRichText(item.kata_ajakan) || item.kata_ajakan || "",
+            prestasi: extractRichText(item.prestasi) || item.prestasi || "",
+            deskripsi_prestasi: extractRichText(item.deskripsi_prestasi) || item.deskripsi_prestasi || "",
             foto: imgUrl,
+            foto_prestasi: fotoPrestasiUrl,
           };
         });
 
@@ -135,10 +171,11 @@ export default function DashboardPage() {
     }
   };
 
-  const handleTambah = async (newItem: Omit<EskulItem, "id">, file?: File | null) => {
+  const handleTambah = async (newItem: Omit<EskulItem, "id">, file?: File | null, prestasiFile?: File | null) => {
     const token = getCleanToken();
     let uploadedImgId = null;
-
+    let uploadedPrestasiImgId = null;
+    
     if (file) {
       const formData = new FormData();
       formData.append("files", file);
@@ -160,11 +197,44 @@ export default function DashboardPage() {
       }
     }
 
+    if (prestasiFile) {
+  const formData = new FormData();
+  formData.append("files", prestasiFile);
+
+  const uploadPrestasiRes = await fetch(`${STRAPI_URL}/api/upload`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
+  });
+
+  if (uploadPrestasiRes.ok) {
+    const uploadData = await uploadPrestasiRes.json();
+    uploadedPrestasiImgId = uploadData[0]?.id;
+  } else {
+    const errData = await uploadPrestasiRes.json();
+    console.error("Upload foto prestasi error:", errData);
+    alert(
+      `Gagal mengupload foto prestasi: ${
+        errData?.error?.message || "Kesalahan server Strapi"
+      }`
+    );
+    return;
+  }
+}
+
     const payloadPlain = {
       nama_ekskul: newItem.nama,
       deskripsi: newItem.deskripsi,
+      deskripsi_singkat: newItem.deskripsi_singkat,
       jadwal_pelaksanaan: newItem.jadwal_pelaksanaan,
+      hari: newItem.hari,
+      tempat_pelaksanaan: newItem.tempat_pelaksanaan,
+      prestasi: newItem.prestasi,
+      foto_prestasi: newItem.foto_prestasi,
       ...(uploadedImgId ? { foto_utama: uploadedImgId } : {}),
+      ...(uploadedPrestasiImgId ? { foto_prestasi: uploadedPrestasiImgId }: {}),
     };
 
     const payloadBlocks = {
@@ -172,8 +242,14 @@ export default function DashboardPage() {
       deskripsi: newItem.deskripsi
         ? [{ type: "paragraph", children: [{ type: "text", text: newItem.deskripsi }] }]
         : [],
+      deskripsi_singkat: newItem.deskripsi_singkat,  
       jadwal_pelaksanaan: newItem.jadwal_pelaksanaan,
+      hari: newItem.hari,
+      tempat_pelaksanaan: newItem.tempat_pelaksanaan,
+      prestasi: newItem.prestasi,
+      foto_prestasi: newItem.foto_prestasi,
       ...(uploadedImgId ? { foto_utama: uploadedImgId } : {}),
+      ...(uploadedPrestasiImgId ? { foto_prestasi: uploadedPrestasiImgId }: {}),
     };
 
     try {
@@ -225,8 +301,58 @@ export default function DashboardPage() {
     }
   };
 
-  const handleEdit = async (updatedItem: EskulItem) => {
+  const handleEdit = async (updatedItem: EskulItem, file?: File | null,prestasiFile?: File | null) => {
     const token = getCleanToken();
+    let uploadedImgId = null;
+    let uploadedPrestasiImgId = null;
+
+    if (file) {
+      const formData = new FormData();
+      formData.append("files", file);
+      const uploadRes = await fetch(`${STRAPI_URL}/api/upload`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      if (!uploadRes.ok) {
+        const errorData = await uploadRes.json();
+        console.error("Upload foto utama error:", errorData);
+        alert(`Gagal mengupload foto: ${errorData?.error?.message || "Kesalahan server Strapi"}`);
+        return;
+      }
+      const uploadData = await uploadRes.json();
+      uploadedImgId = uploadData[0]?.id;
+    }
+    if (prestasiFile) {
+  const formData = new FormData();
+  formData.append("files", prestasiFile);
+
+  const uploadPrestasiRes = await fetch(`${STRAPI_URL}/api/upload`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
+  });
+
+  if (!uploadPrestasiRes.ok) {
+    const errorData = await uploadPrestasiRes.json();
+    console.error("Upload foto prestasi error:", errorData);
+    alert(
+      `Gagal mengupload foto prestasi: ${
+        errorData?.error?.message || "Kesalahan server Strapi"
+      }`
+    );
+    return;
+  }
+
+  const uploadData = await uploadPrestasiRes.json();
+  uploadedPrestasiImgId = uploadData[0]?.id;
+}
+
     const targetId = updatedItem.documentId || updatedItem.id;
     if (!targetId) return;
 
@@ -234,6 +360,14 @@ export default function DashboardPage() {
     if (updatedItem.nama !== undefined) payloadPlain.nama_ekskul = updatedItem.nama;
     if (updatedItem.deskripsi !== undefined) payloadPlain.deskripsi = updatedItem.deskripsi;
     if (updatedItem.jadwal_pelaksanaan !== undefined) payloadPlain.jadwal_pelaksanaan = updatedItem.jadwal_pelaksanaan;
+    if (updatedItem.tempat_pelaksanaan !== undefined) payloadPlain.tempat_pelaksanaan = updatedItem.tempat_pelaksanaan;
+    if (updatedItem.deskripsi_singkat !== undefined) payloadPlain.deskripsi_singkat = updatedItem.deskripsi_singkat;
+    if (updatedItem.kata_ajakan !== undefined) payloadPlain.kata_ajakan = updatedItem.kata_ajakan;
+    if (updatedItem.prestasi !== undefined) payloadPlain.prestasi = updatedItem.prestasi;
+    if (updatedItem.hari !== undefined) payloadPlain.hari = updatedItem.hari;
+
+    if (uploadedImgId) payloadPlain.foto_utama = uploadedImgId;
+    if (uploadedPrestasiImgId) payloadPlain.foto_prestasi = uploadedPrestasiImgId;
 
     const payloadBlocks: any = { ...payloadPlain };
     if (updatedItem.deskripsi !== undefined) {
@@ -285,7 +419,7 @@ export default function DashboardPage() {
 
       setOpenEdit(false);
       setItemToEdit(null);
-      fetchData();
+    fetchData();
     } catch (error) {
       console.error("Gagal update data:", error);
     }

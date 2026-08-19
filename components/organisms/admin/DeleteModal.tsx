@@ -1,65 +1,101 @@
 "use client";
 
+import { useState } from "react";
+
 interface DeleteModalProps {
   open: boolean;
   onClose: () => void;
-  onDelete: () => void;
-  namaEskul?: string;
+  onDelete: () => Promise<boolean>;
 }
 
 export function DeleteModal({
   open,
   onClose,
   onDelete,
-  namaEskul,
 }: DeleteModalProps) {
-  if (!open) return null;
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  if (!open) {
+    if (isSuccess) setIsSuccess(false); // Reset state when closed
+    return null;
+  }
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      const success = await onDelete();
+      if (success) {
+        setIsSuccess(true);
+        setTimeout(() => {
+          setIsSuccess(false);
+          onClose();
+        }, 2000);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <div className="w-full max-w-md rounded-2xl bg-white shadow-2xl">
+      <div className="w-full max-w-[320px] rounded-3xl bg-white shadow-2xl p-8 text-center relative overflow-hidden transition-all">
+        {isSuccess ? (
+          <div className="flex flex-col items-center justify-center py-2 animate-in zoom-in duration-300">
+            <div className="w-20 h-20 bg-[#63F152] rounded-full flex items-center justify-center mb-6">
+              <span className="text-5xl font-bold text-white">
+                ✓
+              </span>
+            </div>
 
-        {/* Header */}
-        <div className="px-6 pt-6">
-          <h2 className="text-3xl font-bold text-slate-700">
-            Hapus Ekstrakurikuler
-          </h2>
+            <h2 className="text-xl font-extrabold text-[#63F152] tracking-wide">
+              Penghapusan Berhasil !
+            </h2>
+          </div>
 
-          <p className="mt-2 text-sm text-gray-400">
-            Konfirmasi penghapusan data
-          </p>
-        </div>
+        ) : (
+          <div className="flex flex-col items-center py-4 animate-in fade-in duration-200">
+            <div className="w-20 h-20 bg-[#F23B33] rounded-full flex items-center justify-center mb-5">
+               <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-14 w-14 text-white"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        strokeWidth={3}
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M6 18L18 6M6 6l12 12"
+        />
+      </svg>
+            </div>
 
-        {/* Isi */}
-        <div className="px-6 py-8 text-center">
-          <p className="text-lg text-slate-600 leading-relaxed">
-            Apakah Anda yakin ingin menghapus
-          </p>
+            <h2 className="text-xl font-extrabold text-[#F23B33] mb-6 leading-snug">
+              Apakah anda yakin<br />
+              ingin menghapus ekskul<br />
+              ini?
+            </h2>
 
-          <p className="mt-2 text-xl font-bold text-[#00598A]">
-            {namaEskul || "data ekstrakurikuler"}?
-          </p>
-
-          <p className="mt-4 text-sm text-red-500">
-            Data yang dihapus tidak dapat dikembalikan.
-          </p>
-        </div>
-
-        {/* Footer */}
-        <div className="flex gap-3 px-6 pb-6">
-          <button
-            onClick={onDelete}
-            className="flex-1 rounded-xl bg-green-500 hover:bg-green-600 active:bg-green-700 active:scale-95 py-2.5 font-semibold text-white transition-all duration-200">
-            Ya, Hapus
-          </button>
-
-          <button
-            onClick={onClose}
-            className="flex-1 rounded-xl border border-red-500 bg-white text-red-500 hover:bg-red-500 hover:text-white active:bg-red-700 active:text-white active:scale-95 py-2.5 font-semibold transition-all duration-200">
-            Batal
-          </button>
-        </div>
-
+            <div className="flex gap-2 w-full px-2">
+              <button
+                onClick={handleDelete}
+                disabled={isDeleting}
+                className="flex-1 rounded-lg border-2 border-[#F23B33] bg-white text-[#F23B33] hover:bg-[#F23B33] hover:text-white active:scale-95 py-2 font-extrabold text-sm transition-all">
+                Ya
+              </button>
+              <button
+                onClick={onClose}
+                disabled={isDeleting}
+                className="flex-1 rounded-lg border-2 border-[#F23B33] bg-white text-[#F23B33] hover:bg-[#F23B33] hover:text-white active:scale-95 py-2 font-extrabold text-sm transition-all">
+                Pikir Lagi
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
