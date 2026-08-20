@@ -51,9 +51,9 @@ export default function Sidebar() {
       {/* PERBAIKAN: Mengganti md:static menjadi h-screen sticky top-0 agar terikat tinggi layar */}
       <aside
         className={`
-          fixed inset-y-0 left-0 z-40 flex w-64 flex-col bg-[#00598A] text-white transition-transform duration-300 ease-in-out
-          h-screen sticky top-0 md:translate-x-0
-          ${isOpen ? "translate-x-0" : "-translate-x-full"}
+          fixed inset-y-0 left-0 z-40 flex flex-col bg-[#00598A] text-white transition-transform duration-300 ease-in-out
+          h-screen sticky top-0 md:translate-x-0 md:w-64!
+          ${isOpen ? "translate-x-0 w-64" : "-translate-x-full w-0"}
           ${josefin.className}
         `}
       >
