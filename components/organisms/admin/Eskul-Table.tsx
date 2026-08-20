@@ -81,7 +81,7 @@ export function EskulTable({
                       ? "ring-2 ring-green-400 bg-green-50"
                       : ""
                     }`}
-                >
+                  >
                   {/* 1. Foto */}
                   <td className="p-4 rounded-l-xl align-middle">
                     <div className="relative w-[120px] h-[70px] overflow-hidden rounded-lg bg-gray-100">
@@ -125,6 +125,32 @@ export function EskulTable({
                         <span className="text-gray-400 font-normal">-</span>
                       )}
                     </div>
+                  </td>
+                  {/* 4. Jadwal */}
+                  <td className="align-middle text-sm">
+                    {item.jadwal_pelaksanaan && item.jadwal_pelaksanaan !== "-" ? (
+                      <div className="flex flex-col">
+                        {item.jadwal_pelaksanaan.includes(",") || item.jadwal_pelaksanaan.includes("\n") ? (
+                          <>
+                            {/* Baris 1: Hari (Tebal) */}
+                            <span className="font-semibold text-slate-700">
+                              {item.jadwal_pelaksanaan.split(/[\n,]/)[0]?.trim()}
+                            </span>
+                            {/* Baris 2: Jam (Abu-abu & Lebih Kecil) */}
+                            <span className="text-xs text-gray-500 font-normal mt-0.5">
+                              {item.jadwal_pelaksanaan.split(/[\n,]/)[1]?.trim()}
+                            </span>
+                          </>
+                        ) : (
+                          /* Jika cuma ada jam saja atau hari saja */
+                          <span className="font-semibold text-gray-600">
+                            {item.jadwal_pelaksanaan}
+                          </span>
+                        )}
+                      </div>
+                    ) : (
+                      <span className="text-gray-400 font-normal">-</span>
+                    )}
                   </td>
 
                   {/* 5. Aksi */}

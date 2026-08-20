@@ -121,8 +121,8 @@ export default function PendaftaranAdminPage() {
 
       <main className="flex-1 flex-col min-w-0">
         {/* Header Biru Atas */}
-        <div className="bg-[#00598a] w-full py-8 px-5">
-          <h1 className={`text-3xl md:text-4xl font-extrabold text-white tracking-wider ${josefin.className}`}>
+        <div className="flex h-20 items-center justify-between bg-[#00598A] px-4 md:px-8">
+          <h1 className={`text-2xl md:text-4xl font-bold tracking-wide text-white pl-12 md:pl-0 ${josefin.className}`}>
             PENDAFTAR
           </h1>
         </div>

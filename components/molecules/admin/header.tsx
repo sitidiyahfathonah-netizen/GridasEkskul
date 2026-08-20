@@ -19,7 +19,7 @@ export default function Header({
 }: HeaderProps) {
   return (
     <header className="flex h-20 items-center justify-between bg-[#00598A] px-4 md:px-8">
-      <h1 className={`text-xl md:text-2xl font-bold tracking-wide text-white pl-12 md:pl-0 ${josefin.className}`}>
+      <h1 className={`text-2xl md:text-4xl font-bold tracking-wide text-white pl-12 md:pl-0 ${josefin.className}`}>
         {title}
       </h1>
 
