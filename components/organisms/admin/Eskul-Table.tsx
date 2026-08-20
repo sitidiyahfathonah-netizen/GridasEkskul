@@ -77,11 +77,10 @@ export function EskulTable({
                 <tr
                   key={item.id}
                   id={`eskul-row-${item.documentId || item.id}`}
-                  className={`bg-white shadow-sm rounded-xl overflow-hidden hover:shadow-md transition-shadow ${
-                    highlightedId === (item.documentId || item.id) || highlightedId === item.id
+                  className={`bg-white shadow-sm rounded-xl overflow-hidden hover:shadow-md transition-shadow ${highlightedId === (item.documentId || item.id) || highlightedId === item.id
                       ? "ring-2 ring-green-400 bg-green-50"
                       : ""
-                  }`}
+                    }`}
                 >
                   {/* 1. Foto */}
                   <td className="p-4 rounded-l-xl align-middle">
@@ -109,24 +108,24 @@ export function EskulTable({
                     <DescriptionCell text={item.deskripsi} />
                   </td>
 
-                 {/* 4. Jadwal */}
-<td className="align-middle text-sm">
-  <div className="flex flex-col">
-    {item.hari && (
-      <span className="font-semibold text-slate-700">
-        {item.hari}
-      </span>
-    )}
-    {item.jadwal_pelaksanaan && item.jadwal_pelaksanaan !== "-" && (
-      <span className="text-xs text-gray-500 font-normal mt-0.5">
-        {item.jadwal_pelaksanaan.match(/\b\d{1,2}:\d{2}\b/g)?.join(" - ") || item.jadwal_pelaksanaan}
-      </span>
-    )}
-    {!item.hari && (!item.jadwal_pelaksanaan || item.jadwal_pelaksanaan === "-") && (
-      <span className="text-gray-400 font-normal">-</span>
-    )}
-  </div>
-</td>
+                  {/* 4. Jadwal */}
+                  <td className="align-middle text-sm">
+                    <div className="flex flex-col">
+                      {item.hari && (
+                        <span className="font-semibold text-slate-700">
+                          {item.hari}
+                        </span>
+                      )}
+                      {item.jadwal_pelaksanaan && item.jadwal_pelaksanaan !== "-" && (
+                        <span className="text-xs text-gray-500 font-normal mt-0.5">
+                          {item.jadwal_pelaksanaan.match(/\b\d{1,2}:\d{2}\b/g)?.join(" - ") || item.jadwal_pelaksanaan}
+                        </span>
+                      )}
+                      {!item.hari && (!item.jadwal_pelaksanaan || item.jadwal_pelaksanaan === "-") && (
+                        <span className="text-gray-400 font-normal">-</span>
+                      )}
+                    </div>
+                  </td>
 
                   {/* 5. Aksi */}
                   <td className="p-4 rounded-r-xl align-middle">

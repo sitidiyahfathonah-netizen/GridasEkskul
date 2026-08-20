@@ -42,7 +42,10 @@ export function DetailEskulCard({ eskul, onBack, onJoin }: DetailEskulProps) {
   const jadwal = timeMatches ? timeMatches.join(" - ") : rawJadwal;
   
   const tempat = eskul.tempat || eskul.tempat_pelaksanaan || eskul.lokasi || "Belum diatur";
-  const hari = eskul.hari || "Belum diatur";
+  const rawHari = eskul.hari;
+  const hari = rawHari 
+    ? (rawHari.toLowerCase().includes("hari") ? rawHari : `Setiap Hari ${rawHari}`)
+    : "Belum diatur";
   const kata_ajakan = eskul.kata_ajakan || eskul.attributes?.kata_ajakan || "belum diatur"
 
 
