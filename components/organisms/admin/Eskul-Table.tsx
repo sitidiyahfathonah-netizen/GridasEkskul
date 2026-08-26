@@ -63,11 +63,67 @@ export function EskulTable({
   }
 
   return (
-    <div className="p-2 sm:p-4 md:p-8 w-full max-w-full overflow-hidden">
+    <div className="p-2 sm:p-4 md:p-8">
+      <div className="grid grid-cols-1 gap-4 md:hidden">
+        {dataEskul.map((item) => {
+          const isHighlighted =
+            highlightedId === (item.documentId || item.id) || highlightedId === item.id;
+
+          return (
+            <div
+              key={item.id}
+              id={`eskul-row-mobile-${item.documentId || item.id}`}
+              className={`bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col gap-3 transition-all ${isHighlighted ? "ring-2 ring-green-400 bg-green-50" : ""
+                }`}
+            >
+              <div className="flex items-center gap-3">
+                <div className="relative w-20 h-20 shrink-0 overflow-hidden rounded-lg bg-gray-100 border">
+                  <img
+                    src={item.foto}
+                    alt={item.nama}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = "/images/tatarias.jpeg";
+                    }}
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <h3 className={`text-lg font-bold text-gray-800 ${josefin.className}`}>
+                    {item.nama}
+                  </h3>
+                  <span className="text-xs text-gray-500 font-medium">
+                    Jadwal: {item.jadwal_pelaksanaan || "-"}
+                  </span>
+                </div>
+              </div>
+
+              <div className="text-sm text-gray-600 bg-gray-50 p-2.5 rounded-lg border border-gray-100">
+                <DescriptionCell text={item.deskripsi} />
+              </div>
+
+              <div className="flex gap-2 justify-end pt-1">
+                <button
+                  onClick={() => onEdit(item)}
+                  className="flex-1 bg-blue-900 hover:bg-blue-950 active:scale-95 text-white py-2 rounded-lg font-semibold text-xs transition-all text-center"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => onDelete(item.id, item.nama)}
+                  className="flex-1 bg-red-600 hover:bg-red-700 active:scale-95 text-white py-2 rounded-lg font-semibold text-xs transition-all text-center"
+                >
+                  Hapus
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
       {/* ------------------------------------------------------------- */}
-      {/* TAMPILAN TABEL - Responsive scroll ke kanan/kiri di HP        */}
+      {/* 2. TAMPILAN DESKTOP & TABLET (Table View) - Tampak Rapi di PC */}
       {/* ------------------------------------------------------------- */}
-      <div className="block max-h-[calc(100vh-250px)] overflow-y-auto overflow-x-auto pr-2">
+      <div className="hidden md:block max-h-[calc(100vh-250px)] overflow-y-auto overflow-x-auto pr-2">
         <table className="w-full min-w-[700px] border-separate border-spacing-y-4 text-left">
           {/* Header Tabel */}
           <thead className="sticky top-0 bg-[#F5F7FA] z-10">
