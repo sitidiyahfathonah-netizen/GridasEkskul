@@ -64,9 +64,6 @@ export function EskulTable({
 
   return (
     <div className="p-2 sm:p-4 md:p-8">
-      {/* ------------------------------------------------------------- */}
-      {/* 1. TAMPILAN MOBILE (Card View) - Tampak Rapi di HP           */}
-      {/* ------------------------------------------------------------- */}
       <div className="grid grid-cols-1 gap-4 md:hidden">
         {dataEskul.map((item) => {
           const isHighlighted =
