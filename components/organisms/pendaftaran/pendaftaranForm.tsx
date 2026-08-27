@@ -85,11 +85,9 @@ export function PendaftaranForm({ onSuccess, ekskulId: propEkskulId }: Pendaftar
       if (res.ok) {
         setShowSuccessModal(true);
 
-        // Redirect ke WhatsApp Admin
-        const waNumber = "6283826231982"; 
-        const message = `Halo Admin, saya ingin konfirmasi pendaftaran ekstrakurikuler.\n\nNama: ${formData.nama}\nKelas: ${formData.kelas}\nJurusan: ${formData.jurusan}\nNo Telp: ${formData.no_telp}`;
-        const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
-        window.open(waUrl, "_blank");
+        // Redirect ke Grup WhatsApp
+        const waGroupLink = "https://chat.whatsapp.com/GANTI_DENGAN_LINK_GRUP_ASLI"; 
+        window.open(waGroupLink, "_blank");
 
         setFormData({ nama: "", kelas: "", jurusan: "", no_telp: "" });
       } else {
