@@ -26,7 +26,7 @@ export function SuccessModal({ isOpen, onClose }: SuccessModalProps) {
 
                 {/* Teks Pesan Sukses */}
                 <div className="space-y-2">
-                    <h3 className="text-xl font-extrabold text-[#22C55E] leading-snug">
+                    <h3 className="text-lg font-extrabold text-[#22C55E] leading-snug">
                         Pendaftaran Berhasil !
                     </h3>
                     <p className="text-xs text-[#22C55E] font-medium leading-relaxed px-2">
