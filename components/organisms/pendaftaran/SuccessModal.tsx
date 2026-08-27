@@ -30,7 +30,7 @@ export function SuccessModal({ isOpen, onClose }: SuccessModalProps) {
                         Pendaftaran Berhasil !
                     </h3>
                     <p className="text-xs text-[#22C55E] font-medium leading-relaxed px-2">
-                        Pengurus akan menghubungimu via Whatsapp untuk info selanjutnya
+                        Silakan bergabung ke grup Whatsapp untuk info selanjutnya
                     </p>
                 </div>
 
