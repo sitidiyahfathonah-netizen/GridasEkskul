@@ -86,7 +86,7 @@ export function PendaftaranForm({ onSuccess, ekskulId: propEkskulId }: Pendaftar
         setShowSuccessModal(true);
 
         // Redirect ke Grup WhatsApp
-        const waGroupLink = "https://chat.whatsapp.com/GANTI_DENGAN_LINK_GRUP_ASLI"; 
+        const waGroupLink = "https://chat.whatsapp.com/Im7urlG447o31yzm2L2FGh"; 
         window.open(waGroupLink, "_blank");
 
         setFormData({ nama: "", kelas: "", jurusan: "", no_telp: "" });
